@@ -1,0 +1,33 @@
+{
+  "name": "webpack-react-typescript-example",
+  "version": "1.0.0",
+  "description": "Minimal TypeScript React Webpack example",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "webpack --mode production",
+    "clean": "rm -rf ./dist",
+    "test": "vitest --run",
+    "update:snapshots": "vitest --run --update"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@datadog/instrumentation-test-plugin": "../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "css-loader": "^7.1.2",
+    "jsdom": "^26.1.0",
+    "style-loader": "^4.0.0",
+    "svg-url-loader": "^8.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "~5.7.2",
+    "vitest": "^3.1.1",
+    "webpack": "^5.99.5",
+    "webpack-cli": "^6.0.1"
+  }
+}

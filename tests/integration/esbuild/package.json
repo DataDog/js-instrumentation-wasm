@@ -1,0 +1,27 @@
+{
+  "name": "esbuild-project",
+  "version": "1.0.0",
+  "description": "Minimal TypeScript React esbuild example",
+  "main": "index.js",
+  "scripts": {
+    "build": "node --preserve-symlinks build.js production",
+    "clean": "rm -rf ./dist",
+    "test": "vitest --run",
+    "update:snapshots": "vitest --run --update"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@datadog/instrumentation-test-plugin": "../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "esbuild": "^0.19.0",
+    "jsdom": "^26.1.0",
+    "typescript": "~5.7.2",
+    "vitest": "^3.1.1"
+  }
+}

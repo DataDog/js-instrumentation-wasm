@@ -1,0 +1,40 @@
+[workspace]
+members = [
+  "datadog-js-instrumentation",
+  "js-instrumentation-shared",
+  "js-instrumentation-transform",
+]
+resolver = "2"
+
+[workspace.package]
+authors = ["Datadog"]
+edition = "2021"
+homepage = "https://github.com/Datadog"
+license = "MIT"
+repository = "https://github.com/Datadog"
+rust-version = "1.70"
+
+[workspace.dependencies]
+anyhow = "1.0.83"
+lazy_static = "1.4.0"
+ordermap = "0.5.6"
+regex = { version = "1.10.4" }
+serde = { version = "1.0.203", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
+similar-asserts = "1.4.2"
+sourcemap = "9.0.0"
+swc_atoms = "5.0.0"
+swc_common = "10.0.0"
+swc_ecma_ast = "10.0.0"
+swc_ecma_parser = "13.0.0"
+swc_ecma_visit = "10.0.0"
+testing = "8.0.0"
+wasm-bindgen = "0.2.100"
+web-sys = { version = "0.3.77", features = ["console"] }
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = true
+opt-level = 3
+strip = "symbols"

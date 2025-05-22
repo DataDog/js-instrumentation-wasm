@@ -1,0 +1,35 @@
+name: Publish package to GitHub Packages
+
+permissions:
+  actions: none
+  attestations: none
+  checks: none
+  contents: read
+  deployments: none
+  discussions: none
+  id-token: none
+  issues: none
+  packages: write
+  pages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and publish
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - uses: ./.github/actions/build/
+      with:
+        mode: "release"
+    - uses: ./.github/actions/publish/
+      with:
+        node_auth_token: ${{ secrets. GITHUB_TOKEN }}

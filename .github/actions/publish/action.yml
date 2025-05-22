@@ -1,0 +1,21 @@
+name: 'Publish'
+description: 'Publish the package to Github Packages'
+inputs:
+  node_auth_token:
+    description: "NODE_AUTH_TOKEN"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Set up authentication for package publishing
+      run: |
+        echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.node_auth_token }}
+    - name: Run yarn workspaces focus
+      run: yarn workspaces focus --all --production
+      shell: bash
+    - name: Run yarn npm publish
+      run: yarn npm publish
+      shell: bash

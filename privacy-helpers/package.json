@@ -1,0 +1,26 @@
+{
+  "name": "datadog-privacy-helpers",
+  "type": "module",
+  "private": true,
+  "collaborators": [
+    "Datadog"
+  ],
+  "description": "Privacy dictionary helpers for js-instrumentation-wasm",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Datadog"
+  },
+  "main": "index.js",
+  "homepage": "https://github.com/Datadog",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

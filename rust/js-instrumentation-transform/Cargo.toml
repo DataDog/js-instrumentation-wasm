@@ -1,0 +1,30 @@
+[package]
+description = "Datadog JS instrumentation AST transform"
+
+authors = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+name = "js-instrumentation-transform"
+repository = { workspace = true }
+rust-version = { workspace = true }
+version = "0.1.0"
+
+[dependencies]
+anyhow = { workspace = true }
+lazy_static = { workspace = true }
+ordermap = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+swc_atoms = { workspace = true }
+swc_common = { workspace = true }
+swc_ecma_ast = { workspace = true }
+swc_ecma_parser = { workspace = true }
+swc_ecma_visit = { workspace = true }
+web-sys = { workspace = true }
+
+js-instrumentation-shared = { path = "../js-instrumentation-shared/" }
+
+[dev-dependencies]
+similar-asserts = { workspace = true }
+testing = { workspace = true }
