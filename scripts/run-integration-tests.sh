@@ -11,6 +11,7 @@ for TEST_ROOT in ./tests/integration/*; do
  # Note that this cannot be a immutable install, because the integration test's
  # package.json references a tarball that we generate as part of the build with
  # `yarn pack`, and by design, the content hash of this tarball will change.
+ export YARN_ENABLE_IMMUTABLE_INSTALLS="false"
  yarn install
 
  yarn build
