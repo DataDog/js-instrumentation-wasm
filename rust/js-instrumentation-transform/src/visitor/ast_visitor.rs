@@ -2,7 +2,7 @@ use swc_common::{Span, Spanned};
 use swc_ecma_ast::{
     CallExpr, Callee, ExportAll, Expr, Ident, ImportDecl, JSXAttrValue, JSXElementChild, JSXText,
     Lit, NamedExport, Program, PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl, TsInterfaceDecl,
-    TsType,
+    TsModuleName, TsType,
 };
 use swc_ecma_visit::{Visit, VisitWith};
 
@@ -216,6 +216,12 @@ impl<'a> Visit for ASTVisitor<'a> {
         // Don't collect string literals inside TypeScript interface declarations.
         // Note that we don't need to recurse with while_filtered() here,
         // because there's nothing we need to collect inside TypeScript types.
+        return;
+    }
+
+    fn visit_ts_module_name(&mut self, _node: &TsModuleName) {
+        // Don't treat TypeScript module names as string literals, even though
+        // string literals can be used in this position syntactically.
         return;
     }
 
