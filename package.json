@@ -13,7 +13,7 @@
     "url": "https://github.com/datadog/js-instrumentation-wasm/issues"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "types": "./dist/types/index.d.ts",
   "exports": {
