@@ -25,7 +25,7 @@ globals,npm,MIT,"Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://s
 jsdom,npm,MIT,"Copyright (c) 2010 Elijah Insua"
 react-dom,npm,MIT,"Copyright (c) Meta Platforms, Inc. and affiliates."
 react,npm,MIT,"Copyright (c) Meta Platforms, Inc. and affiliates."
-rollup-plugin-string-import,npm,GPL-3.0-or-later,""
+rollup-plugin-string-import,npm,GPL-3.0-or-later,"Copyright (c) Bogdan Chadkin <trysound@yandex.ru>"
 rollup,npm,MIT,"Copyright (c) 2017 [these people](https://github.com/rollup/rollup/graphs/contributors)"
 style-loader,npm,MIT,"Copyright JS Foundation and other contributors"
 svg-url-loader,npm,MIT,"Copyright (c) 2015 Hovhannes Babayan"
