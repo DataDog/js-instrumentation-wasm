@@ -117,10 +117,10 @@ __metadata:
     typescript: "npm:^5.8.3"
     typescript-eslint: "npm:^8.29.1"
     unplugin: "npm:^2.3.4"
-    vite: "npm:^6.2.5"
+    vite: "npm:^6.3.5"
     vite-plugin-commonjs: "npm:^0.10.4"
     vite-plugin-require: "npm:^1.2.14"
-    vitest: "npm:^3.0.5"
+    vitest: "npm:^3.1.4"
     webpack: "npm:^5.97.1"
   peerDependencies:
     "@farmfe/core": ">=1"
@@ -150,8 +150,8 @@ __metadata:
 
 "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz::locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A.":
   version: 0.2.0
-  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=8810ad&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
-  checksum: 10c0/bf468c538ad00efa3fb3af20500fd1ba396d5ffce171c1e60264dc6326dd06bb39591e2a751ea079dd61f61eb845cbc5cc69ad0d4c786a93707ff55cc809b404
+  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=110557&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
+  checksum: 10c0/5b931412bb06ee655432e48b2499b5ec8a08d3dc022f41f60eaf64005920840eda902d4bf5f9d706c201bda26ac12b17ee4d6acb0705f211b2ff5698f5211ffe
   languageName: node
   linkType: hard
 
@@ -4122,7 +4122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.2.5":
+"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.3.5":
   version: 6.3.5
   resolution: "vite@npm:6.3.5"
   dependencies:
@@ -4177,7 +4177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^3.0.5":
+"vitest@npm:^3.1.4":
   version: 3.1.4
   resolution: "vitest@npm:3.1.4"
   dependencies:
