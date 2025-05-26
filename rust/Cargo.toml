@@ -34,7 +34,6 @@ web-sys = { version = "0.3.77", features = ["console"] }
 
 [profile.release]
 codegen-units = 1
-debug = false
+debug = true
 lto = true
 opt-level = 3
-strip = "symbols"
