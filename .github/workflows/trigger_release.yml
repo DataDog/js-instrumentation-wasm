@@ -41,6 +41,4 @@ jobs:
         mode: "release"
       if: steps.release.outputs.released == 'true'
     - uses: ./.github/actions/publish/
-      with:
-        node_auth_token: ${{ secrets. GITHUB_TOKEN }}
       if: steps.release.outputs.released == 'true'
