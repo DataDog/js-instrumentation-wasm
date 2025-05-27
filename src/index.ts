@@ -1,5 +1,3 @@
-import helpers from './generated/privacy-helpers.js-txt';
-
 import {
   default as init,
   transform
@@ -7,8 +5,6 @@ import {
 import {
   default as plugin
 } from '../rust/datadog-js-instrumentation/pkg/datadog_js_instrumentation_bg.wasm';
-
-export const defaultPrivacyHelpers: string = helpers;
 
 export interface InstrumentationInput {
   id: string;
