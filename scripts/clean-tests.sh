@@ -13,12 +13,12 @@ cd "$INSTRUMENTATION_TEST_PLUGIN_ROOT"
 
 # Clean `yarn pack` output.
 rm -rf ./artifacts
-mkdir -p ./artifacts
 
 # Remove `rollup` output.
 rm -rf ./dist
-mkdir -p ./dist
-mkdir -p ./dist/types
+
+# Remove output generated from `privacy-helpers`.
+rm -rf ./src/core/generated
 
 ###############################################################################
 ### Clean up the integration tests.

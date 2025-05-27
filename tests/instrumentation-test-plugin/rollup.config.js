@@ -2,7 +2,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-
+import { importAsString } from 'rollup-plugin-string-import';
 
 const entryPoints = [
   'src/index.ts',
@@ -29,7 +29,10 @@ const plugins = () =>
     }),
     nodeResolve(),
     commonjs(),
-    json()
+    json(),
+    importAsString({
+      include: ['**/*.js-txt'],
+    }),
   ];
 
 export default [

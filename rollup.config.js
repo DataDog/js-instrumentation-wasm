@@ -3,8 +3,6 @@ import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import { wasm } from '@rollup/plugin-wasm';
-import { importAsString } from 'rollup-plugin-string-import';
-
 
 const entryPoints = ['src/index.ts'];
 
@@ -21,9 +19,6 @@ const plugins = () =>
     wasm({
       targetEnv: 'auto-inline'
     }),
-    importAsString({
-      include: ['**/*.js-txt'],
-    })
   ];
 
 export default [

@@ -6,3 +6,6 @@ cd "$PROJECT_ROOT"
 
 # Remove `cargo build` output.
 cargo clean --manifest-path ./rust/Cargo.toml
+
+# Remove `wasm-pack` output.
+rm -rf ./rust/datadog-js-instrumentation/pkg

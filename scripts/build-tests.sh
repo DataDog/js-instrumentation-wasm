@@ -17,12 +17,20 @@ cd "$INSTRUMENTATION_TEST_PLUGIN_ROOT"
 export YARN_ENABLE_IMMUTABLE_INSTALLS="false"
 yarn install
 
+# Build dictionary-helpers
+yarn workspace datadog-privacy-helpers build
+mkdir -p ./src/core/generated
+mv ./privacy-helpers/dist/index.js ./src/core/generated/privacy-helpers.js-txt
+
 # Build TypeScript code and bundle.
+mkdir -p ./dist
 yarn rollup -c
 
 # Build bundled type definitions.
+mkdir -p ./dist/types
 yarn dts-buddy dist/types/index.d.ts \
   -m @datadog/instrumentation-test-plugin:src/index.ts
 
 # Generate the packed plugin.
+mkdir -p ./artifacts
 yarn pack --out ./artifacts/%s.tgz

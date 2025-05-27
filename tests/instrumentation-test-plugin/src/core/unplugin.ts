@@ -2,10 +2,11 @@ import { createFilter } from '@rollup/pluginutils';
 import { createUnplugin, type UnpluginFactory } from 'unplugin';
 
 import {
-  defaultPrivacyHelpers,
   instrument,
   type InstrumentationOptions
 } from '@datadog/js-instrumentation-wasm';
+
+import helpers from './generated/privacy-helpers.js-txt';
 
 import { PRIVACY_HELPERS_MODULE_ID } from './constants';
 import { defaultPluginOptions, type PluginOptions } from './options';
@@ -62,7 +63,7 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
           return null;
         }
         return {
-          code: defaultPrivacyHelpers,
+          code: helpers,
         };
       },
     },
