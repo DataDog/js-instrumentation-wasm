@@ -26,14 +26,8 @@ Once you have some code ready, open a PR, [linking it to the issue](https://docs
 To get starting, you'll need to install `yarn`, `rustup` and `wasm-pack` with your system package manager, and use `rustup` to install a Rust toolchain.
 
 ```bash
-# Install yarn
-brew install yarn
-
-# Install rustup from https://rustup.rs/
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Install wasm-pack from https://rustwasm.github.io/wasm-pack/installer/
-curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+# Install yarn, rustup and wasm-pack
+brew install yarn rustup wasm-pack
 ```
 
 Once you've installed those core prerequisites, use the following commands to install dependencies and build the project:
