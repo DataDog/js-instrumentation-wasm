@@ -37,4 +37,6 @@ jobs:
         mode: "release"
       if: steps.release-status.outputs.already-released == 'false'
     - uses: ./.github/actions/publish/
+      with:
+        npm_publish_token: ${{ secrets.NPM_PUBLISH_TOKEN }}
       if: steps.release-status.outputs.already-released == 'false'
