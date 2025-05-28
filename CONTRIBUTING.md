@@ -23,7 +23,12 @@ Once you have some code ready, open a PR, [linking it to the issue](https://docs
 
 ### Setting up your development environment
 
-To get starting, you'll need to install `yarn` and `rustup` with your system package manager, and use `rustup` to install a Rust toolchain.
+To get starting, you'll need to install `yarn`, `rustup` and `wasm-pack` with your system package manager, and use `rustup` to install a Rust toolchain.
+
+```bash
+# Install yarn, rustup and wasm-pack
+brew install yarn rustup wasm-pack
+```
 
 Once you've installed those core prerequisites, use the following commands to install dependencies and build the project:
 
