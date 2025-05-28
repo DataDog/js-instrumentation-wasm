@@ -30,15 +30,11 @@ jobs:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         fetch-depth: 0
-    - name: Check if release is necessary
-      uses: justincy/github-action-npm-release@f6afd60cbb595a76ecae037ad006671636d321f5 # v2.0.2
-      id: release
-    - name: Print release output
-      if: steps.release.outputs.released == 'true'
-      run: echo Release ID ${{ steps.release.outputs.release_id }}
+    - uses: ./.github/actions/check-release-status/
+      id: release-status
     - uses: ./.github/actions/build/
       with:
         mode: "release"
-      if: steps.release.outputs.released == 'true'
+      if: steps.release-status.outputs.already-released == 'false'
     - uses: ./.github/actions/publish/
-      if: steps.release.outputs.released == 'true'
+      if: steps.release-status.outputs.already-released == 'false'

@@ -1,0 +1,22 @@
+name: 'Check Release Status'
+description: 'Check if the current package.json version has already been released.'
+outputs:
+  already-released:
+    description: 'Set to true when the current package.json version has already been released.'
+    value: ${{ steps.check-releases-list.outputs.already-released }}
+runs:
+  using: "composite"
+  steps:
+    - name: Check if version appears in releases list
+      id: check-releases-list
+      shell: bash
+      run: |
+        PACKAGE_VERSION=$(jq -r .version < package.json)
+        echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
+        if gh release list | grep -q "^${PACKAGE_VERSION}\W"; then
+          echo "This version has already been released."
+          echo "already-released=true" >> $GITHUB_OUTPUT
+        else
+          echo "This version has not yet been released."
+          echo "already-released=false" >> $GITHUB_OUTPUT
+        fi
