@@ -16,6 +16,8 @@ runs:
       shell: bash
     - name: Create a Github release
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         PACKAGE_VERSION=$(jq -r .version < package.json)
         echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
