@@ -31,3 +31,5 @@ jobs:
       with:
         mode: "release"
     - uses: ./.github/actions/publish/
+      with:
+        npm_publish_token: ${{ secrets.NPM_PUBLISH_TOKEN }}
