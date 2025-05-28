@@ -10,6 +10,8 @@ runs:
     - name: Check if version appears in releases list
       id: check-releases-list
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         PACKAGE_VERSION=$(jq -r .version < package.json)
         echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
