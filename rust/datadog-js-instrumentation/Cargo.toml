@@ -12,13 +12,14 @@ rust-version = { workspace = true }
 version = "0.1.0"
 
 [package.metadata.wasm-pack.profile.dev]
-wasm-opt = ["--enable-nontrapping-float-to-int", "--enable-bulk-memory"]
+wasm-opt = ["--enable-nontrapping-float-to-int", "--enable-bulk-memory", "-g"]
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = [
   "--enable-nontrapping-float-to-int",
   "--enable-bulk-memory",
   "-O4",
+  "-g",
   "--flexible-inline-max-function-size",
   "4294967295",
 ]
