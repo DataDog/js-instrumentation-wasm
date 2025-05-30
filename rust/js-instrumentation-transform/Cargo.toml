@@ -23,6 +23,7 @@ swc_ecma_parser = { workspace = true }
 swc_ecma_visit = { workspace = true }
 web-sys = { workspace = true }
 
+js-instrumentation-rewrite = { path = "../js-instrumentation-rewrite/" }
 js-instrumentation-shared = { path = "../js-instrumentation-shared/" }
 
 [dev-dependencies]

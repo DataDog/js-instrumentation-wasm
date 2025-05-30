@@ -1,12 +1,11 @@
 use swc_ecma_ast::EsVersion::EsNext;
 use swc_ecma_parser::{lexer::Lexer, EsSyntax, Parser, StringInput, Syntax, TsSyntax};
 
-use js_instrumentation_shared::{
+use crate::{
     filetype::{filename_is_jsx, filename_is_typescript},
+    input_file::InputFile,
     transform_options::TransformOptions,
 };
-
-use crate::input::InputFile;
 
 pub fn build_parser<'a>(file: &InputFile<'a>, options: &TransformOptions) -> Parser<Lexer<'a>> {
     let lexer = build_lexer(file, options);

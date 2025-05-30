@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use super::Dictionary;
+use super::{dictionary_error::DictionaryError, Dictionary};
 
 pub struct OptimizedDictionary {
     pub indices: Vec<usize>,
@@ -13,6 +13,13 @@ impl OptimizedDictionary {
         OptimizedDictionary {
             indices: index,
             strings,
+        }
+    }
+
+    pub fn entry_for_index(self: &Self, dictionary_index: usize) -> Result<usize, DictionaryError> {
+        match self.strings.get_index(dictionary_index) {
+            Some((_, stats)) => Ok(stats.dictionary_entry),
+            None => Err(DictionaryError::InvalidIndex(dictionary_index)),
         }
     }
 

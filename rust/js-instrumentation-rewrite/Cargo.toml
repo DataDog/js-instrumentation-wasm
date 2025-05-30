@@ -1,18 +1,16 @@
 [package]
-description = "Shared infrastructure for Datadog JS instrumentation"
+description = "Source code rewriting infrastructure for Datadog JS instrumentation"
 
 authors = { workspace = true }
 edition = { workspace = true }
 homepage = { workspace = true }
 license = { workspace = true }
-name = "js-instrumentation-shared"
+name = "js-instrumentation-rewrite"
 repository = { workspace = true }
 rust-version = { workspace = true }
 version = "0.1.0"
 
 [dependencies]
-serde = { workspace = true, features = ["derive"] }
 swc_common = { workspace = true }
-swc_ecma_ast = { workspace = true }
-swc_ecma_parser = { workspace = true }
-web-sys = { workspace = true }
+
+js-instrumentation-shared = { path = "../js-instrumentation-shared/" }
