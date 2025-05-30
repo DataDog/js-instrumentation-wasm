@@ -1,4 +1,4 @@
-use swc_common::{Span, Spanned};
+use swc_common::{BytePos, Span, Spanned};
 use swc_ecma_ast::{
     CallExpr, Callee, ExportAll, Expr, Ident, ImportDecl, JSXAttrValue, JSXElementChild, JSXText,
     Lit, NamedExport, Program, PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl, TsInterfaceDecl,
@@ -10,7 +10,13 @@ use crate::{
     dictionary::DictionaryTracker,
     features::FeatureTracker,
     identifiers::IdentifierTracker,
-    rewrite::{Rewrite, RewriteTracker},
+    rewrite::{
+        insert_tagged_template_after_expr_marker,
+        insert_tagged_template_opener_with_dictionary_ref, replace_jsx_string_with_dictionary_ref,
+        replace_property_key_with_dictionary_ref, replace_string_with_dictionary_ref,
+        replace_tagged_template_before_expr_marker, replace_tagged_template_terminator,
+        replace_template_quasi_with_dictionary_ref, RewriteTracker,
+    },
 };
 
 pub fn visit(
@@ -61,7 +67,8 @@ impl<'a> Visit for ASTVisitor<'a> {
         match node {
             Str { raw, span, value } => {
                 if let Some(index) = self.dictionary_tracker.maybe_add_string(&raw, &value) {
-                    self.rewrite_tracker.emit(Rewrite::string(index, *span));
+                    self.rewrite_tracker
+                        .emit(replace_string_with_dictionary_ref(index, *span));
                 }
             }
         }
@@ -72,7 +79,7 @@ impl<'a> Visit for ASTVisitor<'a> {
             PropName::Str(Str { raw, span, value }) => {
                 if let Some(index) = self.dictionary_tracker.maybe_add_string(&raw, &value) {
                     self.rewrite_tracker
-                        .emit(Rewrite::property_key(index, *span));
+                        .emit(replace_property_key_with_dictionary_ref(index, *span));
                 }
             }
             _ => {
@@ -89,7 +96,9 @@ impl<'a> Visit for ASTVisitor<'a> {
             if let Some(quasi) = next_quasi {
                 if let Some(index) = self.dictionary_tracker.maybe_add_template_quasi(&quasi.raw) {
                     self.rewrite_tracker
-                        .emit(Rewrite::template_quasi(index, quasi.span));
+                        .emit(replace_template_quasi_with_dictionary_ref(
+                            index, quasi.span,
+                        ));
                 }
             }
 
@@ -119,35 +128,34 @@ impl<'a> Visit for ASTVisitor<'a> {
 
         node.tag.visit_with(self);
 
-        self.rewrite_tracker.emit(Rewrite::tagged_template_opener(
-            index.unwrap(),
-            Span {
-                lo: node.tpl.span.lo,
-                hi: node.tpl.span.lo,
-            },
-        ));
+        self.rewrite_tracker
+            .emit(insert_tagged_template_opener_with_dictionary_ref(
+                index.unwrap(),
+                node.tpl.span.lo,
+            ));
+
+        let mut prev_hi: BytePos = node.tpl.span.lo;
 
         for expr in &node.tpl.exprs {
             let expr_span = expr.span();
 
             self.rewrite_tracker
-                .emit(Rewrite::tagged_template_before_expr(Span {
-                    lo: expr_span.lo,
+                .emit(replace_tagged_template_before_expr_marker(Span {
+                    lo: prev_hi,
                     hi: expr_span.lo,
                 }));
 
             expr.visit_children_with(self);
 
             self.rewrite_tracker
-                .emit(Rewrite::tagged_template_after_expr(Span {
-                    lo: expr_span.hi,
-                    hi: expr_span.hi,
-                }));
+                .emit(insert_tagged_template_after_expr_marker(expr_span.hi));
+
+            prev_hi = expr_span.hi;
         }
 
         self.rewrite_tracker
-            .emit(Rewrite::tagged_template_terminator(Span {
-                lo: node.tpl.span.hi,
+            .emit(replace_tagged_template_terminator(Span {
+                lo: prev_hi,
                 hi: node.tpl.span.hi,
             }));
     }
@@ -156,7 +164,8 @@ impl<'a> Visit for ASTVisitor<'a> {
         match &node {
             JSXAttrValue::Lit(Lit::Str(Str { raw, span, value })) => {
                 if let Some(index) = self.dictionary_tracker.maybe_add_jsx_attribute(raw, value) {
-                    self.rewrite_tracker.emit(Rewrite::jsx_string(index, *span));
+                    self.rewrite_tracker
+                        .emit(replace_jsx_string_with_dictionary_ref(index, *span));
 
                     // Don't recurse; we don't want to treat this as an ordinary string.
                     return;
@@ -172,7 +181,8 @@ impl<'a> Visit for ASTVisitor<'a> {
         match &node {
             JSXElementChild::JSXText(JSXText { raw, span, value }) => {
                 if let Some(index) = self.dictionary_tracker.maybe_add_jsx_text(raw, value) {
-                    self.rewrite_tracker.emit(Rewrite::jsx_string(index, *span));
+                    self.rewrite_tracker
+                        .emit(replace_jsx_string_with_dictionary_ref(index, *span));
                 }
             }
             _ => {}
@@ -280,13 +290,11 @@ impl<'a> Visit for ASTVisitor<'a> {
 
 #[cfg(test)]
 mod tests {
+    use js_instrumentation_shared::{build_parser, InputFile};
     use swc_common::source_map::SmallPos;
     use swc_common::BytePos;
 
-    use crate::{
-        dictionary::DictionaryEntry,
-        input::{build_parser, InputFile},
-    };
+    use crate::dictionary::DictionaryEntry;
 
     use super::*;
 
@@ -298,7 +306,7 @@ mod tests {
         let mut dictionary_tracker = DictionaryTracker::new();
         let mut feature_tracker = FeatureTracker::new();
         let mut identifier_tracker = IdentifierTracker::new(vec![]);
-        let mut rewrite_tracker = RewriteTracker::new();
+        let mut rewrite_tracker = RewriteTracker::new(vec![]);
 
         visit(
             program,
@@ -334,8 +342,8 @@ mod tests {
             vec![DictionaryEntry::String("'info'".into())]
         );
         assert_eq!(
-            rewrite_tracker.rewrites,
-            vec![Rewrite::property_key(
+            rewrite_tracker.take(),
+            vec![replace_property_key_with_dictionary_ref(
                 0,
                 Span::new(BytePos::from_u32(187), BytePos::from_u32(193))
             )]

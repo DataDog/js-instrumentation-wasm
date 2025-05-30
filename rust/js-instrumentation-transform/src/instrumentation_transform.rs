@@ -1,18 +1,18 @@
 use anyhow::Result;
-
-use js_instrumentation_shared::transform_options::TransformOptions;
-use js_instrumentation_shared::transform_output::TransformOutput;
-use js_instrumentation_shared::{log::debug_log, module_kind::module_kind_for};
+use js_instrumentation_rewrite::rewrite::Rewrite;
+use js_instrumentation_rewrite::rewrite_plan::build_rewrite_plan;
+use js_instrumentation_shared::{
+    build_parser, debug_log, module_kind_for, InputFile, TransformOptions, TransformOutput,
+};
+use swc_common::source_map::SmallPos;
 
 use crate::dictionary::{DictionaryTracker, OptimizedDictionary, DEFAULT_DICTIONARY_IDENTIFIER};
 use crate::features::FeatureTracker;
 use crate::identifiers::IdentifierTracker;
-use crate::rewrite::RewriteTracker;
-use crate::{
-    emit::{emit, EmitContext},
-    input::{build_parser, InputFile},
-    visitor::visit,
+use crate::rewrite::{
+    insert_dictionary_declaration, insert_helper_import, RewriteTracker, TemplateParameters,
 };
+use crate::visitor::visit;
 
 pub fn apply_transform(
     filename: &str,
@@ -34,7 +34,10 @@ pub fn apply_transform(
         &options.add_to_dictionary_helper,
         DEFAULT_DICTIONARY_IDENTIFIER,
     ]);
-    let mut rewrite_tracker = RewriteTracker::new();
+    let mut rewrite_tracker = RewriteTracker::new(vec![
+        insert_helper_import(input_file.start_pos),
+        insert_dictionary_declaration(input_file.start_pos),
+    ]);
 
     visit(
         program,
@@ -57,7 +60,7 @@ pub fn apply_transform(
         Some(feature_tracker.module_keyword_usage),
     );
 
-    let emit_context = EmitContext::new(
+    let template_parameters = TemplateParameters::new(
         dictionary,
         dictionary_identifier,
         &options.helpers_module,
@@ -65,19 +68,35 @@ pub fn apply_transform(
         module_kind,
     );
 
-    let rewrites = rewrite_tracker.rewrites;
+    let rewrite_plan = build_rewrite_plan(
+        rewrite_tracker
+            .take()
+            .into_iter()
+            .filter_map(|rewrite| {
+                rewrite.filter_map_content(|template| {
+                    // Evaluate the rewrite templates by substituting in template parameters (e.g.
+                    // the dictionary identifier).
+                    match template.evaluate(&template_parameters) {
+                        Ok(content) => Some(content),
+                        Err(err) => {
+                            debug_log(&format!("Error evaluating rewrite templates: {}", err));
+                            None
+                        }
+                    }
+                })
+            })
+            .filter(|rewrite| match rewrite {
+                // Some optional rewrites are only beneficial if they produce smaller output than
+                // the original source code. Filter out these rewrites when they'll provide no
+                // benefit.
+                Rewrite::Replace { content, span } if content.should_only_replace_if_smaller() => {
+                    content.len() < (span.hi.to_usize() - span.lo.to_usize())
+                }
+                _ => true,
+            }),
+    );
 
-    let (instrumented_code, emit_errors) = emit(emit_context, &input_file, &rewrites);
-    if !emit_errors.is_empty() {
-        debug_log(&format!(
-            "Serialization failed: {:?}",
-            emit_errors
-                .into_iter()
-                .map(|e| format!("{}", e))
-                .collect::<Vec<String>>()
-                .join(", ")
-        ));
-    }
+    let instrumented_code = rewrite_plan.apply(&input_file);
 
     let output = TransformOutput {
         code: instrumented_code,
