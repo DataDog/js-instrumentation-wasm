@@ -25,7 +25,6 @@ where
 
     // Filter out rewrites that overlap with previous rewrites, since they would otherwise
     // conflict.
-    let mut prev: Option<Rewrite<Content>> = None;
     let mut prev_hi: Option<BytePos> = None;
     let rewrites: Vec<Rewrite<Content>> = rewrites
         .into_iter()
@@ -37,10 +36,8 @@ where
             };
             if should_keep {
                 prev_hi = Some(*rewrite.hi());
-                prev = Some((*rewrite).clone());
             } else {
                 debug_log(&format!("Skipping rewrite due to overlap: {}", rewrite));
-                debug_log(&format!("  - Overlapper was : {}", prev.clone().unwrap()));
             }
             should_keep
         })
