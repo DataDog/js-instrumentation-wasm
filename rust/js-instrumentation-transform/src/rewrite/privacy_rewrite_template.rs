@@ -7,12 +7,18 @@ use crate::dictionary::{DictionaryEntry, DictionaryError, OptimizedDictionary};
 use super::PrivacyRewriteContent;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LeftContext {
+    MaybeKeyword,
+    NonKeyword,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PrivacyRewriteTemplate {
     HelperImport,
     DictionaryDeclaration,
     JSXStringDictionaryReference(usize),
     PropertyKeyDictionaryReference(usize),
-    StringDictionaryReference(usize),
+    StringDictionaryReference(usize, LeftContext),
     TaggedTemplateOpenerDictionaryReference(usize),
     TaggedTemplateBeforeExpr,
     TaggedTemplateAfterExpr,
@@ -72,12 +78,27 @@ impl PrivacyRewriteTemplate {
                     params.dictionary.entry_for_index(*index)?
                 )),
             ),
-            PrivacyRewriteTemplate::StringDictionaryReference(index) => {
-                Ok(PrivacyRewriteContent::StringDictionaryReference(format!(
-                    "{}[{}]",
-                    params.dictionary_identifier,
-                    params.dictionary.entry_for_index(*index)?
-                )))
+            PrivacyRewriteTemplate::StringDictionaryReference(index, left_context) => {
+                Ok(match left_context {
+                    // If the character immediately to the left of the string looks like a keyword,
+                    // we have a construction like `case"foo"`. In this situation, we need to
+                    // insert an extra space to produce valid code after rewriting; otherwise,
+                    // we'd end up with `caseD[0]`, which is invalid.
+                    LeftContext::MaybeKeyword => {
+                        PrivacyRewriteContent::StringDictionaryReference(format!(
+                            " {}[{}]",
+                            params.dictionary_identifier,
+                            params.dictionary.entry_for_index(*index)?
+                        ))
+                    }
+                    LeftContext::NonKeyword => {
+                        PrivacyRewriteContent::StringDictionaryReference(format!(
+                            "{}[{}]",
+                            params.dictionary_identifier,
+                            params.dictionary.entry_for_index(*index)?
+                        ))
+                    }
+                })
             }
             PrivacyRewriteTemplate::TaggedTemplateOpenerDictionaryReference(index) => Ok(
                 PrivacyRewriteContent::TaggedTemplateOpenerDictionaryReference(format!(

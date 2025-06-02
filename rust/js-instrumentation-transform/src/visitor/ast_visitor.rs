@@ -1,3 +1,4 @@
+use js_instrumentation_shared::InputFile;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecma_ast::{
     CallExpr, Callee, ExportAll, Expr, Ident, ImportDecl, JSXAttrValue, JSXElementChild, JSXText,
@@ -19,14 +20,16 @@ use crate::{
     },
 };
 
-pub fn visit(
+pub fn visit<'a, 'b>(
     program: Program,
-    dictionary_tracker: &mut DictionaryTracker,
-    feature_tracker: &mut FeatureTracker,
-    identifier_tracker: &mut IdentifierTracker,
-    rewrite_tracker: &mut RewriteTracker,
+    input_file: &'a mut InputFile<'b>,
+    dictionary_tracker: &'a mut DictionaryTracker,
+    feature_tracker: &'a mut FeatureTracker,
+    identifier_tracker: &'a mut IdentifierTracker,
+    rewrite_tracker: &'a mut RewriteTracker,
 ) {
     let mut visitor = ASTVisitor {
+        input_file,
         dictionary_tracker,
         feature_tracker,
         identifier_tracker,
@@ -35,14 +38,15 @@ pub fn visit(
     program.visit_with(&mut visitor);
 }
 
-struct ASTVisitor<'a> {
+struct ASTVisitor<'a, 'b> {
+    input_file: &'a mut InputFile<'b>,
     dictionary_tracker: &'a mut DictionaryTracker,
     feature_tracker: &'a mut FeatureTracker,
     identifier_tracker: &'a mut IdentifierTracker,
     rewrite_tracker: &'a mut RewriteTracker,
 }
 
-impl<'a> ASTVisitor<'a> {
+impl<'a, 'b> ASTVisitor<'a, 'b> {
     /// Perform an action in a context in which we won't add new strings to the dictionary.
     fn in_uncollected_scope<F: FnOnce(&mut Self)>(self: &mut Self, action: F) {
         self.dictionary_tracker.enter_uncollected_scope();
@@ -58,7 +62,7 @@ impl<'a> ASTVisitor<'a> {
     }
 }
 
-impl<'a> Visit for ASTVisitor<'a> {
+impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
     fn visit_ident(&mut self, node: &Ident) {
         self.identifier_tracker.add_ident(node);
     }
@@ -67,8 +71,13 @@ impl<'a> Visit for ASTVisitor<'a> {
         match node {
             Str { raw, span, value } => {
                 if let Some(index) = self.dictionary_tracker.maybe_add_string(&raw, &value) {
+                    let may_follow_keyword = self.input_file.may_follow_keyword(span.lo);
                     self.rewrite_tracker
-                        .emit(replace_string_with_dictionary_ref(index, *span));
+                        .emit(replace_string_with_dictionary_ref(
+                            index,
+                            *span,
+                            may_follow_keyword,
+                        ));
                 }
             }
         }
@@ -299,7 +308,7 @@ mod tests {
     use super::*;
 
     fn walk_code(code: &str) -> (DictionaryTracker, RewriteTracker) {
-        let input_file = InputFile::new("test.jsx", code);
+        let mut input_file = InputFile::new("test.jsx", code);
         let mut parser = build_parser(&input_file, &Default::default());
         let program = parser.parse_program().unwrap();
 
@@ -310,6 +319,7 @@ mod tests {
 
         visit(
             program,
+            &mut input_file,
             &mut dictionary_tracker,
             &mut feature_tracker,
             &mut identifier_tracker,

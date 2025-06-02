@@ -1,7 +1,7 @@
 use js_instrumentation_rewrite::rewrite::Rewrite;
 use swc_common::{BytePos, Span};
 
-use super::PrivacyRewriteTemplate;
+use super::{privacy_rewrite_template::LeftContext, PrivacyRewriteTemplate};
 
 pub fn insert_helper_import(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
     Rewrite::Insert {
@@ -61,9 +61,17 @@ pub fn replace_property_key_with_dictionary_ref(
 pub fn replace_string_with_dictionary_ref(
     dictionary_index: usize,
     span: Span,
+    may_follow_keyword: bool,
 ) -> Rewrite<PrivacyRewriteTemplate> {
     Rewrite::Replace {
-        content: PrivacyRewriteTemplate::StringDictionaryReference(dictionary_index),
+        content: PrivacyRewriteTemplate::StringDictionaryReference(
+            dictionary_index,
+            if may_follow_keyword {
+                LeftContext::MaybeKeyword
+            } else {
+                LeftContext::NonKeyword
+            },
+        ),
         span,
     }
 }

@@ -19,7 +19,7 @@ pub fn apply_transform(
     code: &str,
     options: &TransformOptions,
 ) -> Result<TransformOutput> {
-    let input_file = InputFile::new(filename, code);
+    let mut input_file = InputFile::new(filename, code);
     let mut parser = build_parser(&input_file, options);
     let program = match parser.parse_program() {
         Ok(program) => program,
@@ -41,6 +41,7 @@ pub fn apply_transform(
 
     visit(
         program,
+        &mut input_file,
         &mut dictionary_tracker,
         &mut feature_tracker,
         &mut identifier_tracker,
@@ -96,7 +97,7 @@ pub fn apply_transform(
             }),
     );
 
-    let instrumented_code = rewrite_plan.apply(&input_file);
+    let instrumented_code = rewrite_plan.apply(&mut input_file);
 
     let output = TransformOutput {
         code: instrumented_code,

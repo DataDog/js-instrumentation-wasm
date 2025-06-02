@@ -19,7 +19,10 @@ export const foo = (value) => {
     case emmett:
       return 5;
 
-    default:
+    case'francis':
       return 6;
+
+    default:
+      return 7;
   }
 };
