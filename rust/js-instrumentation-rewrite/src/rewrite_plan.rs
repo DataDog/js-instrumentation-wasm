@@ -1,10 +1,7 @@
 use std::fmt::Write;
 
 use js_instrumentation_shared::{debug_log, InputFile};
-use swc_common::{
-    input::{Input, StringInput},
-    BytePos,
-};
+use swc_common::BytePos;
 
 use crate::{rewrite::Rewrite, rewrite_content::RewriteContent};
 
@@ -48,26 +45,18 @@ where
 }
 
 impl<Content: RewriteContent> RewritePlan<Content> {
-    pub fn apply<'a>(self: &Self, input_file: &InputFile<'a>) -> String {
-        let mut input = input_file.as_input();
-        let mut input_pos = input.start_pos();
+    pub fn apply<'a>(self: &Self, input_file: &mut InputFile<'a>) -> String {
+        let mut input_pos = input_file.start_pos;
         let mut output = String::new();
 
         for rewrite in &self.rewrites {
-            copy_from_input(&mut input, input_pos, *rewrite.lo(), &mut output);
+            output += input_file.slice(input_pos, *rewrite.lo());
             let _ = write!(&mut output, "{}", rewrite.content());
             input_pos = *rewrite.hi();
         }
 
-        let end_pos = input.end_pos();
-        copy_from_input(&mut input, input_pos, end_pos, &mut output);
+        output += input_file.slice(input_pos, input_file.end_pos);
 
         return output;
-    }
-}
-
-fn copy_from_input<'a>(input: &mut StringInput<'a>, lo: BytePos, hi: BytePos, output: &mut String) {
-    unsafe {
-        *output += input.slice(lo, hi);
     }
 }
