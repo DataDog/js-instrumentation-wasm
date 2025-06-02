@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "datadog-js-instrumentation",
+  "js-instrumentation-rewrite",
   "js-instrumentation-shared",
   "js-instrumentation-transform",
 ]
