@@ -10,6 +10,7 @@ lazy_static! {
     static ref JSX_INITIAL_WHITESPACE_REGEX: Regex = Regex::new(r"^\n\s+").unwrap();
     static ref JSX_INTERNAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+").unwrap();
     static ref JSX_TERMINAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+$").unwrap();
+    static ref JSX_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\"]"#).unwrap();
 
     static ref IGNORE_STRINGS_REGEX: Regex = Regex::new(
         r"chunk|(^http)|(^https)|(^data:)|(^\\t)|(^u?fixed\d+x\d+$)|(^\/\/)|(^url\()|(\[\d+,)|(uint\d{1,2}array)|(\b[0-9]+\b)"
@@ -104,12 +105,15 @@ impl DictionaryTracker {
         // Collapse whitespace after newlines, consistent with JSX rules.
         let string = JSX_INITIAL_WHITESPACE_REGEX.replace(raw, "");
         let string = JSX_TERMINAL_WHITESPACE_REGEX.replace(&string, "");
-        let string = JSX_INTERNAL_WHITESPACE_REGEX.replace(&string, " ");
+        let string = JSX_INTERNAL_WHITESPACE_REGEX.replace_all(&string, " ");
+
         // Remove any newlines that remain.
         let string = string.replace("\n", "");
+
         // Escape double quotes, so that we can safely wrap the string in double
         // quotes.
-        let string = string.replace(r#"""#, r#"\""#);
+        let string = JSX_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
+
         // Wrap the string in double quotes.
         let string = format!(r#""{}""#, string);
 

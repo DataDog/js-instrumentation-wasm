@@ -35,7 +35,7 @@ exports[`Built Page test > should render the expected HTML 1`] = `
   <p
     class="read-the-docs"
   >
-    Click on the React logos to learn more about these projects.
+    Click on the React logos to learn more about these projects. Use "\\" to escape special characters when searching.
   </p>
 </div>
 `;

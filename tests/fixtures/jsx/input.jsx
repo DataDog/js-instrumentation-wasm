@@ -23,6 +23,8 @@ export function MyComponent(props) {
         Text content.
 
         With more than one line.
+
+        And another.
       </SomethingElse>
       <ErrorHandler
         onError={(info) => {
@@ -38,7 +40,9 @@ export function MyComponent(props) {
         className={classNames(BLOCK, {
           [`${BLOCK}--is-stuck`]: isStuck,
         })}
-      />
+      >
+        Escape special characters with the "\" character.
+      </Flex>
       <svg
         fill={props.fill}
         content={(() => { return "some content"; })()}

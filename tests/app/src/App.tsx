@@ -25,6 +25,8 @@ function App() {
         Click on the React logos to learn more
 
         about these projects.
+
+        Use "\" to escape special characters when searching.
       </p>
     </>
   )

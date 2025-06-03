@@ -8,35 +8,6 @@ const ifInstrumentationIsEnabledIt = UPDATING_SNAPSHOTS
   ? test.fails
   : it;
 
-const expected = eval(`[
-  'click',
-  'on',
-  'the',
-  'react',
-  'logos',
-  'to',
-  'learn',
-  'more',
-  'about',
-  'these',
-  'projects',
-  'and',
-  'save',
-  'test',
-  'hmr',
-  'read',
-  'docs',
-  'src',
-  'app',
-  'tsx',
-  'logo',
-  'count',
-  'is',
-  'blank',
-  'edit',
-  'card'
-]`);
-
 describe('Built Page test', () => {
   it('should render the expected HTML', () => {
     const { container } = render(<App />);
@@ -45,6 +16,45 @@ describe('Built Page test', () => {
   });
 
   ifInstrumentationIsEnabledIt('should generate the expected dictionary', async () => {
+    // Note that this dictionary will even contain strings from the tests; to avoid
+    // making the result of this test a tautology, we launder the expectation through eval,
+    // which is ignored by the privacy plugin.
+    const expected = eval(`[
+      "about",
+      "and",
+      "app",
+      "blank",
+      "card",
+      "characters",
+      "click",
+      "count",
+      "docs",
+      "edit",
+      "escape",
+      "hmr",
+      "is",
+      "learn",
+      "logo",
+      "logos",
+      "more",
+      "on",
+      "projects",
+      "react",
+      "read",
+      "save",
+      "searching",
+      "special",
+      "src",
+      "test",
+      "the",
+      "these",
+      "to",
+      "tsx",
+      "use",
+      "when",
+    ]`);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((window as any).$DD_ALLOW).toEqual(new Set(expected));
   });
 });
