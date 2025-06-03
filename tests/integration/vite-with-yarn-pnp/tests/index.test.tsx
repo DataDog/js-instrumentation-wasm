@@ -27,11 +27,13 @@ describe('App', () => {
       "app",
       "blank",
       "card",
+      "characters",
       "click",
       "count",
       "dictionary",
       "docs",
       "edit",
+      "escape",
       "expected",
       "generate",
       "hmr",
@@ -47,8 +49,10 @@ describe('App', () => {
       "read",
       "render",
       "save",
+      "searching",
       "should",
       "snapshots",
+      "special",
       "src",
       "test",
       "the",
@@ -57,6 +61,8 @@ describe('App', () => {
       "true",
       "tsx",
       "updating",
+      "use",
+      "when",
     ]`);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,6 +1,7 @@
 import { $ } from 'datadog:privacy-helpers';
 const D = $([
-  "Text content. With more than one line.",
+  "Escape special characters with the \"\\\" character.",
+  "Text content. With more than one line. And another.",
   " entity reference",
   'quotes"inside',
   'with"\'quotes',
@@ -27,34 +28,34 @@ import {
 
 export function MyComponent(props) {
   return (
-    <SomeComponent attr={D[6]} with={D[2]}>
-      <AnotherComponent attr={D[3]} />
+    <SomeComponent attr={D[7]} with={D[3]}>
+      <AnotherComponent attr={D[4]} />
       <SomethingElse style={{
-        key: D[8],
+        key: D[9],
         anotherKey: props.key2,
       }}
-      >{D[0]}</SomethingElse>
+      >{D[1]}</SomethingElse>
       <ErrorHandler
         onError={(info) => {
-          reportError({ [D[7]]: info });
+          reportError({ [D[8]]: info });
         }}
       />
       <Flex
         style={
           {
-            [D[4]]: `${topOffset}px`,
+            [D[5]]: `${topOffset}px`,
           }
         }
         className={classNames(BLOCK, {
-          [`${BLOCK}${D[9]}`]: isStuck,
+          [`${BLOCK}${D[10]}`]: isStuck,
         })}
-      />
+      >{D[0]}</Flex>
       <svg
         fill={props.fill}
-        content={(() => { return D[5]; })()}
+        content={(() => { return D[6]; })()}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 192 192"
-        data={D[1]}
+        data={D[2]}
       >
         <g>
           <rect x='84' y='156' width='20' height='20' />
