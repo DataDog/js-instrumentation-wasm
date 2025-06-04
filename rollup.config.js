@@ -17,7 +17,10 @@ const plugins = () =>
     commonjs(),
     json(),
     wasm({
-      targetEnv: 'auto-inline'
+      targetEnv: 'auto-inline',
+      sync: [
+        'rust/datadog-js-instrumentation/pkg/datadog_js_instrumentation_bg.wasm'
+      ]
     }),
   ];
 

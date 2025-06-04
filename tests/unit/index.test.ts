@@ -21,7 +21,7 @@ const transformCJS = unpluginCJS.raw(pluginOptions).transform.handler;
 describe('the ESM version should transform code correctly', async () => {
   await walkDir(fixtureDir, async (testCase) => {
     it(`should transform ${testCase.dir} correctly`, async () => {
-      const { code } = await transformESM(testCase.code, testCase.name);
+      const { code } = transformESM(testCase.code, testCase.name);
       expect(code).toMatchSnapshot();
     });
   });
@@ -30,7 +30,7 @@ describe('the ESM version should transform code correctly', async () => {
 describe('the CJS version should transform code correctly', async () => {
   await walkDir(fixtureDir, async (testCase) => {
     it(`should transform ${testCase.dir} correctly`, async () => {
-      const { code } = await transformCJS(testCase.code, testCase.name);
+      const { code } = transformCJS(testCase.code, testCase.name);
       expect(code).toMatchSnapshot();
     });
   });
