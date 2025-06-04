@@ -75,8 +75,8 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
     transform: {
       order: 'pre',
 
-      async handler(code, id) {
-        const result = await instrument({ id, code }, instrumentationOptions);
+      handler(code, id) {
+        const result = instrument({ id, code }, instrumentationOptions);
         return { code: result.code, map: result.map };
       },
     },

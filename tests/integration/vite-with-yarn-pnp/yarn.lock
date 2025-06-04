@@ -282,7 +282,7 @@ __metadata:
 
 "@datadog/instrumentation-test-plugin@file:../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::locator=vite-project%40workspace%3A.":
   version: 0.1
-  resolution: "@datadog/instrumentation-test-plugin@file:../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz#../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::hash=aa62ac&locator=vite-project%40workspace%3A."
+  resolution: "@datadog/instrumentation-test-plugin@file:../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz#../../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::hash=6a5be8&locator=vite-project%40workspace%3A."
   dependencies:
     unplugin: "npm:^2.3.4"
   peerDependencies:
@@ -308,7 +308,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10c0/ee6199a8aa6b269b42dcf91bfcee8809f957d8feb128e99db314742cfec301bd544e00a533e2cdb208cec90106ee84d360bb68128f77af3b0b6f699d3d3e6216
+  checksum: 10c0/d2281aab9e25d65683fea1f9d1a4e95d43aa2a9cfc9b2c5fcc52ad9cefb4eb78b8750110e19698b2a688af0b99ed06991c9e43ba67323eb8862d9a74e8056ea9
   languageName: node
   linkType: hard
 

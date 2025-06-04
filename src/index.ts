@@ -1,5 +1,5 @@
 import {
-  default as init,
+  initSync,
   transform
 } from '../rust/datadog-js-instrumentation/pkg/datadog_js_instrumentation.js';
 import {
@@ -65,19 +65,24 @@ function convertOptions(options: InstrumentationOptions | undefined): RustOption
   };
 }
 
-async function loadWasmPlugin() {
-  const module = await (plugin as unknown as () => unknown)();
-  await init({
-    module_or_path: module,
-  });
+let wasmPluginLoaded = false;
+async function ensureWasmPluginLoaded() {
+  if (wasmPluginLoaded) {
+    return;
+  }
+
+  const module = (plugin as unknown as () => unknown)();
+  initSync({ module });
+
+  wasmPluginLoaded = true;
 }
 
-export async function instrument(
+export function instrument(
   input: InstrumentationInput,
   options?: InstrumentationOptions | undefined,
-): Promise<InstrumentationOutput> {
+): InstrumentationOutput {
   try {
-    await loadWasmPlugin();
+    ensureWasmPluginLoaded();
     const rustOptions = convertOptions(options);
     const output: RustOutput = transform(input.id, input.code, rustOptions);
     return {
