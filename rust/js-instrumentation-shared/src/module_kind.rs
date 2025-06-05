@@ -22,7 +22,7 @@ pub fn module_kind_for(
     options: &TransformOptions,
     keyword_usage: Option<ModuleKeywordUsage>,
 ) -> ModuleKind {
-    match (&options.module, keyword_usage) {
+    match (&options.input.module, keyword_usage) {
         // If the user specified a module kind, use it.
         (Some(ref kind), _) => kind.clone(),
 

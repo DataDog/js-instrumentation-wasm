@@ -6,8 +6,12 @@ use crate::{
 };
 
 pub fn syntax_for(filename: &str, options: &TransformOptions) -> Syntax {
-    let jsx = options.jsx.unwrap_or_else(|| filename_is_jsx(filename));
+    let jsx = options
+        .input
+        .jsx
+        .unwrap_or_else(|| filename_is_jsx(filename));
     let typescript = options
+        .input
         .typescript
         .unwrap_or_else(|| filename_is_typescript(filename));
 

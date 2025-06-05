@@ -9,26 +9,24 @@ import {
 import helpers from './generated/privacy-helpers.js-txt';
 
 import { PRIVACY_HELPERS_MODULE_ID } from './constants';
-import { defaultPluginOptions, type PluginOptions } from './options';
+import { defaultPluginOptions, PluginOptions } from './options';
 
-type UnpluginOptions = Partial<PluginOptions> | undefined;
+type UnpluginOptions = PluginOptions | undefined;
 
 function buildInstrumentationOptions(
-  pluginOptions: PluginOptions
+  pluginOptions: PluginOptions | undefined
 ): InstrumentationOptions {
-  return {
-    input: {
-      module: pluginOptions.module === 'unknown' ? undefined : pluginOptions.module,
-      jsx: pluginOptions.jsx,
-      typescript: pluginOptions.typescript,
-    },
-    privacy: {
-      helpers: {
+  const options: InstrumentationOptions = pluginOptions ?? {};
+  if (!options.privacy?.addToDictionaryHelper) {
+    options.privacy = options.privacy ?? {};
+    options.privacy.addToDictionaryHelper = {
+      import: {
         module: PRIVACY_HELPERS_MODULE_ID,
-        addToDictionaryFunction: '$',
-      },
-    },
-  };
+        func: '$',
+      }
+    };
+  }
+  return options;
 }
 
 export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {

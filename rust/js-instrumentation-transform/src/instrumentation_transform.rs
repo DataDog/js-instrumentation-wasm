@@ -1,16 +1,20 @@
 use anyhow::Result;
 use js_instrumentation_rewrite::rewrite::Rewrite;
 use js_instrumentation_rewrite::rewrite_plan::build_rewrite_plan;
+use js_instrumentation_shared::transform_options::HelperFunctionSource;
 use js_instrumentation_shared::{
     build_parser, debug_log, module_kind_for, InputFile, TransformOptions, TransformOutput,
 };
 use swc_common::source_map::SmallPos;
 
-use crate::dictionary::{DictionaryTracker, OptimizedDictionary, DEFAULT_DICTIONARY_IDENTIFIER};
+use crate::dictionary::{
+    DictionaryTracker, OptimizedDictionary, DEFAULT_ADD_TO_DICTIONARY_FUNCTION,
+    DEFAULT_DICTIONARY_IDENTIFIER,
+};
 use crate::features::FeatureTracker;
 use crate::identifiers::IdentifierTracker;
 use crate::rewrite::{
-    insert_dictionary_declaration, insert_helper_import, RewriteTracker, TemplateParameters,
+    insert_dictionary_declaration, insert_helper_declaration, RewriteTracker, TemplateParameters,
 };
 use crate::visitor::visit;
 
@@ -28,14 +32,16 @@ pub fn apply_transform(
         }
     };
 
+    let default_add_to_dictionary_helper = get_default_add_to_dictionary_helper(&options);
+
     let mut dictionary_tracker = DictionaryTracker::new();
     let mut feature_tracker = FeatureTracker::new();
     let mut identifier_tracker = IdentifierTracker::new(vec![
-        &options.add_to_dictionary_helper,
+        default_add_to_dictionary_helper,
         DEFAULT_DICTIONARY_IDENTIFIER,
     ]);
     let mut rewrite_tracker = RewriteTracker::new(vec![
-        insert_helper_import(input_file.start_pos),
+        insert_helper_declaration(input_file.start_pos),
         insert_dictionary_declaration(input_file.start_pos),
     ]);
 
@@ -53,7 +59,7 @@ pub fn apply_transform(
     let dictionary = OptimizedDictionary::build(&dictionary_identifier, dictionary_tracker.strings);
 
     let helper_identifier =
-        identifier_tracker.new_unused_identifier(&options.add_to_dictionary_helper);
+        identifier_tracker.new_unused_identifier(default_add_to_dictionary_helper);
 
     let module_kind = module_kind_for(
         filename,
@@ -64,7 +70,7 @@ pub fn apply_transform(
     let template_parameters = TemplateParameters::new(
         dictionary,
         dictionary_identifier,
-        &options.helpers_module,
+        &options.privacy.add_to_dictionary_helper,
         helper_identifier,
         module_kind,
     );
@@ -105,4 +111,20 @@ pub fn apply_transform(
     };
 
     Ok(output)
+}
+
+fn get_default_add_to_dictionary_helper<'a>(options: &'a TransformOptions) -> &'a str {
+    match options.privacy.add_to_dictionary_helper {
+        HelperFunctionSource::Expression { .. } => DEFAULT_ADD_TO_DICTIONARY_FUNCTION,
+        HelperFunctionSource::Import { ref func, .. } => {
+            // Default to the imported function name if it's one character long. If it's longer,
+            // renaming it on import will be more space-efficient, so use the standard default
+            // name, which is only one character long.
+            if func.len() == 1 {
+                &func
+            } else {
+                DEFAULT_ADD_TO_DICTIONARY_FUNCTION
+            }
+        }
+    }
 }

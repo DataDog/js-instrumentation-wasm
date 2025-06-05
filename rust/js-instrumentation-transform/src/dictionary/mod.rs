@@ -7,4 +7,5 @@ pub use dictionary_optimizer::OptimizedDictionary;
 mod dictionary_tracker;
 pub use dictionary_tracker::{Dictionary, DictionaryEntry, DictionaryTracker};
 
+pub const DEFAULT_ADD_TO_DICTIONARY_FUNCTION: &'static str = "$";
 pub const DEFAULT_DICTIONARY_IDENTIFIER: &'static str = "D";

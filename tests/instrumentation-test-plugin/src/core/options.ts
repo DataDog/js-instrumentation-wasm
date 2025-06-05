@@ -1,13 +1,13 @@
 import type { FilterPattern } from 'unplugin';
 
-export interface PluginOptions {
+import type { InstrumentationOptions } from '@datadog/js-instrumentation-wasm';
+
+import { PRIVACY_HELPERS_MODULE_ID } from './constants';
+
+export type PluginOptions = InstrumentationOptions & {
   exclude: FilterPattern;
   include: FilterPattern;
-  module: 'cjs' | 'esm' | 'unknown';
-  jsx: boolean | undefined;
-  transformStrategy: 'ast' | undefined;
-  typescript: boolean | undefined;
-}
+};
 
 export const defaultPluginOptions: PluginOptions = {
   exclude: [
@@ -17,8 +17,17 @@ export const defaultPluginOptions: PluginOptions = {
   include: [
     /\.(?:c|m)?(?:j|t)sx?$/
   ],
-  module: 'esm',
-  jsx: undefined,
-  transformStrategy: 'ast',
-  typescript: undefined,
+  input: {
+    module: 'esm',
+    jsx: undefined,
+    typescript: undefined,
+  },
+  privacy: {
+    addToDictionaryHelper: {
+      import: {
+        module: PRIVACY_HELPERS_MODULE_ID,
+        func: '$',
+      }
+    },
+  },
 };
