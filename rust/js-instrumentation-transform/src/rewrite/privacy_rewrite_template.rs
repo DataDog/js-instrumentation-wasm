@@ -1,6 +1,6 @@
 use std::fmt::{Display, Write};
 
-use js_instrumentation_shared::ModuleKind;
+use js_instrumentation_shared::{transform_options::HelperFunctionSource, ModuleKind};
 
 use crate::dictionary::{DictionaryEntry, DictionaryError, OptimizedDictionary};
 
@@ -14,7 +14,7 @@ pub enum LeftContext {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PrivacyRewriteTemplate {
-    HelperImport,
+    HelperDeclaration,
     DictionaryDeclaration,
     JSXStringDictionaryReference(usize),
     PropertyKeyDictionaryReference(usize),
@@ -26,27 +26,27 @@ pub enum PrivacyRewriteTemplate {
     TemplateQuasiDictionaryReference(usize),
 }
 
-pub struct TemplateParameters {
+pub struct TemplateParameters<'a> {
     pub dictionary: OptimizedDictionary,
     pub dictionary_identifier: String,
-    pub helpers_module: String,
-    pub helper_identifier: String,
+    pub add_to_dictionary_helper_source: &'a HelperFunctionSource,
+    pub add_to_dictionary_helper_identifier: String,
     pub module_kind: ModuleKind,
 }
 
-impl TemplateParameters {
+impl<'a> TemplateParameters<'a> {
     pub fn new(
         dictionary: OptimizedDictionary,
         dictionary_identifier: String,
-        helpers_module: &String,
-        helper_identifier: String,
+        add_to_dictionary_helper_source: &HelperFunctionSource,
+        add_to_dictionary_helper_identifier: String,
         module_kind: ModuleKind,
     ) -> TemplateParameters {
         TemplateParameters {
             dictionary,
             dictionary_identifier,
-            helpers_module: helpers_module.into(),
-            helper_identifier,
+            add_to_dictionary_helper_source,
+            add_to_dictionary_helper_identifier,
             module_kind,
         }
     }
@@ -58,8 +58,8 @@ impl PrivacyRewriteTemplate {
         params: &TemplateParameters,
     ) -> Result<PrivacyRewriteContent, DictionaryError> {
         match self {
-            PrivacyRewriteTemplate::HelperImport => Ok(PrivacyRewriteContent::HelperImport(
-                build_helper_import(params),
+            PrivacyRewriteTemplate::HelperDeclaration => Ok(PrivacyRewriteContent::HelperImport(
+                build_helper_declaration(params),
             )),
             PrivacyRewriteTemplate::DictionaryDeclaration => Ok(
                 PrivacyRewriteContent::DictionaryDeclaration(build_dictionary_declaration(params)),
@@ -135,31 +135,43 @@ impl Display for PrivacyRewriteTemplate {
     }
 }
 
-fn build_helper_import(params: &TemplateParameters) -> String {
+fn build_helper_declaration(params: &TemplateParameters) -> String {
     // Don't generate an import statement if we didn't collect any strings.
     if params.dictionary.strings.is_empty() {
         return "".to_string();
     }
 
-    match params.module_kind {
-        ModuleKind::CJS if params.helper_identifier == "$" => {
-            format!("const {{ $ }} = require('{}');\n", params.helpers_module)
-        }
-        ModuleKind::CJS => {
-            format!(
-                "const {{ $: {} }} = require('{}');\n",
-                params.helper_identifier, params.helpers_module,
-            )
-        }
-        ModuleKind::ESM if params.helper_identifier == "$" => {
-            format!("import {{ $ }} from '{}';\n", params.helpers_module)
-        }
-        ModuleKind::ESM => {
-            format!(
-                "import {{ $ as {} }} from '{}';\n",
-                params.helper_identifier, params.helpers_module
-            )
-        }
+    match &params.add_to_dictionary_helper_source {
+        HelperFunctionSource::Expression { code } => format!(
+            "const {} = {};\n",
+            params.add_to_dictionary_helper_identifier, code
+        ),
+        HelperFunctionSource::Import { module, func } => match params.module_kind {
+            ModuleKind::CJS if &params.add_to_dictionary_helper_identifier == func => {
+                format!(
+                    "const {{ {} }} = require('{}');\n",
+                    params.add_to_dictionary_helper_identifier, module,
+                )
+            }
+            ModuleKind::CJS => {
+                format!(
+                    "const {{ {}: {} }} = require('{}');\n",
+                    func, params.add_to_dictionary_helper_identifier, module,
+                )
+            }
+            ModuleKind::ESM if &params.add_to_dictionary_helper_identifier == func => {
+                format!(
+                    "import {{ {} }} from '{}';\n",
+                    params.add_to_dictionary_helper_identifier, module,
+                )
+            }
+            ModuleKind::ESM => {
+                format!(
+                    "import {{ {} as {} }} from '{}';\n",
+                    func, params.add_to_dictionary_helper_identifier, module,
+                )
+            }
+        },
     }
 }
 
@@ -174,7 +186,7 @@ fn build_dictionary_declaration(params: &TemplateParameters) -> String {
     let _ = write!(
         &mut output,
         "const {} = {}([\n",
-        params.dictionary_identifier, params.helper_identifier
+        params.dictionary_identifier, params.add_to_dictionary_helper_identifier
     );
 
     for index in &params.dictionary.indices {
@@ -186,7 +198,11 @@ fn build_dictionary_declaration(params: &TemplateParameters) -> String {
                         let _ = write!(&mut output, "{}", string);
                     }
                     DictionaryEntry::TaggedTemplate(quasis) => {
-                        let _ = write!(&mut output, "{}`", params.helper_identifier);
+                        let _ = write!(
+                            &mut output,
+                            "{}`",
+                            params.add_to_dictionary_helper_identifier
+                        );
                         let mut need_separator = false;
                         for quasi in quasis {
                             if need_separator {

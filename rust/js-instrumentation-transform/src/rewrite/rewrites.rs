@@ -3,9 +3,9 @@ use swc_common::{BytePos, Span};
 
 use super::{privacy_rewrite_template::LeftContext, PrivacyRewriteTemplate};
 
-pub fn insert_helper_import(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
+pub fn insert_helper_declaration(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
     Rewrite::Insert {
-        content: PrivacyRewriteTemplate::HelperImport,
+        content: PrivacyRewriteTemplate::HelperDeclaration,
         pos,
     }
 }

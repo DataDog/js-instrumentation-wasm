@@ -1,11 +1,7 @@
 use swc_ecma_ast::EsVersion::EsNext;
-use swc_ecma_parser::{lexer::Lexer, EsSyntax, Parser, StringInput, Syntax, TsSyntax};
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput};
 
-use crate::{
-    filetype::{filename_is_jsx, filename_is_typescript},
-    input_file::InputFile,
-    transform_options::TransformOptions,
-};
+use crate::{input_file::InputFile, syntax_for, transform_options::TransformOptions};
 
 pub fn build_parser<'a>(file: &InputFile<'a>, options: &TransformOptions) -> Parser<Lexer<'a>> {
     let lexer = build_lexer(file, options);
@@ -13,34 +9,7 @@ pub fn build_parser<'a>(file: &InputFile<'a>, options: &TransformOptions) -> Par
 }
 
 fn build_lexer<'a>(file: &InputFile<'a>, options: &TransformOptions) -> Lexer<'a> {
-    let jsx = options.jsx.unwrap_or_else(|| filename_is_jsx(file.name));
-    let typescript = options
-        .typescript
-        .unwrap_or_else(|| filename_is_typescript(file.name));
-
-    let syntax = if typescript {
-        Syntax::Typescript(TsSyntax {
-            tsx: jsx,
-            decorators: true,
-            dts: false,
-            no_early_errors: false,
-            disallow_ambiguous_jsx_like: false,
-        })
-    } else {
-        Syntax::Es(EsSyntax {
-            jsx,
-            fn_bind: true,
-            decorators: true,
-            decorators_before_export: true,
-            export_default_from: true,
-            import_attributes: true,
-            allow_super_outside_method: true,
-            allow_return_outside_function: true,
-            auto_accessors: true,
-            explicit_resource_management: true,
-        })
-    };
-
+    let syntax = syntax_for(file.name, options);
     Lexer::new(
         syntax,
         EsNext,
