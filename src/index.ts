@@ -36,34 +36,48 @@ export interface InputOptions {
   typescript?: boolean;
 }
 
+/**
+ * Declare the helper using the given JavaScript expression.
+ *
+ * Example: `{ code: '(v) => console.log(v)' }` will produce output like:
+ * ```js
+ *   const $ = (v) => console.log(v);
+ * ```
+ */
+export type ExpressionPrivacyHelperSource = {
+  expression: { code: string };
+};
+
+/**
+ * Declare the helper by importing the given function from the given module.
+ *
+ * Example:
+ * ```js
+ *   {
+ *     cjsModule: 'custom/helpers.cjs',
+ *     esmModule: 'custom/helpers.mjs',
+ *     func: 'foo'
+ *   }
+ * ```
+ * will produce output like:
+ * ```js
+ *   import { foo as $ } from 'custom/helpers.mjs';
+ * ```
+ *
+ * If the input is an ES module, `import` will be used to import `esmModule`;
+ * likewise, for CommonJS modules, `require()` will be used to import `cjsModule`.
+ */
+export type ImportPrivacyHelperSource = {
+  import: {
+    cjsModule: string;
+    esmModule: string;
+    func: string;
+  }
+};
+
 export type PrivacyHelperSource =
-  {
-    /**
-     * Declare the helper using the given JavaScript expression.
-     *
-     * Example: `{ code: '(v) => console.log(v)' }` will produce output like:
-     * ```js
-     *   const $ = (v) => console.log(v);
-     * ```
-     */
-    expression: { code: string };
-  } | {
-    /**
-     * Declare the helper by importing the given function from the given module.
-     *
-     * Example: `{ module: 'custom/helpers', func: 'foo' }` will produce output like:
-     * ```js
-     *   import { foo as $ } from 'custom/helpers';
-     * ```
-     *
-     * If the input is an ES module, `import` will be used; for CommonJS modules,
-     * `require()` will be used.
-     */
-    import: {
-      module: string;
-      func: string;
-    }
-  };
+  | ExpressionPrivacyHelperSource
+  | ImportPrivacyHelperSource;
 
 export interface PrivacyOptions {
   /** The source for the helper function used to add strings to the dictionary. */
@@ -103,7 +117,8 @@ function convertOptions(
     privacy: {
       addToDictionaryHelper: options?.privacy?.addToDictionaryHelper ?? {
         import: {
-          module: 'datadog:privacy-helpers',
+          cjsModule: 'datadog:privacy-helpers.cjs',
+          esmModule: 'datadog:privacy-helpers.mjs',
           func: '$',
         }
       }

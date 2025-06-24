@@ -2,7 +2,10 @@ import type { FilterPattern } from 'unplugin';
 
 import type { InstrumentationOptions } from '@datadog/js-instrumentation-wasm';
 
-import { PRIVACY_HELPERS_MODULE_ID } from './constants';
+import {
+  PRIVACY_HELPERS_MODULE_CJS_ID,
+  PRIVACY_HELPERS_MODULE_ESM_ID,
+} from './constants';
 
 export type PluginOptions = InstrumentationOptions & {
   exclude: FilterPattern;
@@ -25,7 +28,8 @@ export const defaultPluginOptions: PluginOptions = {
   privacy: {
     addToDictionaryHelper: {
       import: {
-        module: PRIVACY_HELPERS_MODULE_ID,
+        cjsModule: PRIVACY_HELPERS_MODULE_CJS_ID,
+        esmModule: PRIVACY_HELPERS_MODULE_ESM_ID,
         func: '$',
       }
     },

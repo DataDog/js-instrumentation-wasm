@@ -18,9 +18,16 @@ pub struct InputOptions {
 
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
+#[serde(rename_all_fields = "camelCase")]
 pub enum HelperFunctionSource {
-    Expression { code: String },
-    Import { module: String, func: String },
+    Expression {
+        code: String,
+    },
+    Import {
+        cjs_module: String,
+        esm_module: String,
+        func: String,
+    },
 }
 
 #[derive(Clone, Deserialize, Serialize)]
@@ -46,7 +53,8 @@ impl Default for TransformOptions {
             },
             privacy: PrivacyOptions {
                 add_to_dictionary_helper: HelperFunctionSource::Import {
-                    module: "datadog:privacy-helpers".into(),
+                    cjs_module: "datadog:privacy-helpers.cjs".into(),
+                    esm_module: "datadog:privacy-helpers.mjs".into(),
                     func: "$".into(),
                 },
             },

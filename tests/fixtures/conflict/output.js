@@ -1,4 +1,4 @@
-import { $ as B } from 'datadog:privacy-helpers';
+import { $ as B } from 'datadog:privacy-helpers.mjs';
 const A = B([
   "test",
 ]);

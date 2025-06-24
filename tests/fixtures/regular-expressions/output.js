@@ -1,4 +1,4 @@
-import { $ } from 'datadog:privacy-helpers';
+import { $ } from 'datadog:privacy-helpers.mjs';
 const D = $([
   `"`,
 ]);
