@@ -1,4 +1,4 @@
-import { $ } from 'datadog:privacy-helpers';
+import { $ } from 'datadog:privacy-helpers.mjs';
 const D = $([
   "Escape special characters with the \"\\\" character.",
   "Text content. With more than one line. And another.",

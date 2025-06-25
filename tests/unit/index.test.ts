@@ -44,7 +44,8 @@ describe('should be able to set a custom imported addToDictionary helper', async
     privacy: {
       addToDictionaryHelper: {
         import: {
-          module: '@custom/helpers',
+          cjsModule: '@custom/helpers.cjs',
+          esmModule: '@custom/helpers.mjs',
           func: 'addToDictionary',
         }
       }
@@ -76,4 +77,3 @@ describe('should be able to set a custom expression addToDictionary helper', asy
     });
   });
 });
-

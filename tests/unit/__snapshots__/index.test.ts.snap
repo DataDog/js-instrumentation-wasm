@@ -24,6 +24,16 @@ foo({
 "
 `;
 
+exports[`should be able to set a custom expression addToDictionary helper > for commonjs-require 1`] = `
+"const $ = (v) => console.log(v);
+const D = $([
+  'test',
+]);
+const foo = require('foo-module');
+foo(D[0]);
+"
+`;
+
 exports[`should be able to set a custom expression addToDictionary helper > for conflict 1`] = `
 "const B = (v) => console.log(v);
 const A = B([
@@ -533,7 +543,7 @@ declare let baz: 'unwanted_declared_var_type_1';
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for common-cases 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   "some string",
   \`something\`,
@@ -556,8 +566,18 @@ foo({
 "
 `;
 
+exports[`should be able to set a custom imported addToDictionary helper > for commonjs-require 1`] = `
+"const { addToDictionary: $ } = require('@custom/helpers.cjs');
+const D = $([
+  'test',
+]);
+const foo = require('foo-module');
+foo(D[0]);
+"
+`;
+
 exports[`should be able to set a custom imported addToDictionary helper > for conflict 1`] = `
-"import { addToDictionary as B } from '@custom/helpers';
+"import { addToDictionary as B } from '@custom/helpers.mjs';
 const A = B([
   "test",
 ]);
@@ -569,7 +589,7 @@ console.log(/* (attached comment) */ A[0]);
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for jsx 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   "Escape special characters with the \\"\\\\\\" character.",
   "Text content. With more than one line. And another.",
@@ -645,7 +665,7 @@ c-9.1,9.1-22.6,13.7-40.3,13.7c-4.6,0-6.9,4-6.9,8V140z"
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for reference-size 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   "abcd",
   \`abcdefghi\`,
@@ -704,7 +724,7 @@ const empty6 = foo(D[8], 0, 1, 2);
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for regular-expressions 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   \`"\`,
 ]);
@@ -718,7 +738,7 @@ const addQuotes = (string, hasQuotes) =>
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for string-literals 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   "appendix",
   "gem\`'\\"\\u{6F}",
@@ -778,7 +798,7 @@ const reuse4 = [...D[4]];
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for switch-statements 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   'francis',
   'result',
@@ -820,7 +840,7 @@ export const foo = (value) => {
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for tagged-templates-only 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   $\`bar\${0}\`,
 ]);
@@ -830,7 +850,7 @@ console.log(foo(D[0], 1000))
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for templates 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   \`\\\`'"\\u{6F}\`,
   \`abc\\r\\n\\t123\`,
@@ -897,7 +917,7 @@ const reuse4 = foo(D[18], foo(D[19], bar));
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for ternary-expressions 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   'katherine',
   "charles",
@@ -928,7 +948,7 @@ export const leopold = { [D[7]]: D[8] } ? { [D[2]]: D[12] } : { 'quinn': D[3] };
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for trivial 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   "test",
 ]);
@@ -938,7 +958,7 @@ console.log(/* (attached comment) */ D[0]);
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for typescript-enums 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   'Number Three',
   'Number One',
@@ -973,7 +993,7 @@ const enum ArabicNumbers {
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for typescript-inheritance 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   'SpecificNode',
   'pattern',
@@ -991,7 +1011,7 @@ export class SpecificNode
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for typescript-namespaces 1`] = `
-"import { addToDictionary as $ } from '@custom/helpers';
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
 const D = $([
   'betelgeuse',
   'cassiopeia',
@@ -1065,7 +1085,7 @@ declare let baz: 'unwanted_declared_var_type_1';
 `;
 
 exports[`the CJS version should transform code correctly > for common-cases 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "some string",
   \`something\`,
@@ -1088,8 +1108,18 @@ foo({
 "
 `;
 
+exports[`the CJS version should transform code correctly > for commonjs-require 1`] = `
+"const { $ } = require(' datadog:privacy-helpers.cjs');
+const D = $([
+  'test',
+]);
+const foo = require('foo-module');
+foo(D[0]);
+"
+`;
+
 exports[`the CJS version should transform code correctly > for conflict 1`] = `
-"import { $ as B } from ' datadog:privacy-helpers';
+"import { $ as B } from ' datadog:privacy-helpers.mjs';
 const A = B([
   "test",
 ]);
@@ -1101,7 +1131,7 @@ console.log(/* (attached comment) */ A[0]);
 `;
 
 exports[`the CJS version should transform code correctly > for jsx 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "Escape special characters with the \\"\\\\\\" character.",
   "Text content. With more than one line. And another.",
@@ -1177,7 +1207,7 @@ c-9.1,9.1-22.6,13.7-40.3,13.7c-4.6,0-6.9,4-6.9,8V140z"
 `;
 
 exports[`the CJS version should transform code correctly > for reference-size 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "abcd",
   \`abcdefghi\`,
@@ -1236,7 +1266,7 @@ const empty6 = foo(D[8], 0, 1, 2);
 `;
 
 exports[`the CJS version should transform code correctly > for regular-expressions 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   \`"\`,
 ]);
@@ -1250,7 +1280,7 @@ const addQuotes = (string, hasQuotes) =>
 `;
 
 exports[`the CJS version should transform code correctly > for string-literals 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "appendix",
   "gem\`'\\"\\u{6F}",
@@ -1310,7 +1340,7 @@ const reuse4 = [...D[4]];
 `;
 
 exports[`the CJS version should transform code correctly > for switch-statements 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'francis',
   'result',
@@ -1352,7 +1382,7 @@ export const foo = (value) => {
 `;
 
 exports[`the CJS version should transform code correctly > for tagged-templates-only 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   $\`bar\${0}\`,
 ]);
@@ -1362,7 +1392,7 @@ console.log(foo(D[0], 1000))
 `;
 
 exports[`the CJS version should transform code correctly > for templates 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   \`\\\`'"\\u{6F}\`,
   \`abc\\r\\n\\t123\`,
@@ -1429,7 +1459,7 @@ const reuse4 = foo(D[18], foo(D[19], bar));
 `;
 
 exports[`the CJS version should transform code correctly > for ternary-expressions 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'katherine',
   "charles",
@@ -1460,7 +1490,7 @@ export const leopold = { [D[7]]: D[8] } ? { [D[2]]: D[12] } : { 'quinn': D[3] };
 `;
 
 exports[`the CJS version should transform code correctly > for trivial 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "test",
 ]);
@@ -1470,7 +1500,7 @@ console.log(/* (attached comment) */ D[0]);
 `;
 
 exports[`the CJS version should transform code correctly > for typescript-enums 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'Number Three',
   'Number One',
@@ -1505,7 +1535,7 @@ const enum ArabicNumbers {
 `;
 
 exports[`the CJS version should transform code correctly > for typescript-inheritance 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'SpecificNode',
   'pattern',
@@ -1523,7 +1553,7 @@ export class SpecificNode
 `;
 
 exports[`the CJS version should transform code correctly > for typescript-namespaces 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'betelgeuse',
   'cassiopeia',
@@ -1597,7 +1627,7 @@ declare let baz: 'unwanted_declared_var_type_1';
 `;
 
 exports[`the ESM version should transform code correctly > for common-cases 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "some string",
   \`something\`,
@@ -1620,8 +1650,18 @@ foo({
 "
 `;
 
+exports[`the ESM version should transform code correctly > for commonjs-require 1`] = `
+"const { $ } = require(' datadog:privacy-helpers.cjs');
+const D = $([
+  'test',
+]);
+const foo = require('foo-module');
+foo(D[0]);
+"
+`;
+
 exports[`the ESM version should transform code correctly > for conflict 1`] = `
-"import { $ as B } from ' datadog:privacy-helpers';
+"import { $ as B } from ' datadog:privacy-helpers.mjs';
 const A = B([
   "test",
 ]);
@@ -1633,7 +1673,7 @@ console.log(/* (attached comment) */ A[0]);
 `;
 
 exports[`the ESM version should transform code correctly > for jsx 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "Escape special characters with the \\"\\\\\\" character.",
   "Text content. With more than one line. And another.",
@@ -1709,7 +1749,7 @@ c-9.1,9.1-22.6,13.7-40.3,13.7c-4.6,0-6.9,4-6.9,8V140z"
 `;
 
 exports[`the ESM version should transform code correctly > for reference-size 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "abcd",
   \`abcdefghi\`,
@@ -1768,7 +1808,7 @@ const empty6 = foo(D[8], 0, 1, 2);
 `;
 
 exports[`the ESM version should transform code correctly > for regular-expressions 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   \`"\`,
 ]);
@@ -1782,7 +1822,7 @@ const addQuotes = (string, hasQuotes) =>
 `;
 
 exports[`the ESM version should transform code correctly > for string-literals 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "appendix",
   "gem\`'\\"\\u{6F}",
@@ -1842,7 +1882,7 @@ const reuse4 = [...D[4]];
 `;
 
 exports[`the ESM version should transform code correctly > for switch-statements 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'francis',
   'result',
@@ -1884,7 +1924,7 @@ export const foo = (value) => {
 `;
 
 exports[`the ESM version should transform code correctly > for tagged-templates-only 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   $\`bar\${0}\`,
 ]);
@@ -1894,7 +1934,7 @@ console.log(foo(D[0], 1000))
 `;
 
 exports[`the ESM version should transform code correctly > for templates 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   \`\\\`'"\\u{6F}\`,
   \`abc\\r\\n\\t123\`,
@@ -1961,7 +2001,7 @@ const reuse4 = foo(D[18], foo(D[19], bar));
 `;
 
 exports[`the ESM version should transform code correctly > for ternary-expressions 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'katherine',
   "charles",
@@ -1992,7 +2032,7 @@ export const leopold = { [D[7]]: D[8] } ? { [D[2]]: D[12] } : { 'quinn': D[3] };
 `;
 
 exports[`the ESM version should transform code correctly > for trivial 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   "test",
 ]);
@@ -2002,7 +2042,7 @@ console.log(/* (attached comment) */ D[0]);
 `;
 
 exports[`the ESM version should transform code correctly > for typescript-enums 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'Number Three',
   'Number One',
@@ -2037,7 +2077,7 @@ const enum ArabicNumbers {
 `;
 
 exports[`the ESM version should transform code correctly > for typescript-inheritance 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'SpecificNode',
   'pattern',
@@ -2055,7 +2095,7 @@ export class SpecificNode
 `;
 
 exports[`the ESM version should transform code correctly > for typescript-namespaces 1`] = `
-"import { $ } from ' datadog:privacy-helpers';
+"import { $ } from ' datadog:privacy-helpers.mjs';
 const D = $([
   'betelgeuse',
   'cassiopeia',

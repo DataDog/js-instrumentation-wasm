@@ -146,29 +146,33 @@ fn build_helper_declaration(params: &TemplateParameters) -> String {
             "const {} = {};\n",
             params.add_to_dictionary_helper_identifier, code
         ),
-        HelperFunctionSource::Import { module, func } => match params.module_kind {
+        HelperFunctionSource::Import {
+            cjs_module,
+            esm_module,
+            func,
+        } => match params.module_kind {
             ModuleKind::CJS if &params.add_to_dictionary_helper_identifier == func => {
                 format!(
                     "const {{ {} }} = require('{}');\n",
-                    params.add_to_dictionary_helper_identifier, module,
+                    params.add_to_dictionary_helper_identifier, cjs_module,
                 )
             }
             ModuleKind::CJS => {
                 format!(
                     "const {{ {}: {} }} = require('{}');\n",
-                    func, params.add_to_dictionary_helper_identifier, module,
+                    func, params.add_to_dictionary_helper_identifier, cjs_module,
                 )
             }
             ModuleKind::ESM if &params.add_to_dictionary_helper_identifier == func => {
                 format!(
                     "import {{ {} }} from '{}';\n",
-                    params.add_to_dictionary_helper_identifier, module,
+                    params.add_to_dictionary_helper_identifier, esm_module,
                 )
             }
             ModuleKind::ESM => {
                 format!(
                     "import {{ {} as {} }} from '{}';\n",
-                    func, params.add_to_dictionary_helper_identifier, module,
+                    func, params.add_to_dictionary_helper_identifier, esm_module,
                 )
             }
         },
