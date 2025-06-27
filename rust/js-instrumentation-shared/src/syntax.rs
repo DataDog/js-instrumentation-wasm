@@ -2,10 +2,10 @@ use swc_ecma_parser::{EsSyntax, Syntax, TsSyntax};
 
 use crate::{
     filetype::{filename_is_jsx, filename_is_typescript},
-    transform_options::TransformOptions,
+    instrumentation_options::InstrumentationOptions,
 };
 
-pub fn syntax_for(filename: &str, options: &TransformOptions) -> Syntax {
+pub fn syntax_for(filename: &str, options: &InstrumentationOptions) -> Syntax {
     let jsx = options
         .input
         .jsx

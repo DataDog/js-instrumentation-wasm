@@ -1,6 +1,6 @@
 use std::fmt::{Display, Write};
 
-use js_instrumentation_shared::{transform_options::HelperFunctionSource, ModuleKind};
+use js_instrumentation_shared::{instrumentation_options::HelperFunctionSource, ModuleKind};
 
 use crate::dictionary::{DictionaryEntry, DictionaryError, OptimizedDictionary};
 

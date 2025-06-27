@@ -16,8 +16,11 @@ pub use parser::build_parser;
 pub mod syntax;
 pub use syntax::syntax_for;
 
-pub mod transform_options;
-pub use transform_options::TransformOptions;
+pub mod instrumentation_input;
+pub use instrumentation_input::InstrumentationInput;
 
-pub mod transform_output;
-pub use transform_output::TransformOutput;
+pub mod instrumentation_options;
+pub use instrumentation_options::InstrumentationOptions;
+
+pub mod instrumentation_output;
+pub use instrumentation_output::InstrumentationOutput;

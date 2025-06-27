@@ -14,7 +14,11 @@ const pluginOptions = {
     module: undefined,
     jsx: true,
     typescript: true,
-  }
+  },
+  output: {
+    inlineSourceMap: true,
+    embedCodeInSourceMap: true,
+  },
 };
 
 const transformESM = unpluginESM.raw(pluginOptions).transform.handler;

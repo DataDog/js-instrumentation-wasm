@@ -17,6 +17,16 @@ pub fn insert_dictionary_declaration(pos: BytePos) -> Rewrite<PrivacyRewriteTemp
     }
 }
 
+pub fn replace_tagged_template_opener_with_dictionary_ref(
+    dictionary_index: usize,
+    span: Span,
+) -> Rewrite<PrivacyRewriteTemplate> {
+    Rewrite::Replace {
+        content: PrivacyRewriteTemplate::TaggedTemplateOpenerDictionaryReference(dictionary_index),
+        span,
+    }
+}
+
 pub fn replace_tagged_template_before_expr_marker(span: Span) -> Rewrite<PrivacyRewriteTemplate> {
     Rewrite::Replace {
         content: PrivacyRewriteTemplate::TaggedTemplateBeforeExpr,
@@ -24,10 +34,10 @@ pub fn replace_tagged_template_before_expr_marker(span: Span) -> Rewrite<Privacy
     }
 }
 
-pub fn insert_tagged_template_after_expr_marker(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
-    Rewrite::Insert {
+pub fn replace_tagged_template_after_expr_marker(span: Span) -> Rewrite<PrivacyRewriteTemplate> {
+    Rewrite::Replace {
         content: PrivacyRewriteTemplate::TaggedTemplateAfterExpr,
-        pos,
+        span,
     }
 }
 
@@ -73,16 +83,6 @@ pub fn replace_string_with_dictionary_ref(
             },
         ),
         span,
-    }
-}
-
-pub fn insert_tagged_template_opener_with_dictionary_ref(
-    dictionary_index: usize,
-    pos: BytePos,
-) -> Rewrite<PrivacyRewriteTemplate> {
-    Rewrite::Insert {
-        content: PrivacyRewriteTemplate::TaggedTemplateOpenerDictionaryReference(dictionary_index),
-        pos,
     }
 }
 
