@@ -12,10 +12,10 @@ use crate::{
     features::FeatureTracker,
     identifiers::IdentifierTracker,
     rewrite::{
-        insert_tagged_template_after_expr_marker,
-        insert_tagged_template_opener_with_dictionary_ref, replace_jsx_string_with_dictionary_ref,
-        replace_property_key_with_dictionary_ref, replace_string_with_dictionary_ref,
-        replace_tagged_template_before_expr_marker, replace_tagged_template_terminator,
+        replace_jsx_string_with_dictionary_ref, replace_property_key_with_dictionary_ref,
+        replace_string_with_dictionary_ref, replace_tagged_template_after_expr_marker,
+        replace_tagged_template_before_expr_marker,
+        replace_tagged_template_opener_with_dictionary_ref, replace_tagged_template_terminator,
         replace_template_quasi_with_dictionary_ref, RewriteTracker,
     },
 };
@@ -137,13 +137,19 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
 
         node.tag.visit_with(self);
 
+        let opening_backtick_lo = node.tpl.span.lo;
+        let opening_backtick_hi = self.input_file.next_char_pos(opening_backtick_lo);
+
         self.rewrite_tracker
-            .emit(insert_tagged_template_opener_with_dictionary_ref(
+            .emit(replace_tagged_template_opener_with_dictionary_ref(
                 index.unwrap(),
-                node.tpl.span.lo,
+                Span {
+                    lo: opening_backtick_lo,
+                    hi: opening_backtick_hi,
+                },
             ));
 
-        let mut prev_hi: BytePos = node.tpl.span.lo;
+        let mut prev_hi: BytePos = opening_backtick_hi;
 
         for expr in &node.tpl.exprs {
             let expr_span = expr.span();
@@ -156,10 +162,16 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
 
             expr.visit_children_with(self);
 
-            self.rewrite_tracker
-                .emit(insert_tagged_template_after_expr_marker(expr_span.hi));
+            let rbrace_lo = expr_span.hi;
+            let rbrace_hi = self.input_file.next_char_pos(rbrace_lo);
 
-            prev_hi = expr_span.hi;
+            self.rewrite_tracker
+                .emit(replace_tagged_template_after_expr_marker(Span {
+                    lo: rbrace_lo,
+                    hi: rbrace_hi,
+                }));
+
+            prev_hi = rbrace_hi;
         }
 
         self.rewrite_tracker

@@ -20,8 +20,12 @@ export interface InstrumentationOutput {
   id: string;
   /** The instrumented source code. */
   code: string;
-  /** The source map for the instrumented code. */
-  map?: string;
+  /**
+   * The source map for the instrumented code. If an input source map was specified,
+   * this map will be the combination of the input source map and the instrumentation
+   * source map -- in other words, the two source maps will be chained.
+   */
+  map: string;
 }
 
 export interface InputOptions {
@@ -34,6 +38,13 @@ export interface InputOptions {
   jsx?: boolean;
   /** If true (the default), allow TypeScript syntax in the input. */
   typescript?: boolean;
+}
+
+export interface OutputOptions {
+  /** If true, inline the source map in the transformed file. The default is false. */
+  inlineSourceMap?: boolean;
+  /** If true, embed the code in the source map. The default is false. */
+  embedCodeInSourceMap?: boolean;
 }
 
 /**
@@ -87,6 +98,8 @@ export interface PrivacyOptions {
 export interface InstrumentationOptions {
   /** Options that configure how the input is interpreted. */
   input?: InputOptions;
+  /** Options that configure how the output should be generated. */
+  output?: OutputOptions;
   /** Options that configure the privacy instrumentation transform. */
   privacy?: PrivacyOptions;
 }
@@ -95,15 +108,7 @@ export interface RustPrivacyOptions {
   addToDictionaryHelper: PrivacyHelperSource;
 }
 
-interface RustInstrumentationOptions {
-  input: InputOptions;
-  privacy: RustPrivacyOptions;
-}
-
-interface RustInstrumentationOutput {
-  code: string;
-  map?: string;
-}
+type RustInstrumentationOptions = Required<InstrumentationOptions>;
 
 function convertOptions(
   options: InstrumentationOptions | undefined
@@ -113,6 +118,10 @@ function convertOptions(
       module: 'esm',
       jsx: undefined,
       typescript: undefined,
+    },
+    output: options?.output ?? {
+      inlineSourceMap: false,
+      embedCodeInSourceMap: false,
     },
     privacy: {
       addToDictionaryHelper: options?.privacy?.addToDictionaryHelper ?? {
@@ -149,17 +158,7 @@ export function instrument(
 ): InstrumentationOutput {
   try {
     ensureWasmPluginLoaded();
-    const rustOptions = convertOptions(options);
-    const output: RustInstrumentationOutput = transform(
-      input.id,
-      input.code,
-      rustOptions
-    );
-    return {
-      id: input.id,
-      code: output.code,
-      map: output.map,
-    };
+    return transform(input, convertOptions(options));
   } catch (e) {
     console.log(`Instrumentation threw error`, e);
     throw e;

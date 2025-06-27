@@ -116,7 +116,7 @@ impl<Content: RewriteContent> Ord for Rewrite<Content> {
         }
 
         // When rewrites have the same starting position, place rewrites with later ending
-        // positions before rewrites with earlier starting positions. When we filter out
+        // positions before rewrites with earlier ending positions. When we filter out
         // conflicting rewrites that overlap, we keep rewrites that are earlier in the sort
         // order, so this has the effect that we keep the rewrite that affects more of the original
         // source code when two rewrites target the same position.

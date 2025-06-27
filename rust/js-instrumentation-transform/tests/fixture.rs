@@ -1,5 +1,6 @@
 use std::{fs, path::PathBuf};
 
+use js_instrumentation_shared::InstrumentationInput;
 use js_instrumentation_transform::apply_transform;
 use similar_asserts::assert_eq;
 
@@ -13,8 +14,15 @@ fn ast_transform_test(input_path: PathBuf) {
     let expected_path = input_path.parent().unwrap().join(expected_filename);
     let expected = fs::read_to_string(expected_path).expect("Unable to read expected output file");
 
-    let actual = apply_transform(&input_path.to_string_lossy(), &input, &Default::default())
-        .expect("Should apply transform successfully");
+    let actual = apply_transform(
+        &InstrumentationInput {
+            id: input_path.to_string_lossy().to_string(),
+            code: input,
+            map: None,
+        },
+        &Default::default(),
+    )
+    .expect("Should apply transform successfully");
 
     assert_eq!(expected, actual.code);
 }

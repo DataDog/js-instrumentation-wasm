@@ -18,6 +18,16 @@ pub struct InputOptions {
 
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct OutputOptions {
+    /// True: inline the source map in the transformed file.
+    pub inline_source_map: bool,
+
+    /// True: embed the source code in the source map.
+    pub embed_code_in_source_map: bool,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 #[serde(rename_all_fields = "camelCase")]
 pub enum HelperFunctionSource {
     Expression {
@@ -38,18 +48,23 @@ pub struct PrivacyOptions {
 
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct TransformOptions {
+pub struct InstrumentationOptions {
     pub input: InputOptions,
+    pub output: OutputOptions,
     pub privacy: PrivacyOptions,
 }
 
-impl Default for TransformOptions {
+impl Default for InstrumentationOptions {
     fn default() -> Self {
-        TransformOptions {
+        InstrumentationOptions {
             input: InputOptions {
                 module: None,
                 jsx: Some(true),
                 typescript: Some(true),
+            },
+            output: OutputOptions {
+                inline_source_map: false,
+                embed_code_in_source_map: false,
             },
             privacy: PrivacyOptions {
                 add_to_dictionary_helper: HelperFunctionSource::Import {

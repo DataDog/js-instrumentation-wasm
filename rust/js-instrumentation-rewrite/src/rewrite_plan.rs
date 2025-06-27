@@ -1,9 +1,8 @@
-use std::fmt::Write;
-
 use js_instrumentation_shared::{debug_log, InputFile};
 use swc_common::BytePos;
+use swc_core::base::sourcemap::SourceMap;
 
-use crate::{rewrite::Rewrite, rewrite_content::RewriteContent};
+use crate::{rewrite::Rewrite, rewrite_content::RewriteContent, rewrite_output::RewriteOutput};
 
 pub struct RewritePlan<Content: RewriteContent> {
     rewrites: Vec<Rewrite<Content>>,
@@ -45,18 +44,46 @@ where
 }
 
 impl<Content: RewriteContent> RewritePlan<Content> {
-    pub fn apply<'a>(self: &Self, input_file: &mut InputFile<'a>) -> String {
-        let mut input_pos = input_file.start_pos;
-        let mut output = String::new();
+    pub fn apply<'a>(
+        self: &Self,
+        input_file: &'a mut InputFile<'a>,
+        embed_code_in_source_map: bool,
+    ) -> (String, SourceMap) {
+        let embedded_code = if embed_code_in_source_map {
+            Some(vec![
+                Some(String::from(input_file.code).into()),
+                Some("".into()),
+            ])
+        } else {
+            None
+        };
+
+        let mut output = RewriteOutput::new(input_file);
 
         for rewrite in &self.rewrites {
-            output += input_file.slice(input_pos, *rewrite.lo());
-            let _ = write!(&mut output, "{}", rewrite.content());
-            input_pos = *rewrite.hi();
+            match rewrite {
+                Rewrite::Replace { content, span } => {
+                    output.emit_input_until(span.lo());
+                    output.emit_replacement_until(span.hi(), &format!("{}", content));
+                }
+                Rewrite::Insert { content, pos } => {
+                    output.emit_input_until(*pos);
+                    output.emit_insertion(&format!("{}", content));
+                }
+            }
         }
 
-        output += input_file.slice(input_pos, input_file.end_pos);
+        let (rewritten_code, source_map_tokens) = output.finish();
 
-        return output;
+        let mut source_map = SourceMap::new(
+            None,
+            source_map_tokens,
+            vec![],
+            vec![String::from(input_file.name).into(), "".into()],
+            embedded_code,
+        );
+        source_map.add_to_ignore_list(1);
+
+        return (rewritten_code, source_map);
     }
 }

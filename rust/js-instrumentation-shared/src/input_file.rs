@@ -1,8 +1,9 @@
-use swc_common::{BytePos, FileName, FilePathMapping, SourceMap};
+use swc_common::{BytePos, FileName, FilePathMapping, SourceMap, Span, Spanned};
 use swc_ecma_parser::{Input, StringInput};
 
 pub struct InputFile<'a> {
     pub code: &'a str,
+    pub map: SourceMap,
     pub name: &'a str,
     pub start_pos: BytePos,
     pub end_pos: BytePos,
@@ -19,6 +20,7 @@ impl<'a> InputFile<'a> {
 
         InputFile {
             code,
+            map,
             name,
             start_pos,
             end_pos,
@@ -36,7 +38,20 @@ impl<'a> InputFile<'a> {
         }
     }
 
+    pub fn next_char_pos(self: &mut Self, pos: BytePos) -> BytePos {
+        let maybe_next_char_pos = self.map.next_point(pos.span()).hi;
+        if maybe_next_char_pos > self.end_pos {
+            self.end_pos
+        } else {
+            maybe_next_char_pos
+        }
+    }
+
     pub fn slice(self: &mut Self, start: BytePos, end: BytePos) -> &str {
         unsafe { self.input.slice(start, end) }
+    }
+
+    pub fn slice_span(self: &mut Self, span: Span) -> &str {
+        unsafe { self.input.slice(span.lo, span.hi) }
     }
 }

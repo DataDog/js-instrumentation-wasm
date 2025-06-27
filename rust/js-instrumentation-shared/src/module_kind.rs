@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     filetype::{filename_is_explicitly_cjs, filename_is_explicitly_esm},
-    transform_options::TransformOptions,
+    instrumentation_options::InstrumentationOptions,
 };
 
 #[derive(Clone, Deserialize, PartialEq, Eq, Serialize)]
@@ -19,7 +19,7 @@ pub struct ModuleKeywordUsage {
 
 pub fn module_kind_for(
     filename: &str,
-    options: &TransformOptions,
+    options: &InstrumentationOptions,
     keyword_usage: Option<ModuleKeywordUsage>,
 ) -> ModuleKind {
     match (&options.input.module, keyword_usage) {

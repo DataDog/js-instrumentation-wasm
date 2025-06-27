@@ -28,6 +28,7 @@ wasm-opt = [
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+getrandom = { workspace = true }
 serde = { workspace = true }
 serde-wasm-bindgen = { workspace = true }
 wasm-bindgen = { workspace = true }
