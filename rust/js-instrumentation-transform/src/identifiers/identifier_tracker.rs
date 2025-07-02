@@ -1,6 +1,6 @@
 use std::{cmp::max, collections::HashMap};
 
-use swc_ecma_ast::Ident;
+use swc_ecma_ast::{Ident, IdentName};
 
 pub struct IdentifierTracker {
     desired_identifier_availability: HashMap<String, bool>,
@@ -24,6 +24,12 @@ impl IdentifierTracker {
     }
 
     pub fn add_ident(self: &mut Self, identifier: &Ident) {
+        let string: &str = identifier.sym.as_str();
+        self.update_desired_identifier_availability(string);
+        self.tracker.add(string);
+    }
+
+    pub fn add_ident_name(self: &mut Self, identifier: &IdentName) {
         let string: &str = identifier.sym.as_str();
         self.update_desired_identifier_availability(string);
         self.tracker.add(string);

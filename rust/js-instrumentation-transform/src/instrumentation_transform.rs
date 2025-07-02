@@ -49,7 +49,7 @@ pub fn apply_transform(
     ]);
 
     visit(
-        program,
+        &program,
         &mut input_file,
         &mut dictionary_tracker,
         &mut feature_tracker,
@@ -78,9 +78,9 @@ pub fn apply_transform(
         module_kind,
     );
 
+    let (rewrites, token_positions) = rewrite_tracker.take();
     let rewrite_plan = build_rewrite_plan(
-        rewrite_tracker
-            .take()
+        rewrites
             .into_iter()
             .filter_map(|rewrite| {
                 rewrite.filter_map_content(|template| {
@@ -106,8 +106,11 @@ pub fn apply_transform(
             }),
     );
 
-    let (mut instrumented_code, transform_map) =
-        rewrite_plan.apply(&mut input_file, options.output.embed_code_in_source_map);
+    let (mut instrumented_code, transform_map) = rewrite_plan.apply(
+        &mut input_file,
+        token_positions,
+        options.output.embed_code_in_source_map,
+    );
 
     let source_map = match &input.map {
         // An input source map was specified; chain it with the source map we generated to produce

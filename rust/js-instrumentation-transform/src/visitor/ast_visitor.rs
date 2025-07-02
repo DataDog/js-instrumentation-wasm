@@ -1,9 +1,9 @@
 use js_instrumentation_shared::InputFile;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecma_ast::{
-    CallExpr, Callee, ExportAll, Expr, Ident, ImportDecl, JSXAttrValue, JSXElementChild, JSXText,
-    Lit, NamedExport, Program, PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl, TsInterfaceDecl,
-    TsModuleName, TsType,
+    CallExpr, Callee, ExportAll, Expr, Ident, IdentName, ImportDecl, JSXAttrValue, JSXElementChild,
+    JSXText, Lit, NamedExport, Program, PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl,
+    TsInterfaceDecl, TsModuleName, TsType,
 };
 use swc_ecma_visit::{Visit, VisitWith};
 
@@ -21,7 +21,7 @@ use crate::{
 };
 
 pub fn visit<'a, 'b>(
-    program: Program,
+    program: &Program,
     input_file: &'a mut InputFile<'b>,
     dictionary_tracker: &'a mut DictionaryTracker,
     feature_tracker: &'a mut FeatureTracker,
@@ -63,8 +63,36 @@ impl<'a, 'b> ASTVisitor<'a, 'b> {
 }
 
 impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
+    fn visit_span(&mut self, span: &Span) {
+        // Track the starting position of all AST nodes; this roughly
+        // gives us the starting position of all tokens, which we need
+        // to generate high-quality source maps. (The TypeScript
+        // compiler does this as well.)
+        self.rewrite_tracker.add_token_position(span.lo);
+    }
+
     fn visit_ident(&mut self, node: &Ident) {
+        // Track all identifiers, so that we can generate unique
+        // identifiers later.
         self.identifier_tracker.add_ident(node);
+
+        // Track both the starting and ending position of all identifiers, so that we generate
+        // source maps that can handle identifier renaming well. (The TypeScript compiler does this
+        // as well.)
+        self.rewrite_tracker.add_token_position(node.span.lo);
+        self.rewrite_tracker.add_token_position(node.span.hi);
+    }
+
+    fn visit_ident_name(&mut self, node: &IdentName) {
+        // Track all identifiers, so that we can generate unique
+        // identifiers later.
+        self.identifier_tracker.add_ident_name(node);
+
+        // Track both the starting and ending position of all identifiers, so that we generate
+        // source maps that can handle identifier renaming well. (The TypeScript compiler does this
+        // as well.)
+        self.rewrite_tracker.add_token_position(node.span.lo);
+        self.rewrite_tracker.add_token_position(node.span.hi);
     }
 
     fn visit_str(&mut self, node: &Str) {
@@ -79,6 +107,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                             may_follow_keyword,
                         ));
                 }
+
+                // Track both the start and ending position since we rewrite this kind of token.
+                self.rewrite_tracker.add_token_position(span.lo);
+                self.rewrite_tracker.add_token_position(span.hi);
             }
         }
     }
@@ -90,6 +122,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                     self.rewrite_tracker
                         .emit(replace_property_key_with_dictionary_ref(index, *span));
                 }
+
+                // Track both the start and ending position since we rewrite this kind of token.
+                self.rewrite_tracker.add_token_position(span.lo);
+                self.rewrite_tracker.add_token_position(span.hi);
             }
             _ => {
                 node.visit_children_with(self);
@@ -109,6 +145,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                             index, quasi.span,
                         ));
                 }
+
+                // Track both the start and ending position since we rewrite this kind of token.
+                self.rewrite_tracker.add_token_position(quasi.span.lo);
+                self.rewrite_tracker.add_token_position(quasi.span.hi);
             }
 
             let next_expr = expr_iter.next();
@@ -127,7 +167,13 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
             .tpl
             .quasis
             .iter()
-            .map(|quasi| quasi.raw.clone())
+            .map(|quasi| {
+                // Track both the start and ending position since we rewrite this kind of token.
+                self.rewrite_tracker.add_token_position(quasi.span.lo);
+                self.rewrite_tracker.add_token_position(quasi.span.hi);
+
+                quasi.raw.clone()
+            })
             .collect();
         let index = self.dictionary_tracker.maybe_add_tagged_template(&quasis);
         if let None = index {
@@ -188,6 +234,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                     self.rewrite_tracker
                         .emit(replace_jsx_string_with_dictionary_ref(index, *span));
 
+                    // Track both the start and ending position since we rewrite this kind of token.
+                    self.rewrite_tracker.add_token_position(span.lo);
+                    self.rewrite_tracker.add_token_position(span.hi);
+
                     // Don't recurse; we don't want to treat this as an ordinary string.
                     return;
                 }
@@ -205,6 +255,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                     self.rewrite_tracker
                         .emit(replace_jsx_string_with_dictionary_ref(index, *span));
                 }
+
+                // Track both the start and ending position since we rewrite this kind of token.
+                self.rewrite_tracker.add_token_position(span.lo);
+                self.rewrite_tracker.add_token_position(span.hi);
             }
             _ => {}
         }
@@ -260,7 +314,11 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         match node {
             Stmt::Expr(stmt) => {
                 match *stmt.expr {
-                    Expr::Lit(Lit::Str(_)) => {
+                    Expr::Lit(Lit::Str(Str { span, .. })) => {
+                        // Track both the start and ending position since we rewrite this kind of token.
+                        self.rewrite_tracker.add_token_position(span.lo);
+                        self.rewrite_tracker.add_token_position(span.hi);
+
                         // Don't collect string literals in a statement that consists only
                         // of a string literal. This is a directive like "use strict".
                         // Note that we don't need to recurse with while_filtered() here,
@@ -330,7 +388,7 @@ mod tests {
         let mut rewrite_tracker = RewriteTracker::new(vec![]);
 
         visit(
-            program,
+            &program,
             &mut input_file,
             &mut dictionary_tracker,
             &mut feature_tracker,
@@ -364,7 +422,7 @@ mod tests {
             vec![DictionaryEntry::String("'info'".into())]
         );
         assert_eq!(
-            rewrite_tracker.take(),
+            rewrite_tracker.take().0,
             vec![replace_property_key_with_dictionary_ref(
                 0,
                 Span::new(BytePos::from_u32(187), BytePos::from_u32(193))
