@@ -26,12 +26,12 @@ serde-wasm-bindgen = "0.6.5"
 similar-asserts = "1.4.2"
 sourcemap = "9.0.0"
 swc_atoms = "5.0.0"
-swc_common = "10.0.0"
+swc_common = "12.0.1"
 swc_core = { version = "27.0.6", features = ["__base"] }
-swc_ecma_ast = "10.0.0"
-swc_ecma_parser = "13.0.0"
-swc_ecma_visit = "10.0.0"
-testing = "8.0.0"
+swc_ecma_ast = "12.0.0"
+swc_ecma_parser = "15.0.0"
+swc_ecma_visit = "12.0.0"
+testing = "13.0.0"
 wasm-bindgen = "0.2.100"
 web-sys = { version = "0.3.77", features = ["console"] }
 

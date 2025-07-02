@@ -46,7 +46,8 @@ where
 impl<Content: RewriteContent> RewritePlan<Content> {
     pub fn apply<'a>(
         self: &Self,
-        input_file: &'a mut InputFile<'a>,
+        input_file: &mut InputFile<'a>,
+        token_positions: Vec<BytePos>,
         embed_code_in_source_map: bool,
     ) -> (String, SourceMap) {
         let embedded_code = if embed_code_in_source_map {
@@ -58,7 +59,7 @@ impl<Content: RewriteContent> RewritePlan<Content> {
             None
         };
 
-        let mut output = RewriteOutput::new(input_file);
+        let mut output = RewriteOutput::new(input_file, token_positions);
 
         for rewrite in &self.rewrites {
             match rewrite {
