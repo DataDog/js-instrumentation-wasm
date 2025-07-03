@@ -32,6 +32,13 @@ impl<'a> InputFile<'a> {
         StringInput::new(self.code, self.start_pos, self.end_pos)
     }
 
+    pub fn span(self: &Self) -> Span {
+        Span {
+            lo: self.start_pos,
+            hi: self.end_pos,
+        }
+    }
+
     pub fn may_follow_keyword(self: &mut Self, pos: BytePos) -> bool {
         if pos == self.start_pos {
             return false;

@@ -46,6 +46,197 @@ console.log(/* (attached comment) */ A[0]);
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIENyZWF0ZSBjb25mbGljdGluZyBiaW5kaW5ncyBmb3IgdGhlIGRlZmF1bHQgbmFtZXMgb2YgdGhlIGhlbHBlcnMuXG5jb25zdCAkID0gMTIzO1xuY29uc3QgRCA9IDQ1NjtcbmNvbnNvbGUubG9nKC8qIChhdHRhY2hlZCBjb21tZW50KSAqLyBcInRlc3RcIik7XG4iLCIiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztBQUFBO0FBQ0EsTUFBTSxDQUFDLEdBQUc7QUFDVixNQUFNLENBQUMsR0FBRztBQUNWLE9BQU8sQ0FBQyxHQUFHLDBCQUEwQixJQUFNIiwiaWdub3JlTGlzdCI6WzFdfQ=="
 `;
 
+exports[`should be able to set a custom expression addToDictionary helper > for excluded-file 1`] = `
+"// datadog-privacy-allowlist-exclude-file
+console.log(
+  "Should",
+  'not',
+  \`be\`,
+  "allowlisted"
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1maWxlXG5jb25zb2xlLmxvZyhcbiAgXCJTaG91bGRcIixcbiAgJ25vdCcsXG4gIGBiZWAsXG4gIFwiYWxsb3dsaXN0ZWRcIlxuKTtcbiIsIiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxRQUFRO0FBQ1YsRUFBRSxLQUFLO0FBQ1AsR0FBRyxFQUFFO0FBQ0wsRUFBRSxhQUFhO0FBQ2YiLCJpZ25vcmVMaXN0IjpbMV19"
+`;
+
+exports[`should be able to set a custom expression addToDictionary helper > for excluded-lines 1`] = `
+"const $ = (v) => console.log(v);
+const D = $([
+  'not excluded',
+]);
+const tag = () => { };
+
+// Should be able to exclude any kind of string with an exclude-line.
+console.log(
+  D[0],
+  "exclude line 1", // datadog-privacy-allowlist-exclude-line
+  D[0],
+  'exclude line 2', // datadog-privacy-allowlist-exclude-line
+  D[0],
+  \`exclude line 3\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+  tag\`exclude line 4\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+);
+
+// Block comments should also work.
+console.log(
+  D[0],
+  "block 1", /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  'block 2', /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  \`block 3\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  tag\`block 4\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+);
+
+// Prefixed block comments should also work.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ "prefixed block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ 'prefixed block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ \`prefixed block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ tag\`prefixed block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ "multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ 'multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ \`multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ tag\`multiline block 4\`,
+  D[0],
+);
+
+// Should be able to exclude any kind of string with an exclude-next-line.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  "exclude next line 1",
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  'exclude next line 2',
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  \`exclude next line 3\`,
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  tag\`exclude next line 4\`,
+  D[0],
+);
+
+// Block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  "exclude next line block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  'exclude next line block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  \`exclude next line block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  tag\`exclude next line block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  "exclude next line multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  'exclude next line multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  \`exclude next line multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  tag\`exclude next line multiline block 4\`,
+  D[0],
+);
+
+// We should be able to exclude a range of lines.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range 1",
+  'exclude range 2',
+  \`exclude range 3\`,
+  tag\`exclude range 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// We should be able to exclude a range of with a block comment.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with block comment 1",
+  'exclude range with block comment 2',
+  \`exclude range with block comment 3\`,
+  tag\`exclude range with block comment 4\`,
+  /* datadog-privacy-allowlist-exclude-end */
+  D[0],
+);
+
+// Extra 'exclude-begin' directives inside an exclusion and 'exclude-end'
+// directives outside of an exclusion should have no effect.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range with extra directives 1",
+  'exclude range with extra directives 2',
+  // datadog-privacy-allowlist-exclude-begin
+  \`exclude range with extra directives 3\`,
+  tag\`exclude range with extra directives 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// An unterminated 'exclude-begin' should cover the rest of the file. (And extra
+// 'exclude-begins' after that point should be ignored.)
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with unterminated comment 1",
+  'exclude range with unterminated comment 2',
+  /* datadog-privacy-allowlist-exclude-begin */
+  \`exclude range with unterminated comment 3\`,
+  tag\`exclude range with unterminated comment 4\`,
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IHRhZyA9ICgpID0+IHsgfTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIFwiZXhjbHVkZSBsaW5lIDFcIiwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4gICdleGNsdWRlIGxpbmUgMicsIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICdub3QgZXhjbHVkZWQnLFxuICBgZXhjbHVkZSBsaW5lIDNgLCAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZVxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgdGFnYGV4Y2x1ZGUgbGluZSA0YCwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICBcImJsb2NrIDFcIiwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gICdibG9jayAyJywgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIGBibG9jayAzYCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIHRhZ2BibG9jayA0YCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBQcmVmaXhlZCBibG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZSAqLyBcInByZWZpeGVkIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovICdwcmVmaXhlZCBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIGBwcmVmaXhlZCBibG9jayAzYCxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIHRhZ2BwcmVmaXhlZCBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yay5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICAqLyBcIm11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovICdtdWx0aWxpbmUgYmxvY2sgMicsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIGBtdWx0aWxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIHRhZ2BtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBgZXhjbHVkZSBuZXh0IGxpbmUgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrIGZvciBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmUgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yayBmb3IgZXhjbHVkZS1uZXh0LWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICAgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgbXVsdGlsaW5lIGJsb2NrIDNgLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gV2Ugc2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhIHJhbmdlIG9mIGxpbmVzLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgXCJleGNsdWRlIHJhbmdlIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2UgMicsXG4gIGBleGNsdWRlIHJhbmdlIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSA0YCxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWVuZFxuICAnbm90IGV4Y2x1ZGVkJyxcbik7XG5cbi8vIFdlIHNob3VsZCBiZSBhYmxlIHRvIGV4Y2x1ZGUgYSByYW5nZSBvZiB3aXRoIGEgYmxvY2sgY29tbWVudC5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMVwiLFxuICAnZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMicsXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggYmxvY2sgY29tbWVudCAzYCxcbiAgdGFnYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBibG9jayBjb21tZW50IDRgLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtZW5kICovXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gRXh0cmEgJ2V4Y2x1ZGUtYmVnaW4nIGRpcmVjdGl2ZXMgaW5zaWRlIGFuIGV4Y2x1c2lvbiBhbmQgJ2V4Y2x1ZGUtZW5kJ1xuLy8gZGlyZWN0aXZlcyBvdXRzaWRlIG9mIGFuIGV4Y2x1c2lvbiBzaG91bGQgaGF2ZSBubyBlZmZlY3QuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1iZWdpblxuICBcImV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDInLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSB3aXRoIGV4dHJhIGRpcmVjdGl2ZXMgNGAsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBBbiB1bnRlcm1pbmF0ZWQgJ2V4Y2x1ZGUtYmVnaW4nIHNob3VsZCBjb3ZlciB0aGUgcmVzdCBvZiB0aGUgZmlsZS4gKEFuZCBleHRyYVxuLy8gJ2V4Y2x1ZGUtYmVnaW5zJyBhZnRlciB0aGF0IHBvaW50IHNob3VsZCBiZSBpZ25vcmVkLilcbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIHVudGVybWluYXRlZCBjb21tZW50IDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCB1bnRlcm1pbmF0ZWQgY29tbWVudCAyJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgM2AsXG4gIHRhZ2BleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgNGAsXG4pO1xuIiwiIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7QUFBQSxNQUFNLEdBQUcsR0FBRyxNQUFNO0FBQ2xCO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQixFQUFFLGdCQUFnQjtBQUNsQixFQUFFLElBQWM7QUFDaEIsRUFBRSxnQkFBZ0I7QUFDbEIsRUFBRSxJQUFjO0FBQ2hCLEdBQUcsY0FBYztBQUNqQixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsY0FBYztBQUNwQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEIsRUFBRSxTQUFTO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCLEVBQUUsU0FBUztBQUNYLEVBQUUsSUFBYztBQUNoQixHQUFHLE9BQU87QUFDVixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsT0FBTztBQUNiLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQixnREFBZ0QsZ0JBQWdCO0FBQ2hFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0MsR0FBRyxDQUFDLGdCQUFnQjtBQUNuRSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sbUJBQW1CO0FBQ3pCLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0EsTUFBTSxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQSxPQUFPLGlCQUFpQjtBQUN4QixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sR0FBRyxDQUFDLGlCQUFpQjtBQUMzQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxHQUFHLG1CQUFtQjtBQUN0QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsR0FBRyx5QkFBeUI7QUFDNUIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxHQUFHLENBQUMseUJBQXlCO0FBQy9CLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLHFDQUFxQztBQUN2QyxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsRUFBRSxxQ0FBcUM7QUFDdkMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLEdBQUcsbUNBQW1DO0FBQ3RDLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQ0FBbUM7QUFDekMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxpQkFBaUI7QUFDbkIsRUFBRSxpQkFBaUI7QUFDbkIsR0FBRyxlQUFlO0FBQ2xCLEVBQUUsR0FBRyxDQUFDLGVBQWU7QUFDckI7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLG9DQUFvQztBQUN0QyxFQUFFLG9DQUFvQztBQUN0QyxHQUFHLGtDQUFrQztBQUNyQyxFQUFFLEdBQUcsQ0FBQyxrQ0FBa0M7QUFDeEM7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsdUNBQXVDO0FBQ3pDLEVBQUUsdUNBQXVDO0FBQ3pDO0FBQ0EsR0FBRyxxQ0FBcUM7QUFDeEMsRUFBRSxHQUFHLENBQUMscUNBQXFDO0FBQzNDO0FBQ0EsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLDJDQUEyQztBQUM3QyxFQUFFLDJDQUEyQztBQUM3QztBQUNBLEdBQUcseUNBQXlDO0FBQzVDLEVBQUUsR0FBRyxDQUFDLHlDQUF5QztBQUMvQyIsImlnbm9yZUxpc3QiOlsxXX0="
+`;
+
 exports[`should be able to set a custom expression addToDictionary helper > for excluded-strings 1`] = `
 "// URLS (excluded by URL_STRINGS_REGEX):
 console.log(
@@ -667,6 +858,197 @@ const $ = 123;
 const D = 456;
 console.log(/* (attached comment) */ A[0]);
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIENyZWF0ZSBjb25mbGljdGluZyBiaW5kaW5ncyBmb3IgdGhlIGRlZmF1bHQgbmFtZXMgb2YgdGhlIGhlbHBlcnMuXG5jb25zdCAkID0gMTIzO1xuY29uc3QgRCA9IDQ1NjtcbmNvbnNvbGUubG9nKC8qIChhdHRhY2hlZCBjb21tZW50KSAqLyBcInRlc3RcIik7XG4iLCIiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztBQUFBO0FBQ0EsTUFBTSxDQUFDLEdBQUc7QUFDVixNQUFNLENBQUMsR0FBRztBQUNWLE9BQU8sQ0FBQyxHQUFHLDBCQUEwQixJQUFNIiwiaWdub3JlTGlzdCI6WzFdfQ=="
+`;
+
+exports[`should be able to set a custom imported addToDictionary helper > for excluded-file 1`] = `
+"// datadog-privacy-allowlist-exclude-file
+console.log(
+  "Should",
+  'not',
+  \`be\`,
+  "allowlisted"
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1maWxlXG5jb25zb2xlLmxvZyhcbiAgXCJTaG91bGRcIixcbiAgJ25vdCcsXG4gIGBiZWAsXG4gIFwiYWxsb3dsaXN0ZWRcIlxuKTtcbiIsIiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxRQUFRO0FBQ1YsRUFBRSxLQUFLO0FBQ1AsR0FBRyxFQUFFO0FBQ0wsRUFBRSxhQUFhO0FBQ2YiLCJpZ25vcmVMaXN0IjpbMV19"
+`;
+
+exports[`should be able to set a custom imported addToDictionary helper > for excluded-lines 1`] = `
+"import { addToDictionary as $ } from '@custom/helpers.mjs';
+const D = $([
+  'not excluded',
+]);
+const tag = () => { };
+
+// Should be able to exclude any kind of string with an exclude-line.
+console.log(
+  D[0],
+  "exclude line 1", // datadog-privacy-allowlist-exclude-line
+  D[0],
+  'exclude line 2', // datadog-privacy-allowlist-exclude-line
+  D[0],
+  \`exclude line 3\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+  tag\`exclude line 4\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+);
+
+// Block comments should also work.
+console.log(
+  D[0],
+  "block 1", /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  'block 2', /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  \`block 3\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  tag\`block 4\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+);
+
+// Prefixed block comments should also work.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ "prefixed block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ 'prefixed block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ \`prefixed block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ tag\`prefixed block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ "multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ 'multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ \`multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ tag\`multiline block 4\`,
+  D[0],
+);
+
+// Should be able to exclude any kind of string with an exclude-next-line.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  "exclude next line 1",
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  'exclude next line 2',
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  \`exclude next line 3\`,
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  tag\`exclude next line 4\`,
+  D[0],
+);
+
+// Block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  "exclude next line block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  'exclude next line block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  \`exclude next line block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  tag\`exclude next line block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  "exclude next line multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  'exclude next line multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  \`exclude next line multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  tag\`exclude next line multiline block 4\`,
+  D[0],
+);
+
+// We should be able to exclude a range of lines.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range 1",
+  'exclude range 2',
+  \`exclude range 3\`,
+  tag\`exclude range 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// We should be able to exclude a range of with a block comment.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with block comment 1",
+  'exclude range with block comment 2',
+  \`exclude range with block comment 3\`,
+  tag\`exclude range with block comment 4\`,
+  /* datadog-privacy-allowlist-exclude-end */
+  D[0],
+);
+
+// Extra 'exclude-begin' directives inside an exclusion and 'exclude-end'
+// directives outside of an exclusion should have no effect.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range with extra directives 1",
+  'exclude range with extra directives 2',
+  // datadog-privacy-allowlist-exclude-begin
+  \`exclude range with extra directives 3\`,
+  tag\`exclude range with extra directives 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// An unterminated 'exclude-begin' should cover the rest of the file. (And extra
+// 'exclude-begins' after that point should be ignored.)
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with unterminated comment 1",
+  'exclude range with unterminated comment 2',
+  /* datadog-privacy-allowlist-exclude-begin */
+  \`exclude range with unterminated comment 3\`,
+  tag\`exclude range with unterminated comment 4\`,
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IHRhZyA9ICgpID0+IHsgfTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIFwiZXhjbHVkZSBsaW5lIDFcIiwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4gICdleGNsdWRlIGxpbmUgMicsIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICdub3QgZXhjbHVkZWQnLFxuICBgZXhjbHVkZSBsaW5lIDNgLCAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZVxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgdGFnYGV4Y2x1ZGUgbGluZSA0YCwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICBcImJsb2NrIDFcIiwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gICdibG9jayAyJywgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIGBibG9jayAzYCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIHRhZ2BibG9jayA0YCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBQcmVmaXhlZCBibG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZSAqLyBcInByZWZpeGVkIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovICdwcmVmaXhlZCBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIGBwcmVmaXhlZCBibG9jayAzYCxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIHRhZ2BwcmVmaXhlZCBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yay5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICAqLyBcIm11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovICdtdWx0aWxpbmUgYmxvY2sgMicsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIGBtdWx0aWxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIHRhZ2BtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBgZXhjbHVkZSBuZXh0IGxpbmUgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrIGZvciBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmUgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yayBmb3IgZXhjbHVkZS1uZXh0LWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICAgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgbXVsdGlsaW5lIGJsb2NrIDNgLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gV2Ugc2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhIHJhbmdlIG9mIGxpbmVzLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgXCJleGNsdWRlIHJhbmdlIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2UgMicsXG4gIGBleGNsdWRlIHJhbmdlIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSA0YCxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWVuZFxuICAnbm90IGV4Y2x1ZGVkJyxcbik7XG5cbi8vIFdlIHNob3VsZCBiZSBhYmxlIHRvIGV4Y2x1ZGUgYSByYW5nZSBvZiB3aXRoIGEgYmxvY2sgY29tbWVudC5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMVwiLFxuICAnZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMicsXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggYmxvY2sgY29tbWVudCAzYCxcbiAgdGFnYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBibG9jayBjb21tZW50IDRgLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtZW5kICovXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gRXh0cmEgJ2V4Y2x1ZGUtYmVnaW4nIGRpcmVjdGl2ZXMgaW5zaWRlIGFuIGV4Y2x1c2lvbiBhbmQgJ2V4Y2x1ZGUtZW5kJ1xuLy8gZGlyZWN0aXZlcyBvdXRzaWRlIG9mIGFuIGV4Y2x1c2lvbiBzaG91bGQgaGF2ZSBubyBlZmZlY3QuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1iZWdpblxuICBcImV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDInLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSB3aXRoIGV4dHJhIGRpcmVjdGl2ZXMgNGAsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBBbiB1bnRlcm1pbmF0ZWQgJ2V4Y2x1ZGUtYmVnaW4nIHNob3VsZCBjb3ZlciB0aGUgcmVzdCBvZiB0aGUgZmlsZS4gKEFuZCBleHRyYVxuLy8gJ2V4Y2x1ZGUtYmVnaW5zJyBhZnRlciB0aGF0IHBvaW50IHNob3VsZCBiZSBpZ25vcmVkLilcbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIHVudGVybWluYXRlZCBjb21tZW50IDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCB1bnRlcm1pbmF0ZWQgY29tbWVudCAyJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgM2AsXG4gIHRhZ2BleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgNGAsXG4pO1xuIiwiIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7QUFBQSxNQUFNLEdBQUcsR0FBRyxNQUFNO0FBQ2xCO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQixFQUFFLGdCQUFnQjtBQUNsQixFQUFFLElBQWM7QUFDaEIsRUFBRSxnQkFBZ0I7QUFDbEIsRUFBRSxJQUFjO0FBQ2hCLEdBQUcsY0FBYztBQUNqQixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsY0FBYztBQUNwQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEIsRUFBRSxTQUFTO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCLEVBQUUsU0FBUztBQUNYLEVBQUUsSUFBYztBQUNoQixHQUFHLE9BQU87QUFDVixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsT0FBTztBQUNiLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQixnREFBZ0QsZ0JBQWdCO0FBQ2hFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0MsR0FBRyxDQUFDLGdCQUFnQjtBQUNuRSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sbUJBQW1CO0FBQ3pCLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0EsTUFBTSxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQSxPQUFPLGlCQUFpQjtBQUN4QixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sR0FBRyxDQUFDLGlCQUFpQjtBQUMzQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxHQUFHLG1CQUFtQjtBQUN0QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsR0FBRyx5QkFBeUI7QUFDNUIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxHQUFHLENBQUMseUJBQXlCO0FBQy9CLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLHFDQUFxQztBQUN2QyxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsRUFBRSxxQ0FBcUM7QUFDdkMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLEdBQUcsbUNBQW1DO0FBQ3RDLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQ0FBbUM7QUFDekMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxpQkFBaUI7QUFDbkIsRUFBRSxpQkFBaUI7QUFDbkIsR0FBRyxlQUFlO0FBQ2xCLEVBQUUsR0FBRyxDQUFDLGVBQWU7QUFDckI7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLG9DQUFvQztBQUN0QyxFQUFFLG9DQUFvQztBQUN0QyxHQUFHLGtDQUFrQztBQUNyQyxFQUFFLEdBQUcsQ0FBQyxrQ0FBa0M7QUFDeEM7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsdUNBQXVDO0FBQ3pDLEVBQUUsdUNBQXVDO0FBQ3pDO0FBQ0EsR0FBRyxxQ0FBcUM7QUFDeEMsRUFBRSxHQUFHLENBQUMscUNBQXFDO0FBQzNDO0FBQ0EsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLDJDQUEyQztBQUM3QyxFQUFFLDJDQUEyQztBQUM3QztBQUNBLEdBQUcseUNBQXlDO0FBQzVDLEVBQUUsR0FBRyxDQUFDLHlDQUF5QztBQUMvQyIsImlnbm9yZUxpc3QiOlsxXX0="
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for excluded-strings 1`] = `
@@ -1292,6 +1674,197 @@ console.log(/* (attached comment) */ A[0]);
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIENyZWF0ZSBjb25mbGljdGluZyBiaW5kaW5ncyBmb3IgdGhlIGRlZmF1bHQgbmFtZXMgb2YgdGhlIGhlbHBlcnMuXG5jb25zdCAkID0gMTIzO1xuY29uc3QgRCA9IDQ1NjtcbmNvbnNvbGUubG9nKC8qIChhdHRhY2hlZCBjb21tZW50KSAqLyBcInRlc3RcIik7XG4iLCIiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztBQUFBO0FBQ0EsTUFBTSxDQUFDLEdBQUc7QUFDVixNQUFNLENBQUMsR0FBRztBQUNWLE9BQU8sQ0FBQyxHQUFHLDBCQUEwQixJQUFNIiwiaWdub3JlTGlzdCI6WzFdfQ=="
 `;
 
+exports[`the CJS version should transform code correctly > for excluded-file 1`] = `
+"// datadog-privacy-allowlist-exclude-file
+console.log(
+  "Should",
+  'not',
+  \`be\`,
+  "allowlisted"
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1maWxlXG5jb25zb2xlLmxvZyhcbiAgXCJTaG91bGRcIixcbiAgJ25vdCcsXG4gIGBiZWAsXG4gIFwiYWxsb3dsaXN0ZWRcIlxuKTtcbiIsIiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxRQUFRO0FBQ1YsRUFBRSxLQUFLO0FBQ1AsR0FBRyxFQUFFO0FBQ0wsRUFBRSxhQUFhO0FBQ2YiLCJpZ25vcmVMaXN0IjpbMV19"
+`;
+
+exports[`the CJS version should transform code correctly > for excluded-lines 1`] = `
+"import { $ } from ' datadog:privacy-helpers.mjs';
+const D = $([
+  'not excluded',
+]);
+const tag = () => { };
+
+// Should be able to exclude any kind of string with an exclude-line.
+console.log(
+  D[0],
+  "exclude line 1", // datadog-privacy-allowlist-exclude-line
+  D[0],
+  'exclude line 2', // datadog-privacy-allowlist-exclude-line
+  D[0],
+  \`exclude line 3\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+  tag\`exclude line 4\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+);
+
+// Block comments should also work.
+console.log(
+  D[0],
+  "block 1", /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  'block 2', /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  \`block 3\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  tag\`block 4\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+);
+
+// Prefixed block comments should also work.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ "prefixed block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ 'prefixed block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ \`prefixed block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ tag\`prefixed block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ "multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ 'multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ \`multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ tag\`multiline block 4\`,
+  D[0],
+);
+
+// Should be able to exclude any kind of string with an exclude-next-line.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  "exclude next line 1",
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  'exclude next line 2',
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  \`exclude next line 3\`,
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  tag\`exclude next line 4\`,
+  D[0],
+);
+
+// Block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  "exclude next line block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  'exclude next line block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  \`exclude next line block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  tag\`exclude next line block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  "exclude next line multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  'exclude next line multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  \`exclude next line multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  tag\`exclude next line multiline block 4\`,
+  D[0],
+);
+
+// We should be able to exclude a range of lines.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range 1",
+  'exclude range 2',
+  \`exclude range 3\`,
+  tag\`exclude range 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// We should be able to exclude a range of with a block comment.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with block comment 1",
+  'exclude range with block comment 2',
+  \`exclude range with block comment 3\`,
+  tag\`exclude range with block comment 4\`,
+  /* datadog-privacy-allowlist-exclude-end */
+  D[0],
+);
+
+// Extra 'exclude-begin' directives inside an exclusion and 'exclude-end'
+// directives outside of an exclusion should have no effect.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range with extra directives 1",
+  'exclude range with extra directives 2',
+  // datadog-privacy-allowlist-exclude-begin
+  \`exclude range with extra directives 3\`,
+  tag\`exclude range with extra directives 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// An unterminated 'exclude-begin' should cover the rest of the file. (And extra
+// 'exclude-begins' after that point should be ignored.)
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with unterminated comment 1",
+  'exclude range with unterminated comment 2',
+  /* datadog-privacy-allowlist-exclude-begin */
+  \`exclude range with unterminated comment 3\`,
+  tag\`exclude range with unterminated comment 4\`,
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IHRhZyA9ICgpID0+IHsgfTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIFwiZXhjbHVkZSBsaW5lIDFcIiwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4gICdleGNsdWRlIGxpbmUgMicsIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICdub3QgZXhjbHVkZWQnLFxuICBgZXhjbHVkZSBsaW5lIDNgLCAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZVxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgdGFnYGV4Y2x1ZGUgbGluZSA0YCwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICBcImJsb2NrIDFcIiwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gICdibG9jayAyJywgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIGBibG9jayAzYCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIHRhZ2BibG9jayA0YCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBQcmVmaXhlZCBibG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZSAqLyBcInByZWZpeGVkIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovICdwcmVmaXhlZCBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIGBwcmVmaXhlZCBibG9jayAzYCxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIHRhZ2BwcmVmaXhlZCBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yay5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICAqLyBcIm11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovICdtdWx0aWxpbmUgYmxvY2sgMicsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIGBtdWx0aWxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIHRhZ2BtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBgZXhjbHVkZSBuZXh0IGxpbmUgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrIGZvciBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmUgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yayBmb3IgZXhjbHVkZS1uZXh0LWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICAgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgbXVsdGlsaW5lIGJsb2NrIDNgLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gV2Ugc2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhIHJhbmdlIG9mIGxpbmVzLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgXCJleGNsdWRlIHJhbmdlIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2UgMicsXG4gIGBleGNsdWRlIHJhbmdlIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSA0YCxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWVuZFxuICAnbm90IGV4Y2x1ZGVkJyxcbik7XG5cbi8vIFdlIHNob3VsZCBiZSBhYmxlIHRvIGV4Y2x1ZGUgYSByYW5nZSBvZiB3aXRoIGEgYmxvY2sgY29tbWVudC5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMVwiLFxuICAnZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMicsXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggYmxvY2sgY29tbWVudCAzYCxcbiAgdGFnYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBibG9jayBjb21tZW50IDRgLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtZW5kICovXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gRXh0cmEgJ2V4Y2x1ZGUtYmVnaW4nIGRpcmVjdGl2ZXMgaW5zaWRlIGFuIGV4Y2x1c2lvbiBhbmQgJ2V4Y2x1ZGUtZW5kJ1xuLy8gZGlyZWN0aXZlcyBvdXRzaWRlIG9mIGFuIGV4Y2x1c2lvbiBzaG91bGQgaGF2ZSBubyBlZmZlY3QuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1iZWdpblxuICBcImV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDInLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSB3aXRoIGV4dHJhIGRpcmVjdGl2ZXMgNGAsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBBbiB1bnRlcm1pbmF0ZWQgJ2V4Y2x1ZGUtYmVnaW4nIHNob3VsZCBjb3ZlciB0aGUgcmVzdCBvZiB0aGUgZmlsZS4gKEFuZCBleHRyYVxuLy8gJ2V4Y2x1ZGUtYmVnaW5zJyBhZnRlciB0aGF0IHBvaW50IHNob3VsZCBiZSBpZ25vcmVkLilcbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIHVudGVybWluYXRlZCBjb21tZW50IDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCB1bnRlcm1pbmF0ZWQgY29tbWVudCAyJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgM2AsXG4gIHRhZ2BleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgNGAsXG4pO1xuIiwiIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7QUFBQSxNQUFNLEdBQUcsR0FBRyxNQUFNO0FBQ2xCO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQixFQUFFLGdCQUFnQjtBQUNsQixFQUFFLElBQWM7QUFDaEIsRUFBRSxnQkFBZ0I7QUFDbEIsRUFBRSxJQUFjO0FBQ2hCLEdBQUcsY0FBYztBQUNqQixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsY0FBYztBQUNwQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEIsRUFBRSxTQUFTO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCLEVBQUUsU0FBUztBQUNYLEVBQUUsSUFBYztBQUNoQixHQUFHLE9BQU87QUFDVixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsT0FBTztBQUNiLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQixnREFBZ0QsZ0JBQWdCO0FBQ2hFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0MsR0FBRyxDQUFDLGdCQUFnQjtBQUNuRSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sbUJBQW1CO0FBQ3pCLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0EsTUFBTSxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQSxPQUFPLGlCQUFpQjtBQUN4QixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sR0FBRyxDQUFDLGlCQUFpQjtBQUMzQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxHQUFHLG1CQUFtQjtBQUN0QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsR0FBRyx5QkFBeUI7QUFDNUIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxHQUFHLENBQUMseUJBQXlCO0FBQy9CLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLHFDQUFxQztBQUN2QyxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsRUFBRSxxQ0FBcUM7QUFDdkMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLEdBQUcsbUNBQW1DO0FBQ3RDLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQ0FBbUM7QUFDekMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxpQkFBaUI7QUFDbkIsRUFBRSxpQkFBaUI7QUFDbkIsR0FBRyxlQUFlO0FBQ2xCLEVBQUUsR0FBRyxDQUFDLGVBQWU7QUFDckI7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLG9DQUFvQztBQUN0QyxFQUFFLG9DQUFvQztBQUN0QyxHQUFHLGtDQUFrQztBQUNyQyxFQUFFLEdBQUcsQ0FBQyxrQ0FBa0M7QUFDeEM7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsdUNBQXVDO0FBQ3pDLEVBQUUsdUNBQXVDO0FBQ3pDO0FBQ0EsR0FBRyxxQ0FBcUM7QUFDeEMsRUFBRSxHQUFHLENBQUMscUNBQXFDO0FBQzNDO0FBQ0EsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLDJDQUEyQztBQUM3QyxFQUFFLDJDQUEyQztBQUM3QztBQUNBLEdBQUcseUNBQXlDO0FBQzVDLEVBQUUsR0FBRyxDQUFDLHlDQUF5QztBQUMvQyIsImlnbm9yZUxpc3QiOlsxXX0="
+`;
+
 exports[`the CJS version should transform code correctly > for excluded-strings 1`] = `
 "// URLS (excluded by URL_STRINGS_REGEX):
 console.log(
@@ -1913,6 +2486,197 @@ const $ = 123;
 const D = 456;
 console.log(/* (attached comment) */ A[0]);
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIENyZWF0ZSBjb25mbGljdGluZyBiaW5kaW5ncyBmb3IgdGhlIGRlZmF1bHQgbmFtZXMgb2YgdGhlIGhlbHBlcnMuXG5jb25zdCAkID0gMTIzO1xuY29uc3QgRCA9IDQ1NjtcbmNvbnNvbGUubG9nKC8qIChhdHRhY2hlZCBjb21tZW50KSAqLyBcInRlc3RcIik7XG4iLCIiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztBQUFBO0FBQ0EsTUFBTSxDQUFDLEdBQUc7QUFDVixNQUFNLENBQUMsR0FBRztBQUNWLE9BQU8sQ0FBQyxHQUFHLDBCQUEwQixJQUFNIiwiaWdub3JlTGlzdCI6WzFdfQ=="
+`;
+
+exports[`the ESM version should transform code correctly > for excluded-file 1`] = `
+"// datadog-privacy-allowlist-exclude-file
+console.log(
+  "Should",
+  'not',
+  \`be\`,
+  "allowlisted"
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1maWxlXG5jb25zb2xlLmxvZyhcbiAgXCJTaG91bGRcIixcbiAgJ25vdCcsXG4gIGBiZWAsXG4gIFwiYWxsb3dsaXN0ZWRcIlxuKTtcbiIsIiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxRQUFRO0FBQ1YsRUFBRSxLQUFLO0FBQ1AsR0FBRyxFQUFFO0FBQ0wsRUFBRSxhQUFhO0FBQ2YiLCJpZ25vcmVMaXN0IjpbMV19"
+`;
+
+exports[`the ESM version should transform code correctly > for excluded-lines 1`] = `
+"import { $ } from ' datadog:privacy-helpers.mjs';
+const D = $([
+  'not excluded',
+]);
+const tag = () => { };
+
+// Should be able to exclude any kind of string with an exclude-line.
+console.log(
+  D[0],
+  "exclude line 1", // datadog-privacy-allowlist-exclude-line
+  D[0],
+  'exclude line 2', // datadog-privacy-allowlist-exclude-line
+  D[0],
+  \`exclude line 3\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+  tag\`exclude line 4\`, // datadog-privacy-allowlist-exclude-line
+  D[0],
+);
+
+// Block comments should also work.
+console.log(
+  D[0],
+  "block 1", /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  'block 2', /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  \`block 3\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+  tag\`block 4\`, /* datadog-privacy-allowlist-exclude-line */
+  D[0],
+);
+
+// Prefixed block comments should also work.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ "prefixed block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ 'prefixed block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ \`prefixed block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-line */ tag\`prefixed block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ "multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ 'multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ \`multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-line
+   */ tag\`multiline block 4\`,
+  D[0],
+);
+
+// Should be able to exclude any kind of string with an exclude-next-line.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  "exclude next line 1",
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  'exclude next line 2',
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  \`exclude next line 3\`,
+  D[0],
+  // datadog-privacy-allowlist-exclude-next-line
+  tag\`exclude next line 4\`,
+  D[0],
+);
+
+// Block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  "exclude next line block 1",
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  'exclude next line block 2',
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  \`exclude next line block 3\`,
+  D[0],
+  /* datadog-privacy-allowlist-exclude-next-line */
+  tag\`exclude next line block 4\`,
+  D[0],
+);
+
+// Multiline block comments should also work for exclude-next-line.
+console.log(
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  "exclude next line multiline block 1",
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  'exclude next line multiline block 2',
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  \`exclude next line multiline block 3\`,
+  D[0],
+  /*
+   datadog-privacy-allowlist-exclude-next-line
+   */
+  tag\`exclude next line multiline block 4\`,
+  D[0],
+);
+
+// We should be able to exclude a range of lines.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range 1",
+  'exclude range 2',
+  \`exclude range 3\`,
+  tag\`exclude range 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// We should be able to exclude a range of with a block comment.
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with block comment 1",
+  'exclude range with block comment 2',
+  \`exclude range with block comment 3\`,
+  tag\`exclude range with block comment 4\`,
+  /* datadog-privacy-allowlist-exclude-end */
+  D[0],
+);
+
+// Extra 'exclude-begin' directives inside an exclusion and 'exclude-end'
+// directives outside of an exclusion should have no effect.
+console.log(
+  D[0],
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+  // datadog-privacy-allowlist-exclude-begin
+  "exclude range with extra directives 1",
+  'exclude range with extra directives 2',
+  // datadog-privacy-allowlist-exclude-begin
+  \`exclude range with extra directives 3\`,
+  tag\`exclude range with extra directives 4\`,
+  // datadog-privacy-allowlist-exclude-end
+  D[0],
+);
+
+// An unterminated 'exclude-begin' should cover the rest of the file. (And extra
+// 'exclude-begins' after that point should be ignored.)
+console.log(
+  D[0],
+  /* datadog-privacy-allowlist-exclude-begin */
+  "exclude range with unterminated comment 1",
+  'exclude range with unterminated comment 2',
+  /* datadog-privacy-allowlist-exclude-begin */
+  \`exclude range with unterminated comment 3\`,
+  tag\`exclude range with unterminated comment 4\`,
+);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIiwiIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IHRhZyA9ICgpID0+IHsgfTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIFwiZXhjbHVkZSBsaW5lIDFcIiwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4gICdleGNsdWRlIGxpbmUgMicsIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICdub3QgZXhjbHVkZWQnLFxuICBgZXhjbHVkZSBsaW5lIDNgLCAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZVxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgdGFnYGV4Y2x1ZGUgbGluZSA0YCwgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICBcImJsb2NrIDFcIiwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gICdibG9jayAyJywgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIGBibG9jayAzYCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4gIHRhZ2BibG9jayA0YCwgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmUgKi9cbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBQcmVmaXhlZCBibG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbGluZSAqLyBcInByZWZpeGVkIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovICdwcmVmaXhlZCBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIGBwcmVmaXhlZCBibG9jayAzYCxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lICovIHRhZ2BwcmVmaXhlZCBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yay5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1saW5lXG4gICAqLyBcIm11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovICdtdWx0aWxpbmUgYmxvY2sgMicsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIGBtdWx0aWxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWxpbmVcbiAgICovIHRhZ2BtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gU2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhbnkga2luZCBvZiBzdHJpbmcgd2l0aCBhbiBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICBgZXhjbHVkZSBuZXh0IGxpbmUgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBCbG9jayBjb21tZW50cyBzaG91bGQgYWxzbyB3b3JrIGZvciBleGNsdWRlLW5leHQtbGluZS5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDFcIixcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmUgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIGJsb2NrIDInLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZSAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgYmxvY2sgM2AsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBibG9jayA0YCxcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBNdWx0aWxpbmUgYmxvY2sgY29tbWVudHMgc2hvdWxkIGFsc28gd29yayBmb3IgZXhjbHVkZS1uZXh0LWxpbmUuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBcImV4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAxXCIsXG4gICdub3QgZXhjbHVkZWQnLFxuICAvKlxuICAgZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLW5leHQtbGluZVxuICAgKi9cbiAgJ2V4Y2x1ZGUgbmV4dCBsaW5lIG11bHRpbGluZSBibG9jayAyJyxcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8qXG4gICBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtbmV4dC1saW5lXG4gICAqL1xuICBgZXhjbHVkZSBuZXh0IGxpbmUgbXVsdGlsaW5lIGJsb2NrIDNgLFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLypcbiAgIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1uZXh0LWxpbmVcbiAgICovXG4gIHRhZ2BleGNsdWRlIG5leHQgbGluZSBtdWx0aWxpbmUgYmxvY2sgNGAsXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gV2Ugc2hvdWxkIGJlIGFibGUgdG8gZXhjbHVkZSBhIHJhbmdlIG9mIGxpbmVzLlxuY29uc29sZS5sb2coXG4gICdub3QgZXhjbHVkZWQnLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgXCJleGNsdWRlIHJhbmdlIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2UgMicsXG4gIGBleGNsdWRlIHJhbmdlIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSA0YCxcbiAgLy8gZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWVuZFxuICAnbm90IGV4Y2x1ZGVkJyxcbik7XG5cbi8vIFdlIHNob3VsZCBiZSBhYmxlIHRvIGV4Y2x1ZGUgYSByYW5nZSBvZiB3aXRoIGEgYmxvY2sgY29tbWVudC5cbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMVwiLFxuICAnZXhjbHVkZSByYW5nZSB3aXRoIGJsb2NrIGNvbW1lbnQgMicsXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggYmxvY2sgY29tbWVudCAzYCxcbiAgdGFnYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBibG9jayBjb21tZW50IDRgLFxuICAvKiBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtZW5kICovXG4gICdub3QgZXhjbHVkZWQnLFxuKTtcblxuLy8gRXh0cmEgJ2V4Y2x1ZGUtYmVnaW4nIGRpcmVjdGl2ZXMgaW5zaWRlIGFuIGV4Y2x1c2lvbiBhbmQgJ2V4Y2x1ZGUtZW5kJ1xuLy8gZGlyZWN0aXZlcyBvdXRzaWRlIG9mIGFuIGV4Y2x1c2lvbiBzaG91bGQgaGF2ZSBubyBlZmZlY3QuXG5jb25zb2xlLmxvZyhcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1iZWdpblxuICBcImV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDInLFxuICAvLyBkYXRhZG9nLXByaXZhY3ktYWxsb3dsaXN0LWV4Y2x1ZGUtYmVnaW5cbiAgYGV4Y2x1ZGUgcmFuZ2Ugd2l0aCBleHRyYSBkaXJlY3RpdmVzIDNgLFxuICB0YWdgZXhjbHVkZSByYW5nZSB3aXRoIGV4dHJhIGRpcmVjdGl2ZXMgNGAsXG4gIC8vIGRhdGFkb2ctcHJpdmFjeS1hbGxvd2xpc3QtZXhjbHVkZS1lbmRcbiAgJ25vdCBleGNsdWRlZCcsXG4pO1xuXG4vLyBBbiB1bnRlcm1pbmF0ZWQgJ2V4Y2x1ZGUtYmVnaW4nIHNob3VsZCBjb3ZlciB0aGUgcmVzdCBvZiB0aGUgZmlsZS4gKEFuZCBleHRyYVxuLy8gJ2V4Y2x1ZGUtYmVnaW5zJyBhZnRlciB0aGF0IHBvaW50IHNob3VsZCBiZSBpZ25vcmVkLilcbmNvbnNvbGUubG9nKFxuICAnbm90IGV4Y2x1ZGVkJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIFwiZXhjbHVkZSByYW5nZSB3aXRoIHVudGVybWluYXRlZCBjb21tZW50IDFcIixcbiAgJ2V4Y2x1ZGUgcmFuZ2Ugd2l0aCB1bnRlcm1pbmF0ZWQgY29tbWVudCAyJyxcbiAgLyogZGF0YWRvZy1wcml2YWN5LWFsbG93bGlzdC1leGNsdWRlLWJlZ2luICovXG4gIGBleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgM2AsXG4gIHRhZ2BleGNsdWRlIHJhbmdlIHdpdGggdW50ZXJtaW5hdGVkIGNvbW1lbnQgNGAsXG4pO1xuIiwiIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7QUFBQSxNQUFNLEdBQUcsR0FBRyxNQUFNO0FBQ2xCO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQixFQUFFLGdCQUFnQjtBQUNsQixFQUFFLElBQWM7QUFDaEIsRUFBRSxnQkFBZ0I7QUFDbEIsRUFBRSxJQUFjO0FBQ2hCLEdBQUcsY0FBYztBQUNqQixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsY0FBYztBQUNwQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEIsRUFBRSxTQUFTO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCLEVBQUUsU0FBUztBQUNYLEVBQUUsSUFBYztBQUNoQixHQUFHLE9BQU87QUFDVixFQUFFLElBQWM7QUFDaEIsRUFBRSxHQUFHLENBQUMsT0FBTztBQUNiLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0Msa0JBQWtCO0FBQ2pFLEVBQUUsSUFBYztBQUNoQixnREFBZ0QsZ0JBQWdCO0FBQ2hFLEVBQUUsSUFBYztBQUNoQiwrQ0FBK0MsR0FBRyxDQUFDLGdCQUFnQjtBQUNuRSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sbUJBQW1CO0FBQ3pCLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0EsTUFBTSxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQSxPQUFPLGlCQUFpQjtBQUN4QixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBLE1BQU0sR0FBRyxDQUFDLGlCQUFpQjtBQUMzQixFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLHFCQUFxQjtBQUN2QixFQUFFLElBQWM7QUFDaEI7QUFDQSxHQUFHLG1CQUFtQjtBQUN0QixFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQkFBbUI7QUFDekIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSwyQkFBMkI7QUFDN0IsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsR0FBRyx5QkFBeUI7QUFDNUIsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxHQUFHLENBQUMseUJBQXlCO0FBQy9CLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLHFDQUFxQztBQUN2QyxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsRUFBRSxxQ0FBcUM7QUFDdkMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLEdBQUcsbUNBQW1DO0FBQ3RDLEVBQUUsSUFBYztBQUNoQjtBQUNBO0FBQ0E7QUFDQSxFQUFFLEdBQUcsQ0FBQyxtQ0FBbUM7QUFDekMsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBLE9BQU8sQ0FBQyxHQUFHO0FBQ1gsRUFBRSxJQUFjO0FBQ2hCO0FBQ0EsRUFBRSxpQkFBaUI7QUFDbkIsRUFBRSxpQkFBaUI7QUFDbkIsR0FBRyxlQUFlO0FBQ2xCLEVBQUUsR0FBRyxDQUFDLGVBQWU7QUFDckI7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLG9DQUFvQztBQUN0QyxFQUFFLG9DQUFvQztBQUN0QyxHQUFHLGtDQUFrQztBQUNyQyxFQUFFLEdBQUcsQ0FBQyxrQ0FBa0M7QUFDeEM7QUFDQSxFQUFFLElBQWM7QUFDaEI7QUFDQTtBQUNBO0FBQ0E7QUFDQSxPQUFPLENBQUMsR0FBRztBQUNYLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsSUFBYztBQUNoQjtBQUNBLEVBQUUsdUNBQXVDO0FBQ3pDLEVBQUUsdUNBQXVDO0FBQ3pDO0FBQ0EsR0FBRyxxQ0FBcUM7QUFDeEMsRUFBRSxHQUFHLENBQUMscUNBQXFDO0FBQzNDO0FBQ0EsRUFBRSxJQUFjO0FBQ2hCO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsT0FBTyxDQUFDLEdBQUc7QUFDWCxFQUFFLElBQWM7QUFDaEI7QUFDQSxFQUFFLDJDQUEyQztBQUM3QyxFQUFFLDJDQUEyQztBQUM3QztBQUNBLEdBQUcseUNBQXlDO0FBQzVDLEVBQUUsR0FBRyxDQUFDLHlDQUF5QztBQUMvQyIsImlnbm9yZUxpc3QiOlsxXX0="
 `;
 
 exports[`the ESM version should transform code correctly > for excluded-strings 1`] = `

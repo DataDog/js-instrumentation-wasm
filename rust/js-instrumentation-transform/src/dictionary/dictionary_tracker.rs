@@ -3,6 +3,9 @@ use lazy_static::lazy_static;
 use ordermap::OrderMap;
 use regex::Regex;
 use swc_atoms::Atom;
+use swc_common::Span;
+
+use crate::directives::DirectiveSet;
 
 pub type Dictionary = OrderMap<DictionaryEntry, DictionaryEntryStats>;
 
@@ -39,15 +42,17 @@ pub enum DictionaryEntry {
 }
 
 pub struct DictionaryTracker {
-    pub strings: Dictionary,
+    directive_set: DirectiveSet,
     in_uncollected_scopes: usize,
+    pub strings: Dictionary,
 }
 
 impl DictionaryTracker {
-    pub fn new() -> DictionaryTracker {
+    pub fn new(directive_set: DirectiveSet) -> DictionaryTracker {
         DictionaryTracker {
-            strings: Dictionary::default(),
+            directive_set,
             in_uncollected_scopes: 0,
+            strings: Dictionary::default(),
         }
     }
 
@@ -67,8 +72,9 @@ impl DictionaryTracker {
         self: &mut Self,
         raw: &Option<Atom>,
         value: &Atom,
+        span: &Span,
     ) -> Option<usize> {
-        if self.should_skip_string(value) {
+        if self.should_skip_string(value, span) {
             return None;
         }
 
@@ -91,19 +97,24 @@ impl DictionaryTracker {
 
         if raw_value.starts_with("\"") {
             let string = format!(r#""{}""#, string);
-            self.maybe_add_string(&Some(string.into()), value)
+            self.try_add_string(&Some(string.into()))
         } else if raw_value.starts_with("'") {
             let string = format!(r#"'{}'"#, string);
-            self.maybe_add_string(&Some(string.into()), value)
+            self.try_add_string(&Some(string.into()))
         } else {
             let string = string.replace("\"", "\\\"");
             let string = format!(r#""{}""#, string);
-            self.maybe_add_string(&Some(string.into()), value)
+            self.try_add_string(&Some(string.into()))
         }
     }
 
-    pub fn maybe_add_jsx_text(self: &mut Self, raw: &Atom, value: &Atom) -> Option<usize> {
-        if self.should_skip_string(value) {
+    pub fn maybe_add_jsx_text(
+        self: &mut Self,
+        raw: &Atom,
+        value: &Atom,
+        span: &Span,
+    ) -> Option<usize> {
+        if self.should_skip_string(value, span) {
             return None;
         }
 
@@ -125,11 +136,20 @@ impl DictionaryTracker {
         Some(self.add_atom(DictionaryEntry::String(string.into())))
     }
 
-    pub fn maybe_add_string(self: &mut Self, raw: &Option<Atom>, value: &Atom) -> Option<usize> {
-        if self.should_skip_string(value) {
+    pub fn maybe_add_string(
+        self: &mut Self,
+        raw: &Option<Atom>,
+        value: &Atom,
+        span: &Span,
+    ) -> Option<usize> {
+        if self.should_skip_string(value, span) {
             return None;
         }
 
+        self.try_add_string(raw)
+    }
+
+    fn try_add_string(self: &mut Self, raw: &Option<Atom>) -> Option<usize> {
         match raw {
             Some(raw_value) => {
                 return Some(self.add_atom(DictionaryEntry::String(raw_value.clone())));
@@ -140,16 +160,20 @@ impl DictionaryTracker {
         }
     }
 
-    pub fn maybe_add_tagged_template(self: &mut Self, quasis: &Vec<Atom>) -> Option<usize> {
-        if self.should_skip_tagged_template() {
+    pub fn maybe_add_tagged_template(
+        self: &mut Self,
+        quasis: &Vec<Atom>,
+        span: &Span,
+    ) -> Option<usize> {
+        if self.should_skip_tagged_template(span) {
             return None;
         } else {
             return Some(self.add_atom(DictionaryEntry::TaggedTemplate(quasis.clone())));
         }
     }
 
-    pub fn maybe_add_template_quasi(self: &mut Self, raw: &Atom) -> Option<usize> {
-        if self.should_skip_string(raw) {
+    pub fn maybe_add_template_quasi(self: &mut Self, raw: &Atom, span: &Span) -> Option<usize> {
+        if self.should_skip_string(raw, span) {
             None
         } else {
             Some(self.add_atom(DictionaryEntry::TemplateQuasi(raw.clone())))
@@ -180,11 +204,17 @@ impl DictionaryTracker {
     // Ignore empty or otherwise unwanted strings. It's important to use 'value' for this check to
     // ensure that we ignore the surrounding quotes when calculating the length of the string;
     // don't pass 'raw' to this function.
-    fn should_skip_string(self: &Self, value: &str) -> bool {
+    fn should_skip_string(self: &Self, value: &str, span: &Span) -> bool {
         if self.in_uncollected_scopes > 0 {
             return true;
         }
         if value.trim().len() == 0 {
+            return true;
+        }
+        if self
+            .directive_set
+            .excludes_span_from_privacy_allowlist(span)
+        {
             return true;
         }
         if URL_STRINGS_REGEX.is_match(value) {
@@ -199,8 +229,14 @@ impl DictionaryTracker {
         return false;
     }
 
-    fn should_skip_tagged_template(self: &Self) -> bool {
+    fn should_skip_tagged_template(self: &Self, span: &Span) -> bool {
         if self.in_uncollected_scopes > 0 {
+            return true;
+        }
+        if self
+            .directive_set
+            .excludes_span_from_privacy_allowlist(span)
+        {
             return true;
         }
         return false;

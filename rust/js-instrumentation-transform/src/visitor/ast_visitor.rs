@@ -99,7 +99,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
     fn visit_str(&mut self, node: &Str) {
         match node {
             Str { raw, span, value } => {
-                if let Some(index) = self.dictionary_tracker.maybe_add_string(&raw, &value) {
+                if let Some(index) = self
+                    .dictionary_tracker
+                    .maybe_add_string(&raw, &value, &span)
+                {
                     let may_follow_keyword = self.input_file.may_follow_keyword(span.lo);
                     self.rewrite_tracker
                         .emit(replace_string_with_dictionary_ref(
@@ -119,7 +122,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
     fn visit_prop_name(&mut self, node: &PropName) {
         match node {
             PropName::Str(Str { raw, span, value }) => {
-                if let Some(index) = self.dictionary_tracker.maybe_add_string(&raw, &value) {
+                if let Some(index) = self
+                    .dictionary_tracker
+                    .maybe_add_string(&raw, &value, &span)
+                {
                     self.rewrite_tracker
                         .emit(replace_property_key_with_dictionary_ref(index, *span));
                 }
@@ -140,7 +146,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         loop {
             let next_quasi = quasi_iter.next();
             if let Some(quasi) = next_quasi {
-                if let Some(index) = self.dictionary_tracker.maybe_add_template_quasi(&quasi.raw) {
+                if let Some(index) = self
+                    .dictionary_tracker
+                    .maybe_add_template_quasi(&quasi.raw, &quasi.span)
+                {
                     self.rewrite_tracker
                         .emit(replace_template_quasi_with_dictionary_ref(
                             index, quasi.span,
@@ -176,7 +185,9 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                 quasi.raw.clone()
             })
             .collect();
-        let index = self.dictionary_tracker.maybe_add_tagged_template(&quasis);
+        let index = self
+            .dictionary_tracker
+            .maybe_add_tagged_template(&quasis, &node.span);
         if let None = index {
             node.visit_children_with(self);
             return;
@@ -245,7 +256,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
     fn visit_jsx_attr_value(&mut self, node: &JSXAttrValue) {
         match &node {
             JSXAttrValue::Lit(Lit::Str(Str { raw, span, value })) => {
-                if let Some(index) = self.dictionary_tracker.maybe_add_jsx_attribute(raw, value) {
+                if let Some(index) = self
+                    .dictionary_tracker
+                    .maybe_add_jsx_attribute(raw, value, span)
+                {
                     self.rewrite_tracker
                         .emit(replace_jsx_string_with_dictionary_ref(index, *span));
 
@@ -282,7 +296,7 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
     fn visit_jsx_element_child(&mut self, node: &JSXElementChild) {
         match &node {
             JSXElementChild::JSXText(JSXText { raw, span, value }) => {
-                if let Some(index) = self.dictionary_tracker.maybe_add_jsx_text(raw, value) {
+                if let Some(index) = self.dictionary_tracker.maybe_add_jsx_text(raw, value, span) {
                     self.rewrite_tracker
                         .emit(replace_jsx_string_with_dictionary_ref(index, *span));
                 }
@@ -415,19 +429,23 @@ fn is_uncollected_jsx_attr(atom: &Atom) -> bool {
 #[cfg(test)]
 mod tests {
     use js_instrumentation_shared::{build_parser, InputFile};
+    use swc_common::comments::SingleThreadedComments;
     use swc_common::source_map::SmallPos;
     use swc_common::BytePos;
 
     use crate::dictionary::DictionaryEntry;
+    use crate::directives::DirectiveSet;
 
     use super::*;
 
     fn walk_code(code: &str) -> (DictionaryTracker, RewriteTracker) {
         let mut input_file = InputFile::new("test.jsx", code);
-        let mut parser = build_parser(&input_file, &Default::default());
+        let comments: SingleThreadedComments = Default::default();
+        let mut parser = build_parser(&input_file, &comments, &Default::default());
         let program = parser.parse_program().unwrap();
+        let directive_set = DirectiveSet::new(&input_file, &comments);
 
-        let mut dictionary_tracker = DictionaryTracker::new();
+        let mut dictionary_tracker = DictionaryTracker::new(directive_set);
         let mut feature_tracker = FeatureTracker::new();
         let mut identifier_tracker = IdentifierTracker::new(vec![]);
         let mut rewrite_tracker = RewriteTracker::new(vec![]);
