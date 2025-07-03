@@ -30,7 +30,7 @@ export function MyComponent(props) {
   return (
     <SomeComponent attr={D[7]} with={D[3]}>
       <AnotherComponent attr={D[4]} />
-      <SomethingElse style={{
+      <SomethingElse stuff={{
         key: D[9],
         anotherKey: props.key2,
       }}
@@ -41,12 +41,12 @@ export function MyComponent(props) {
         }}
       />
       <Flex
-        style={
+        stuff={
           {
             [D[5]]: `${topOffset}px`,
           }
         }
-        className={classNames(BLOCK, {
+        clazzes={classNames(BLOCK, {
           [`${BLOCK}${D[10]}`]: isStuck,
         })}
       >{D[0]}</Flex>

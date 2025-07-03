@@ -92,7 +92,7 @@ __metadata:
 
 "@datadog/instrumentation-test-plugin@file:../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::locator=%40datadog%2Fjs-instrumentation-wasm-unit-tests%40workspace%3A.":
   version: 0.1
-  resolution: "@datadog/instrumentation-test-plugin@file:../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz#../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::hash=55d7d0&locator=%40datadog%2Fjs-instrumentation-wasm-unit-tests%40workspace%3A."
+  resolution: "@datadog/instrumentation-test-plugin@file:../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz#../instrumentation-test-plugin/artifacts/@datadog-instrumentation-test-plugin.tgz::hash=8d7fd5&locator=%40datadog%2Fjs-instrumentation-wasm-unit-tests%40workspace%3A."
   dependencies:
     unplugin: "npm:^2.3.4"
   peerDependencies:
@@ -118,7 +118,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10c0/a87c11f8fcc7e05ef794d3fc77ed613c9d830118342583677888d924730efa201fae6ef144272b2eefa5b6061c93e9dc8adc53aefdaba0081b289da5d96f7d1b
+  checksum: 10c0/6fec41a1dad259eef685004512c69e31b45f94adfc07063a09dd4c4c0df6a0e88130082fb447101c4b57c68946bf385b3661671772335c8ed82ccdbc03b4b36a
   languageName: node
   linkType: hard
 

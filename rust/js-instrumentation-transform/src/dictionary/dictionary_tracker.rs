@@ -12,12 +12,17 @@ lazy_static! {
     static ref JSX_TERMINAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+$").unwrap();
     static ref JSX_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\"]"#).unwrap();
 
-    static ref IGNORE_STRINGS_REGEX: Regex = Regex::new(
-        r"chunk|(^http)|(^https)|(^data:)|(^\\t)|(^u?fixed\d+x\d+$)|(^\/\/)|(^url\()|(\[\d+,)|(uint\d{1,2}array)|(\b[0-9]+\b)"
-    ).unwrap();
-    static ref MAP_SHAPE_REGEX: Regex = Regex::new(r"^[A-Z]{3}-[A-Z]{3}\d-[A-Z0-9]+$").unwrap();
-    static ref SVG_PATH_REGEX: Regex = Regex::new(r"-?(?:\d+(?:\.\d+))").unwrap();
-    static ref IMAGE_FILE_REGEX: Regex = Regex::new(r"\.(png|jpe?g|gif|svg|webp|js|cjs|ts)$").unwrap();
+    /// Matches strings that look like URLs.
+    static ref URL_STRINGS_REGEX: Regex =
+        Regex::new(r"^(?:http:|https:|data:|url\(|\/\/)").unwrap();
+
+    /// Matches strings that look like file names.
+    static ref FILE_NAME_REGEX: Regex =
+        Regex::new(r"\.(png|jpe?g|gif|svg|webp|js|cjs|mjs|ts|cts|mts)$").unwrap();
+
+    /// Matches strings that consist only of numbers, or of numbers in [brackets], or of groups of
+    /// numbers separated by spaces or dashes or commas or periods.
+    static ref NUMERIC_STRINGS_REGEX: Regex = Regex::new(r"^(?:\[?[0-9]+\]?(?:\s|-|,|.)*)+$").unwrap();
 }
 
 pub struct DictionaryEntryStats {
@@ -176,16 +181,29 @@ impl DictionaryTracker {
     // ensure that we ignore the surrounding quotes when calculating the length of the string;
     // don't pass 'raw' to this function.
     fn should_skip_string(self: &Self, value: &str) -> bool {
-        self.in_uncollected_scopes > 0
-            || value.trim().len() == 0
-            || IGNORE_STRINGS_REGEX.is_match(value)
-            || MAP_SHAPE_REGEX.is_match(value)
-            || SVG_PATH_REGEX.is_match(value)
-            || IMAGE_FILE_REGEX.is_match(value)
+        if self.in_uncollected_scopes > 0 {
+            return true;
+        }
+        if value.trim().len() == 0 {
+            return true;
+        }
+        if URL_STRINGS_REGEX.is_match(value) {
+            return true;
+        }
+        if FILE_NAME_REGEX.is_match(value) {
+            return true;
+        }
+        if NUMERIC_STRINGS_REGEX.is_match(value) {
+            return true;
+        }
+        return false;
     }
 
     fn should_skip_tagged_template(self: &Self) -> bool {
-        self.in_uncollected_scopes > 0
+        if self.in_uncollected_scopes > 0 {
+            return true;
+        }
+        return false;
     }
 }
 

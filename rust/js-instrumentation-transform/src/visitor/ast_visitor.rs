@@ -1,9 +1,10 @@
 use js_instrumentation_shared::InputFile;
+use swc_atoms::Atom;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecma_ast::{
-    CallExpr, Callee, ExportAll, Expr, Ident, IdentName, ImportDecl, JSXAttrValue, JSXElementChild,
-    JSXText, Lit, NamedExport, Program, PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl,
-    TsInterfaceDecl, TsModuleName, TsType,
+    CallExpr, Callee, ExportAll, Expr, Ident, IdentName, ImportDecl, JSXAttr, JSXAttrName,
+    JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXText, Lit, NamedExport, Program,
+    PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl, TsInterfaceDecl, TsModuleName, TsType,
 };
 use swc_ecma_visit::{Visit, VisitWith};
 
@@ -227,6 +228,20 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
             }));
     }
 
+    fn visit_jsx_attr(&mut self, node: &JSXAttr) {
+        match &node.name {
+            JSXAttrName::Ident(ident) if is_uncollected_jsx_attr(&ident.sym) => {
+                self.in_uncollected_scope(|this| node.visit_children_with(this));
+            }
+            JSXAttrName::JSXNamespacedName(name) if is_uncollected_jsx_attr(&name.name.sym) => {
+                self.in_uncollected_scope(|this| node.visit_children_with(this));
+            }
+            _ => {
+                node.visit_children_with(self);
+            }
+        }
+    }
+
     fn visit_jsx_attr_value(&mut self, node: &JSXAttrValue) {
         match &node {
             JSXAttrValue::Lit(Lit::Str(Str { raw, span, value })) => {
@@ -246,6 +261,22 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         }
 
         node.visit_children_with(self);
+    }
+
+    fn visit_jsx_element(&mut self, node: &JSXElement) {
+        match &node.opening.name {
+            JSXElementName::Ident(ident) if is_uncollected_jsx_element(&ident.sym) => {
+                self.in_uncollected_scope(|this| node.visit_children_with(this));
+            }
+            JSXElementName::JSXNamespacedName(name)
+                if is_uncollected_jsx_element(&name.name.sym) =>
+            {
+                self.in_uncollected_scope(|this| node.visit_children_with(this));
+            }
+            _ => {
+                node.visit_children_with(self);
+            }
+        }
     }
 
     fn visit_jsx_element_child(&mut self, node: &JSXElementChild) {
@@ -364,6 +395,20 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         }
 
         node.visit_children_with(self);
+    }
+}
+
+fn is_uncollected_jsx_element(atom: &Atom) -> bool {
+    match atom.as_str() {
+        "g" | "path" => true,
+        _ => false,
+    }
+}
+
+fn is_uncollected_jsx_attr(atom: &Atom) -> bool {
+    match atom.as_str() {
+        "class" | "className" | "d" | "id" | "src" | "srcset" | "style" => true,
+        _ => false,
     }
 }
 
