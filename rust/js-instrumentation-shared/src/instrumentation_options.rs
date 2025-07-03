@@ -64,7 +64,7 @@ impl Default for InstrumentationOptions {
             },
             output: OutputOptions {
                 inline_source_map: false,
-                embed_code_in_source_map: false,
+                embed_code_in_source_map: true,
             },
             privacy: PrivacyOptions {
                 add_to_dictionary_helper: HelperFunctionSource::Import {
