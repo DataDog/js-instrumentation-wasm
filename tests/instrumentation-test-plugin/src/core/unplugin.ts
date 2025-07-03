@@ -36,20 +36,20 @@ function buildInstrumentationOptions(
 
 function getHelperModuleNames(
   options: InstrumentationOptions
-): { cjsModule: string, esmModule: string } {
+): { cjsHelpersModule: string, esmHelpersModule: string } {
   const addToDictionaryHelper = options?.privacy?.addToDictionaryHelper ?? {};
   if (!('import' in addToDictionaryHelper)) {
     // We're using an expression-style helper. Use the default module names, although we
     // won't ever actually load or resolve them.
     return {
-      cjsModule: PRIVACY_HELPERS_MODULE_CJS_ID,
-      esmModule: PRIVACY_HELPERS_MODULE_ESM_ID
+      cjsHelpersModule: PRIVACY_HELPERS_MODULE_CJS_ID,
+      esmHelpersModule: PRIVACY_HELPERS_MODULE_ESM_ID
     };
   }
   const importHelper = addToDictionaryHelper as ImportPrivacyHelperSource;
   return {
-    cjsModule: importHelper.import.cjsModule,
-    esmModule: importHelper.import.esmModule,
+    cjsHelpersModule: importHelper.import.cjsModule,
+    esmHelpersModule: importHelper.import.esmModule,
   };
 }
 
@@ -63,12 +63,13 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
     pluginOptions.include,
     pluginOptions.exclude
   );
-  const { cjsModule, esmModule } = getHelperModuleNames(instrumentationOptions);
+  const { cjsHelpersModule, esmHelpersModule } =
+    getHelperModuleNames(instrumentationOptions);
   return {
     name: 'instrumentation-test-plugin',
 
     resolveId(source) {
-      if (source === cjsModule || source === esmModule) {
+      if (source === cjsHelpersModule || source === esmHelpersModule) {
         return { id: source };
       }
       return null;
@@ -79,12 +80,12 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
 
       filter: {
         id: {
-          include: new RegExp(`^(?:${cjsModule})|(?:${esmModule})$`)
+          include: new RegExp(`^(?:${cjsHelpersModule})|(?:${esmHelpersModule})$`)
         },
       },
 
       handler(id) {
-        if (id === cjsModule || id === esmModule) {
+        if (id === cjsHelpersModule || id === esmHelpersModule) {
           return { code: helpers };
         }
         return null;
@@ -93,14 +94,14 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
 
     transformInclude(id) {
       // Check for a literal match for our helpers.
-      if (id === cjsModule || id === esmModule) {
+      if (id === cjsHelpersModule || id === esmHelpersModule) {
         return false;
       }
 
       // Check for a URI ending with an encoded version of our helpers. (This is how
       // webpack does things.)
       const decodedId = decodeURIComponent(id);
-      if (decodedId.endsWith(cjsModule) || decodedId.endsWith(esmModule)) {
+      if (decodedId.endsWith(cjsHelpersModule) || decodedId.endsWith(esmHelpersModule)) {
         return false;
       }
 

@@ -16,9 +16,9 @@ pub struct RewriteOutput<'a> {
     input_end_pos: BytePos,
     source_map_tokens: Vec<RawToken>,
 
+    next_token_position: BytePos,
     token_positions: Vec<BytePos>,
     token_position_index: usize,
-    next_token_position: BytePos,
 }
 
 impl<'a> RewriteOutput<'a> {
@@ -38,9 +38,9 @@ impl<'a> RewriteOutput<'a> {
             input_end_pos: input_file.end_pos,
             source_map_tokens: Vec::new(),
 
+            next_token_position,
             token_positions,
             token_position_index,
-            next_token_position,
         }
     }
 
@@ -49,10 +49,14 @@ impl<'a> RewriteOutput<'a> {
         let src_start_pos = self.input.cur_pos();
 
         while self.input.cur_pos() < src_end_pos {
-            self.maybe_emit_source_map_token();
+            self.emit_source_map_token_if_mapping_exists();
 
+            // Advance by one character if possible.
             match self.input.cur() {
                 Some(ch) => {
+                    unsafe {
+                        self.input.bump();
+                    }
                     if ch == '\n' {
                         self.dst_line += 1;
                         self.dst_col = 0;
@@ -61,9 +65,6 @@ impl<'a> RewriteOutput<'a> {
                     } else {
                         self.dst_col += 1;
                         self.src_col += 1;
-                    }
-                    unsafe {
-                        self.input.bump();
                     }
                 }
                 None => break,
@@ -79,18 +80,19 @@ impl<'a> RewriteOutput<'a> {
     /// given replacement string is emitted instead.
     pub fn emit_replacement_until(self: &mut Self, src_end_pos: BytePos, replacement_string: &str) {
         while self.input.cur_pos() < src_end_pos {
-            self.maybe_emit_source_map_token();
+            self.emit_source_map_token_if_mapping_exists();
 
+            // Advance by one character if possible.
             match self.input.cur() {
                 Some(ch) => {
+                    unsafe {
+                        self.input.bump();
+                    }
                     if ch == '\n' {
                         self.src_line += 1;
                         self.src_col = 0;
                     } else {
                         self.src_col += 1;
-                    }
-                    unsafe {
-                        self.input.bump();
                     }
                 }
                 None => break,
@@ -121,22 +123,33 @@ impl<'a> RewriteOutput<'a> {
         (self.dst_buffer, self.source_map_tokens)
     }
 
-    fn maybe_emit_source_map_token(self: &mut Self) {
+    fn emit_source_map_token_if_mapping_exists(self: &mut Self) {
         if self.input.cur_pos() == self.next_token_position {
-            self.source_map_tokens.push(RawToken {
-                dst_line: self.dst_line,
-                dst_col: self.dst_col,
-                src_line: self.src_line,
-                src_col: self.src_col,
-                src_id: 0,
-                name_id: !0,
-                is_range: false,
-            });
+            // Emit a mapping because there's a mapped token at this position.
+            self.emit_source_map_token();
             self.token_position_index += 1;
             self.next_token_position = self
                 .token_positions
                 .get(self.token_position_index)
                 .map_or(BytePos::DUMMY, |p| *p);
+        } else if self.src_col == 0 {
+            // Emit a mapping for the first character of every line. This guarantees that every
+            // line receives at least one mapping, and it ensures the minor source map inaccuracies
+            // never cause a character to be associated with the previous line instead of the line
+            // it's actually on.
+            self.emit_source_map_token();
         }
+    }
+
+    fn emit_source_map_token(self: &mut Self) {
+        self.source_map_tokens.push(RawToken {
+            dst_line: self.dst_line,
+            dst_col: self.dst_col,
+            src_line: self.src_line,
+            src_col: self.src_col,
+            src_id: 0,
+            name_id: !0,
+            is_range: false,
+        });
     }
 }

@@ -43,7 +43,7 @@ export interface InputOptions {
 export interface OutputOptions {
   /** If true, inline the source map in the transformed file. The default is false. */
   inlineSourceMap?: boolean;
-  /** If true, embed the code in the source map. The default is false. */
+  /** If true, embed the code in the source map. The default is true. */
   embedCodeInSourceMap?: boolean;
 }
 
@@ -114,14 +114,14 @@ function convertOptions(
   options: InstrumentationOptions | undefined
 ): RustInstrumentationOptions {
   return {
-    input: options?.input ?? {
-      module: 'esm',
-      jsx: undefined,
-      typescript: undefined,
+    input: {
+      module: options?.input?.module ?? undefined,
+      jsx: options?.input?.jsx ?? true,
+      typescript: options?.input?.typescript ?? true,
     },
-    output: options?.output ?? {
-      inlineSourceMap: false,
-      embedCodeInSourceMap: false,
+    output: {
+      inlineSourceMap: options?.output?.inlineSourceMap ?? false,
+      embedCodeInSourceMap: options?.output?.embedCodeInSourceMap ?? true,
     },
     privacy: {
       addToDictionaryHelper: options?.privacy?.addToDictionaryHelper ?? {

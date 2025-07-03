@@ -17,7 +17,6 @@ const pluginOptions = {
   },
   output: {
     inlineSourceMap: true,
-    embedCodeInSourceMap: true,
   },
 };
 

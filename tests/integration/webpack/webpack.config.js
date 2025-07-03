@@ -13,6 +13,8 @@ const plugins = process.env['UPDATING_SNAPSHOTS'] === 'true'
   : [InstrumentationTestPlugin()];
 
 export default {
+  devtool: 'source-map',
+
   entry: "./app/src/main.tsx",
 
   experiments: {
