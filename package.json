@@ -1,7 +1,7 @@
 {
   "name": "@datadog/js-instrumentation-wasm",
   "type": "module",
-  "version": "0.9.7",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "A library for adding Datadog instrumentation to JavaScript and TypeScript code",
   "homepage": "https://github.com/datadog/js-instrumentation-wasm#readme",
