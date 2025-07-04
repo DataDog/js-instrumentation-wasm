@@ -8,6 +8,7 @@ use js_instrumentation_shared::{
     build_parser, debug_log, module_kind_for, InputFile, InstrumentationInput,
     InstrumentationOptions, InstrumentationOutput,
 };
+use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SmallPos;
 use swc_core::base::sourcemap::SourceMap;
 
@@ -15,6 +16,7 @@ use crate::dictionary::{
     DictionaryTracker, OptimizedDictionary, DEFAULT_ADD_TO_DICTIONARY_FUNCTION,
     DEFAULT_DICTIONARY_IDENTIFIER,
 };
+use crate::directives::DirectiveSet;
 use crate::features::FeatureTracker;
 use crate::identifiers::IdentifierTracker;
 use crate::rewrite::{
@@ -27,7 +29,8 @@ pub fn apply_transform(
     options: &InstrumentationOptions,
 ) -> Result<InstrumentationOutput> {
     let mut input_file = InputFile::new(&input.id, &input.code);
-    let mut parser = build_parser(&input_file, options);
+    let comments: SingleThreadedComments = Default::default();
+    let mut parser = build_parser(&input_file, &comments, options);
     let program = match parser.parse_program() {
         Ok(program) => program,
         Err(err) => {
@@ -35,9 +38,11 @@ pub fn apply_transform(
         }
     };
 
+    let directive_set = DirectiveSet::new(&input_file, &comments);
+
     let default_add_to_dictionary_helper = get_default_add_to_dictionary_helper(&options);
 
-    let mut dictionary_tracker = DictionaryTracker::new();
+    let mut dictionary_tracker = DictionaryTracker::new(directive_set);
     let mut feature_tracker = FeatureTracker::new();
     let mut identifier_tracker = IdentifierTracker::new(vec![
         default_add_to_dictionary_helper,
