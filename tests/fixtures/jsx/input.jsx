@@ -15,7 +15,7 @@ export function MyComponent(props) {
   return (
     <SomeComponent attr="something'" with='quotes"inside'>
       <AnotherComponent attr={'with"\'quotes'} />
-      <SomethingElse style={{
+      <SomethingElse stuff={{
         key: 'value',
         anotherKey: props.key2,
       }}
@@ -32,12 +32,12 @@ export function MyComponent(props) {
         }}
       />
       <Flex
-        style={
+        stuff={
           {
             '--top-offset': `${topOffset}px`,
           }
         }
-        className={classNames(BLOCK, {
+        clazzes={classNames(BLOCK, {
           [`${BLOCK}--is-stuck`]: isStuck,
         })}
       >
