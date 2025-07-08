@@ -384,16 +384,18 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
             Callee::Expr(expr) => {
                 match **expr {
                     Expr::Ident(ref ident) => {
-                        if ident.sym.as_str() == "eval" {
-                            // Don't collect strings inside eval() calls.
-                            self.in_uncollected_scope(|this| node.visit_children_with(this));
-                            return;
-                        }
-                        if ident.sym.as_str() == "require" {
-                            // Don't collect strings inside require() calls.
-                            self.feature_tracker.observed_require();
-                            self.in_uncollected_scope(|this| node.visit_children_with(this));
-                            return;
+                        // Don't collect strings inside certain function calls.
+                        match ident.sym.as_str() {
+                            "eval" => {
+                                self.in_uncollected_scope(|this| node.visit_children_with(this));
+                                return;
+                            }
+                            "require" => {
+                                self.feature_tracker.observed_require();
+                                self.in_uncollected_scope(|this| node.visit_children_with(this));
+                                return;
+                            }
+                            _ => {}
                         }
                     }
                     _ => {}
@@ -404,6 +406,24 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                 self.feature_tracker.observed_export_or_import();
                 self.in_uncollected_scope(|this| node.visit_children_with(this));
                 return;
+            }
+            _ => {}
+        }
+
+        node.visit_children_with(self);
+    }
+
+    fn visit_new_expr(&mut self, node: &swc_ecma_ast::NewExpr) {
+        match *node.callee {
+            Expr::Ident(ref ident) => {
+                // Don't collect strings inside certain constructor calls.
+                match ident.sym.as_str() {
+                    "Function" | "RegExp" => {
+                        self.in_uncollected_scope(|this| node.visit_children_with(this));
+                        return;
+                    }
+                    _ => {}
+                }
             }
             _ => {}
         }

@@ -24,3 +24,5 @@ function doSomething() {
   "use strict";
   return 0;
 }
+const regex = new RegExp('foo');
+const func = new Function('foo');

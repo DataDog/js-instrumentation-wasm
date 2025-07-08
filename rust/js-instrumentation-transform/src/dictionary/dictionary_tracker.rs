@@ -9,6 +9,8 @@ use crate::directives::DirectiveSet;
 
 pub type Dictionary = OrderMap<DictionaryEntry, DictionaryEntryStats>;
 
+const MAX_STRING_LENGTH: usize = 4096;
+
 lazy_static! {
     static ref JSX_INITIAL_WHITESPACE_REGEX: Regex = Regex::new(r"^\n\s+").unwrap();
     static ref JSX_INTERNAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+").unwrap();
@@ -26,6 +28,9 @@ lazy_static! {
     /// Matches strings that consist only of numbers, or of numbers in [brackets], or of groups of
     /// numbers separated by spaces or dashes or commas or periods.
     static ref NUMERIC_STRINGS_REGEX: Regex = Regex::new(r"^(?:\[?[0-9]+\]?(?:\s|-|,|.)*)+$").unwrap();
+
+    /// Matches strings that look like programming code.
+    static ref CODE_STRINGS_REGEX: Regex = Regex::new(r#""use strict""#).unwrap();
 }
 
 pub struct DictionaryEntryStats {
@@ -208,6 +213,9 @@ impl DictionaryTracker {
         if self.in_uncollected_scopes > 0 {
             return true;
         }
+        if value.len() > MAX_STRING_LENGTH {
+            return true;
+        }
         if value.trim().len() == 0 {
             return true;
         }
@@ -224,6 +232,9 @@ impl DictionaryTracker {
             return true;
         }
         if NUMERIC_STRINGS_REGEX.is_match(value) {
+            return true;
+        }
+        if CODE_STRINGS_REGEX.is_match(value) {
             return true;
         }
         return false;
