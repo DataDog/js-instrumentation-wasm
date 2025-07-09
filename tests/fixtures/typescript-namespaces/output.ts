@@ -1,10 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  'betelgeuse',
-  'cassiopeia',
-  'andromeda',
-]);
-declare module SomeModule {
+import{$}from'datadog:privacy-helpers.mjs';const D=$(['betelgeuse','cassiopeia','andromeda']);declare module SomeModule {
   const variable = D[2];
 }
 

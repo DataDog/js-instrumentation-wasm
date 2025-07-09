@@ -1,8 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  'not excluded',
-]);
-const tag = () => { };
+import{$}from'datadog:privacy-helpers.mjs';const D=$(['not excluded']);const tag = () => { };
 
 // Should be able to exclude any kind of string with an exclude-line.
 console.log(

@@ -1,23 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  "appendix",
-  "gem`'\"\u{6F}",
-  "cat\r\n\tdog",
-  "observe",
-  'quarrel',
-  'fizz"\'"',
-  "karat",
-  'bowling',
-  "egg'\"'",
-  "macrame",
-  "nanobot",
-  "pacific",
-  "hammer",
-  "image",
-  "jewel",
-  "labor",
-]);
-const foo = () => {};
+import{$}from'datadog:privacy-helpers.mjs';const D=$(["appendix","gem`'\"\u{6F}","cat\r\n\tdog","observe",'quarrel','fizz"\'"',"karat",'bowling',"egg'\"'","macrame","nanobot","pacific","hammer","image","jewel","labor"]);const foo = () => {};
 
 // Trivial string literals.
 const trivial1 = "";
