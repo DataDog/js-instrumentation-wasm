@@ -17,6 +17,7 @@ rust-version = "1.70"
 
 [workspace.dependencies]
 anyhow = "1.0.83"
+data-url = "0.3.1"
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
 lazy_static = "1.4.0"
 ordermap = "0.5.6"

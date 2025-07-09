@@ -5,7 +5,7 @@ use regex::Regex;
 use swc_atoms::Atom;
 use swc_common::Span;
 
-use crate::directives::DirectiveSet;
+use crate::comments::DirectiveSet;
 
 pub type Dictionary = OrderMap<DictionaryEntry, DictionaryEntryStats>;
 

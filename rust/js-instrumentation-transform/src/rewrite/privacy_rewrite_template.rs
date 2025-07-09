@@ -24,6 +24,7 @@ pub enum PrivacyRewriteTemplate {
     TaggedTemplateAfterExpr,
     TaggedTemplateTerminator,
     TemplateQuasiDictionaryReference(usize),
+    DeleteSourceMapComment,
 }
 
 pub struct TemplateParameters<'a> {
@@ -122,6 +123,9 @@ impl PrivacyRewriteTemplate {
                     params.dictionary_identifier,
                     params.dictionary.entry_for_index(*index)?
                 )),
+            ),
+            PrivacyRewriteTemplate::DeleteSourceMapComment => Ok(
+                PrivacyRewriteContent::DeleteSourceMapComment("".to_string()),
             ),
         }
     }

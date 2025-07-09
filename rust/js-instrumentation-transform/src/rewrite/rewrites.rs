@@ -95,3 +95,10 @@ pub fn replace_template_quasi_with_dictionary_ref(
         span,
     }
 }
+
+pub fn delete_source_map_comment(span: Span) -> Rewrite<PrivacyRewriteTemplate> {
+    Rewrite::Replace {
+        content: PrivacyRewriteTemplate::DeleteSourceMapComment,
+        span,
+    }
+}

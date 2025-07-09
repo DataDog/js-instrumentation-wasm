@@ -1,8 +1,8 @@
+use data_url::DataUrl;
 use js_instrumentation_shared::InputFile;
-use swc_common::{
-    comments::{Comment, SingleThreadedComments},
-    BytePos, Span,
-};
+use swc_common::{comments::SingleThreadedComments, BytePos, Span};
+
+use super::{DirectiveSet, SourceMapComment};
 
 const PRIVACY_ALLOWLIST_EXCLUDE_BEGIN_COMMENT: &'static str =
     "datadog-privacy-allowlist-exclude-begin";
@@ -13,94 +13,113 @@ const PRIVACY_ALLOWLIST_EXCLUDE_LINE_COMMENT: &'static str =
     "datadog-privacy-allowlist-exclude-line";
 const PRIVACY_ALLOWLIST_EXCLUDE_NEXT_LINE_COMMENT: &'static str =
     "datadog-privacy-allowlist-exclude-next-line";
+const SOURCE_MAPPING_URL_COMMENT_PREFIX: &'static str = "# sourceMappingURL=";
 
-pub struct DirectiveSet {
-    privacy_allowlist_excluded_file: bool,
-    privacy_allowlist_excluded_spans: Vec<Span>,
-}
+pub fn process_comments(
+    file: &InputFile,
+    comments: &SingleThreadedComments,
+) -> (DirectiveSet, Option<SourceMapComment>) {
+    let mut source_map_comment: Option<SourceMapComment> = None;
+    let mut privacy_allowlist_excluded_file = false;
+    let mut privacy_allowlist_excluded_spans: Vec<Span> = Vec::new();
+    let mut exclusion_begin_positions: Vec<BytePos> = Vec::new();
+    let mut exclusion_end_positions: Vec<BytePos> = Vec::new();
 
-impl DirectiveSet {
-    pub fn new(file: &InputFile, comments: &SingleThreadedComments) -> Self {
-        let mut privacy_allowlist_excluded_file = false;
-        let mut privacy_allowlist_excluded_spans: Vec<Span> = Vec::new();
-        let mut exclusion_begin_positions: Vec<BytePos> = Vec::new();
-        let mut exclusion_end_positions: Vec<BytePos> = Vec::new();
-
-        let (leading_comments, trailing_comments) = comments.borrow_all();
-        for (_pos, comments) in leading_comments.iter().chain(trailing_comments.iter()) {
-            for comment in comments {
-                if let Some(span) = parse_privacy_allowlist_excluded_span_directive(file, comment) {
-                    if span == file.span() {
-                        privacy_allowlist_excluded_file = true;
-                    } else {
-                        privacy_allowlist_excluded_spans.push(span);
-                    }
-                } else if let Some(pos) = parse_privacy_allowlist_exclude_begin_directive(comment) {
-                    exclusion_begin_positions.push(pos);
-                } else if let Some(pos) = parse_privacy_allowlist_exclude_end_directive(comment) {
-                    exclusion_end_positions.push(pos);
+    let (leading_comments, trailing_comments) = comments.borrow_all();
+    for (_pos, comments) in leading_comments.iter().chain(trailing_comments.iter()) {
+        for comment in comments {
+            let comment_text = comment.text.as_str().trim();
+            if let Some(source_mapping) =
+                parse_source_mapping_url_directive(comment_text, &comment.span)
+            {
+                source_map_comment = Some(source_mapping);
+            } else if let Some(span) =
+                parse_privacy_allowlist_excluded_span_directive(file, comment_text, &comment.span)
+            {
+                if span == file.span() {
+                    privacy_allowlist_excluded_file = true;
+                } else {
+                    privacy_allowlist_excluded_spans.push(span);
                 }
+            } else if let Some(pos) =
+                parse_privacy_allowlist_exclude_begin_directive(comment_text, &comment.span)
+            {
+                exclusion_begin_positions.push(pos);
+            } else if let Some(pos) =
+                parse_privacy_allowlist_exclude_end_directive(comment_text, &comment.span)
+            {
+                exclusion_end_positions.push(pos);
             }
         }
-
-        add_spans_for_exclusion_begin_and_end_positions(
-            file,
-            &mut privacy_allowlist_excluded_spans,
-            exclusion_begin_positions,
-            exclusion_end_positions,
-        );
-
-        return DirectiveSet {
-            privacy_allowlist_excluded_file,
-            privacy_allowlist_excluded_spans,
-        };
     }
 
-    pub fn excludes_span_from_privacy_allowlist(self: &Self, span: &Span) -> bool {
-        if self.privacy_allowlist_excluded_file {
-            return true;
+    add_spans_for_exclusion_begin_and_end_positions(
+        file,
+        &mut privacy_allowlist_excluded_spans,
+        exclusion_begin_positions,
+        exclusion_end_positions,
+    );
+
+    (
+        DirectiveSet {
+            privacy_allowlist_excluded_file,
+            privacy_allowlist_excluded_spans,
+        },
+        source_map_comment,
+    )
+}
+
+fn parse_source_mapping_url_directive(
+    comment_text: &str,
+    comment_span: &Span,
+) -> Option<SourceMapComment> {
+    match comment_text.strip_prefix(SOURCE_MAPPING_URL_COMMENT_PREFIX) {
+        Some(url_str) if url_str.starts_with("data:") => {
+            let url = DataUrl::process(url_str).ok()?;
+            let (body, _) = url.decode_to_vec().ok()?;
+            Some(SourceMapComment::Inline(body, comment_span.clone()))
         }
-        for excluded_span in &self.privacy_allowlist_excluded_spans {
-            if spans_intersect(span, &excluded_span) {
-                return true;
-            }
-        }
-        return false;
+        Some(_) => Some(SourceMapComment::External()),
+        _ => None,
     }
 }
 
 fn parse_privacy_allowlist_excluded_span_directive(
     file: &InputFile,
-    comment: &Comment,
+    comment_text: &str,
+    comment_span: &Span,
 ) -> Option<Span> {
-    let text = comment.text.as_str().trim();
-    if text == PRIVACY_ALLOWLIST_EXCLUDE_FILE_COMMENT {
+    if comment_text == PRIVACY_ALLOWLIST_EXCLUDE_FILE_COMMENT {
         Some(Span {
             lo: file.start_pos,
             hi: file.end_pos,
         })
-    } else if text == PRIVACY_ALLOWLIST_EXCLUDE_LINE_COMMENT {
-        bounds_of_lines_intersecting_span(comment.span, file)
-    } else if text == PRIVACY_ALLOWLIST_EXCLUDE_NEXT_LINE_COMMENT {
-        bounds_of_line_after_pos(comment.span.hi, file)
+    } else if comment_text == PRIVACY_ALLOWLIST_EXCLUDE_LINE_COMMENT {
+        bounds_of_lines_intersecting_span(comment_span, file)
+    } else if comment_text == PRIVACY_ALLOWLIST_EXCLUDE_NEXT_LINE_COMMENT {
+        bounds_of_line_after_pos(comment_span.hi, file)
     } else {
         None
     }
 }
 
-fn parse_privacy_allowlist_exclude_begin_directive(comment: &Comment) -> Option<BytePos> {
-    let text = comment.text.as_str().trim();
-    if text == PRIVACY_ALLOWLIST_EXCLUDE_BEGIN_COMMENT {
-        Some(comment.span.lo)
+fn parse_privacy_allowlist_exclude_begin_directive(
+    comment_text: &str,
+    comment_span: &Span,
+) -> Option<BytePos> {
+    if comment_text == PRIVACY_ALLOWLIST_EXCLUDE_BEGIN_COMMENT {
+        Some(comment_span.lo)
     } else {
         None
     }
 }
 
-fn parse_privacy_allowlist_exclude_end_directive(comment: &Comment) -> Option<BytePos> {
-    let text = comment.text.as_str().trim();
-    if text == PRIVACY_ALLOWLIST_EXCLUDE_END_COMMENT {
-        Some(comment.span.hi)
+fn parse_privacy_allowlist_exclude_end_directive(
+    comment_text: &str,
+    comment_span: &Span,
+) -> Option<BytePos> {
+    if comment_text == PRIVACY_ALLOWLIST_EXCLUDE_END_COMMENT {
+        Some(comment_span.hi)
     } else {
         None
     }
@@ -160,7 +179,7 @@ fn add_spans_for_exclusion_begin_and_end_positions(
     privacy_allowlist_excluded_spans.sort_unstable();
 }
 
-fn bounds_of_lines_intersecting_span(span: Span, file: &InputFile) -> Option<Span> {
+fn bounds_of_lines_intersecting_span(span: &Span, file: &InputFile) -> Option<Span> {
     let lo_span = bounds_of_line_containing_pos(span.lo, file);
     let hi_span = bounds_of_line_containing_pos(span.hi, file);
     match (lo_span, hi_span) {
@@ -200,14 +219,4 @@ fn bounds_of_line_after_pos(pos: BytePos, file: &InputFile) -> Option<Span> {
         lo: line_bounds.0,
         hi: line_bounds.1,
     })
-}
-
-fn spans_intersect(a: &Span, b: &Span) -> bool {
-    if a.hi <= b.lo {
-        return false;
-    }
-    if b.hi <= a.lo {
-        return false;
-    }
-    return true;
 }

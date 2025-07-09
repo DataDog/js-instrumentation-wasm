@@ -453,8 +453,8 @@ mod tests {
     use swc_common::source_map::SmallPos;
     use swc_common::BytePos;
 
+    use crate::comments::process_comments;
     use crate::dictionary::DictionaryEntry;
-    use crate::directives::DirectiveSet;
 
     use super::*;
 
@@ -463,7 +463,7 @@ mod tests {
         let comments: SingleThreadedComments = Default::default();
         let mut parser = build_parser(&input_file, &comments, &Default::default());
         let program = parser.parse_program().unwrap();
-        let directive_set = DirectiveSet::new(&input_file, &comments);
+        let (directive_set, _) = process_comments(&input_file, &comments);
 
         let mut dictionary_tracker = DictionaryTracker::new(directive_set);
         let mut feature_tracker = FeatureTracker::new();

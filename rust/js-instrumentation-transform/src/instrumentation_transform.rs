@@ -1,5 +1,3 @@
-use std::io::BufWriter;
-
 use anyhow::Result;
 use js_instrumentation_rewrite::rewrite::Rewrite;
 use js_instrumentation_rewrite::rewrite_plan::build_rewrite_plan;
@@ -10,17 +8,20 @@ use js_instrumentation_shared::{
 };
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SmallPos;
-use swc_core::base::sourcemap::SourceMap;
 
+use crate::comments::process_comments;
 use crate::dictionary::{
     DictionaryTracker, OptimizedDictionary, DEFAULT_ADD_TO_DICTIONARY_FUNCTION,
     DEFAULT_DICTIONARY_IDENTIFIER,
 };
-use crate::directives::DirectiveSet;
 use crate::features::FeatureTracker;
 use crate::identifiers::IdentifierTracker;
 use crate::rewrite::{
-    insert_dictionary_declaration, insert_helper_declaration, RewriteTracker, TemplateParameters,
+    delete_source_map_comment, insert_dictionary_declaration, insert_helper_declaration,
+    RewriteTracker, TemplateParameters,
+};
+use crate::source_maps::{
+    chain_source_map_if_needed, serialize_source_map, source_map_comment_span_to_delete,
 };
 use crate::visitor::visit;
 
@@ -38,7 +39,7 @@ pub fn apply_transform(
         }
     };
 
-    let directive_set = DirectiveSet::new(&input_file, &comments);
+    let (directive_set, source_map_comment) = process_comments(&input_file, &comments);
 
     let default_add_to_dictionary_helper = get_default_add_to_dictionary_helper(&options);
 
@@ -83,7 +84,11 @@ pub fn apply_transform(
         module_kind,
     );
 
-    let (rewrites, token_positions) = rewrite_tracker.take();
+    let (mut rewrites, token_positions) = rewrite_tracker.take();
+    if let Some(span_to_delete) = source_map_comment_span_to_delete(&source_map_comment) {
+        rewrites.push(delete_source_map_comment(span_to_delete));
+    }
+
     let rewrite_plan = build_rewrite_plan(
         rewrites
             .into_iter()
@@ -117,25 +122,19 @@ pub fn apply_transform(
         options.output.embed_code_in_source_map,
     );
 
-    let source_map = match &input.map {
-        // An input source map was specified; chain it with the source map we generated to produce
-        // the output source map.
-        Some(unparsed_map) => {
-            let mut map = parse_source_map(&unparsed_map)?;
-            map.adjust_mappings(&transform_map);
-            map
-        }
-        // No input source map was specified, so the source map we generated can be used as the
-        // output source map directly.
-        None => transform_map,
-    };
+    let source_map = chain_source_map_if_needed(&source_map_comment, &input.map, transform_map)?;
 
     if options.output.inline_source_map {
-        instrumented_code += "//# sourceMappingURL=";
-        instrumented_code += &source_map.to_data_url()?;
+        if let Some(ref source_map) = source_map {
+            instrumented_code += "//# sourceMappingURL=";
+            instrumented_code += &source_map.to_data_url()?;
+        }
     }
 
-    let serialized_source_map = serialize_source_map(source_map)?;
+    let serialized_source_map = match source_map {
+        Some(source_map) => Some(serialize_source_map(source_map)?),
+        None => None,
+    };
 
     Ok(InstrumentationOutput {
         id: input.id.clone(),
@@ -158,20 +157,4 @@ fn get_default_add_to_dictionary_helper<'a>(options: &'a InstrumentationOptions)
             }
         }
     }
-}
-
-fn parse_source_map(unparsed_map: &str) -> Result<SourceMap> {
-    SourceMap::from_reader(unparsed_map.as_bytes())
-        .map_err(|err| anyhow::anyhow!("Parsing input source map failed: {}", err))
-}
-
-fn serialize_source_map(map: SourceMap) -> Result<String> {
-    let mut source_map_buffer = BufWriter::new(Vec::new());
-    map.to_writer(&mut source_map_buffer)
-        .map_err(|err| anyhow::anyhow!("Serializing output source map failed: {}", err))?;
-    let source_map_writer = source_map_buffer
-        .into_inner()
-        .map_err(|err| anyhow::anyhow!("Unwrapping output source map failed: {}", err))?;
-    String::from_utf8(source_map_writer)
-        .map_err(|err| anyhow::anyhow!("Converting output source map to string failed: {}", err))
 }

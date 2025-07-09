@@ -23,9 +23,11 @@ export interface InstrumentationOutput {
   /**
    * The source map for the instrumented code. If an input source map was specified,
    * this map will be the combination of the input source map and the instrumentation
-   * source map -- in other words, the two source maps will be chained.
+   * source map -- in other words, the two source maps will be chained. If a source
+   * map was not generated for some reason (e.g. because the input referenced an
+   * external source map), no source map is returned.
    */
-  map: string;
+  map?: string;
 }
 
 export interface InputOptions {
