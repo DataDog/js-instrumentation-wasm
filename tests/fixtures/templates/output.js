@@ -1,33 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  `\`'"\u{6F}`,
-  `abc\r\n\t123`,
-  `gallingly`,
-  `hairbrush`,
-  `idealists`,
-  `absolute`,
-  `backdrops`,
-  `cacophony`,
-  `dachshund`,
-  `eagerness`,
-  `fabricate`,
-  `newlyweds`,
-  `orthodoxy`,
-  `paralyzed`,
-  `quadrants`,
-  `reflexive`,
-  `waferlike`,
-  `yardstick`,
-  $`superior${0}vertical`,
-  $`triangle${0}umbrella`,
-  $``,
-  $`judgment`,
-  $`keyboard${0}laughter${0}material`,
-  $`abstract`,
-  $`doubtful${0}endeavor`,
-  $`bacteria${0}contrast`,
-]);
-const foo = () => {};
+import{$}from'datadog:privacy-helpers.mjs';const D=$([`\`'"\u{6F}`,`abc\r\n\t123`,`gallingly`,`hairbrush`,`idealists`,`absolute`,`backdrops`,`cacophony`,`dachshund`,`eagerness`,`fabricate`,`newlyweds`,`orthodoxy`,`paralyzed`,`quadrants`,`reflexive`,`waferlike`,`yardstick`,$`superior${0}vertical`,$`triangle${0}umbrella`,$``,$`judgment`,$`keyboard${0}laughter${0}material`,$`abstract`,$`doubtful${0}endeavor`,$`bacteria${0}contrast`]);const foo = () => {};
 const bar = 1;
 
 // Trivial template expressions.

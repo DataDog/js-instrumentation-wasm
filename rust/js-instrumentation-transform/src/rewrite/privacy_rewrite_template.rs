@@ -143,7 +143,7 @@ fn build_helper_declaration(params: &TemplateParameters) -> String {
 
     match &params.add_to_dictionary_helper_source {
         HelperFunctionSource::Expression { code } => format!(
-            "const {} = {};\n",
+            "const {}={};",
             params.add_to_dictionary_helper_identifier, code
         ),
         HelperFunctionSource::Import {
@@ -153,25 +153,25 @@ fn build_helper_declaration(params: &TemplateParameters) -> String {
         } => match params.module_kind {
             ModuleKind::CJS if &params.add_to_dictionary_helper_identifier == func => {
                 format!(
-                    "const {{ {} }} = require('{}');\n",
+                    "const{{{}}}=require('{}');",
                     params.add_to_dictionary_helper_identifier, cjs_module,
                 )
             }
             ModuleKind::CJS => {
                 format!(
-                    "const {{ {}: {} }} = require('{}');\n",
+                    "const{{{}:{}}}=require('{}');",
                     func, params.add_to_dictionary_helper_identifier, cjs_module,
                 )
             }
             ModuleKind::ESM if &params.add_to_dictionary_helper_identifier == func => {
                 format!(
-                    "import {{ {} }} from '{}';\n",
+                    "import{{{}}}from'{}';",
                     params.add_to_dictionary_helper_identifier, esm_module,
                 )
             }
             ModuleKind::ESM => {
                 format!(
-                    "import {{ {} as {} }} from '{}';\n",
+                    "import{{{} as {}}}from'{}';",
                     func, params.add_to_dictionary_helper_identifier, esm_module,
                 )
             }
@@ -189,14 +189,18 @@ fn build_dictionary_declaration(params: &TemplateParameters) -> String {
 
     let _ = write!(
         &mut output,
-        "const {} = {}([\n",
+        "const {}={}([",
         params.dictionary_identifier, params.add_to_dictionary_helper_identifier
     );
 
+    let mut follows_another_entry = false;
     for index in &params.dictionary.indices {
         match params.dictionary.strings.get_index(*index) {
             Some((atom, _stats)) => {
-                let _ = write!(&mut output, "{}", "  ");
+                if follows_another_entry {
+                    let _ = write!(&mut output, "{}", ",");
+                }
+
                 match atom {
                     DictionaryEntry::String(string) => {
                         let _ = write!(&mut output, "{}", string);
@@ -222,13 +226,14 @@ fn build_dictionary_declaration(params: &TemplateParameters) -> String {
                         let _ = write!(&mut output, "`{}`", quasi.as_str());
                     }
                 }
-                let _ = write!(&mut output, "{}", ",\n");
+
+                follows_another_entry = true;
             }
             None => {}
         }
     }
 
-    let _ = write!(&mut output, "{}", "]);\n");
+    let _ = write!(&mut output, "{}", "]);");
 
     return output;
 }

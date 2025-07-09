@@ -15,6 +15,15 @@ pub enum PrivacyRewriteContent {
 }
 
 impl PrivacyRewriteContent {
+    /// Returns true if it's safe to discard this rewrite if it would increase code size.
+    /// TODO: Ideally, we would only return true here for the rewrites that actually
+    /// construct the dictionary, but it's currently not safe to drop the rewrites for
+    /// tagged templates. To make it safe, we need to rework things so that the tagged
+    /// template rewrites for a given tagged template expression can be evaluated for size
+    /// as a unit, and either retained together or discarded together. Right now, they're
+    /// independent, and if we dropped some but kept others we could end up generating
+    /// broken code. It's not urgent to fix this, though, because tagged template rewrites
+    /// are almost always a size win.
     pub fn should_only_replace_if_smaller(self: &Self) -> bool {
         match self {
             PrivacyRewriteContent::HelperImport(_) => false,

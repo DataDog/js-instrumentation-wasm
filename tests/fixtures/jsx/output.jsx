@@ -1,19 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  "Escape special characters with the \"\\\" character.",
-  "Text content. With more than one line. And another.",
-  " entity reference",
-  'quotes"inside',
-  'with"\'quotes',
-  '--top-offset',
-  "some content",
-  "something'",
-  'error-info',
-  'value',
-  `--is-stuck`,
-  `px`,
-]);
-import {
+import{$}from'datadog:privacy-helpers.mjs';const D=$(["Escape special characters with the \"\\\" character.","Text content. With more than one line. And another."," entity reference",'quotes"inside','with"\'quotes','--top-offset',"some content","something'",'error-info','value',`--is-stuck`,`px`]);import {
   AnotherComponent,
   ErrorHandler,
   Flex,

@@ -1,18 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  'Number Three',
-  'Number One',
-  'Letter A',
-  "Letter B",
-  "Number Two",
-  'Number Two',
-  'Letter C',
-  'Alpha',
-  "Beta",
-  `Letter C`,
-  `Gamma`,
-]);
-enum GreekLetters {
+import{$}from'datadog:privacy-helpers.mjs';const D=$(['Number Three','Number One','Letter A',"Letter B","Number Two",'Number Two','Letter C','Alpha',"Beta",`Letter C`,`Gamma`]);enum GreekLetters {
   Alpha = 'Alpha',
   Beta = "Beta",
   Gamma = `Gamma`,

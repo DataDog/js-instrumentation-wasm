@@ -1,25 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  'katherine',
-  "charles",
-  'ophelia',
-  'richard',
-  'result',
-  "arnold",
-  'george',
-  'marcia',
-  'nathan',
-  "betty",
-  'harry',
-  'irina',
-  'peter',
-  'quinn',
-  'jack',
-  $`danielle`,
-  $`emmett`,
-  $`francine`,
-]);
-const tag = () => D[4];
+import{$}from'datadog:privacy-helpers.mjs';const D=$(['katherine',"charles",'ophelia','richard','result',"arnold",'george','marcia','nathan',"betty",'harry','irina','peter','quinn','jack',$`danielle`,$`emmett`,$`francine`]);const tag = () => D[4];
 
 export const arnold = D[5] ? D[9] : D[1];
 export const danielle = tag(D[15]) ? tag(D[16]) : tag(D[17]);

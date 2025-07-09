@@ -1,11 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  "some string",
-  `something`,
-  "abc",
-  $`123${0}another thing`,
-]);
-import { foo } from "my-module.js";
+import{$}from'datadog:privacy-helpers.mjs';const D=$(["some string",`something`,"abc",$`123${0}another thing`]);import { foo } from "my-module.js";
 
 // const constant = "some string";
 const constant = D[0];

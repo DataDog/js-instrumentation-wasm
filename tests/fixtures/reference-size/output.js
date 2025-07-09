@@ -1,21 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  "abcd",
-  `abcdefghi`,
-  "abcde",
-  "abc",
-  `abcdefgh`,
-  "xyz0",
-  "xyz",
-  $``,
-  $`${0}${0}${0}`,
-  "a",
-  "ab",
-  `abcde`,
-  `abcdef`,
-  `abcdefg`,
-]);
-const foo = () => {};
+import{$}from'datadog:privacy-helpers.mjs';const D=$(["abcd",`abcdefghi`,"abcde","abc",`abcdefgh`,"xyz0","xyz",$``,$`${0}${0}${0}`,"a","ab",`abcde`,`abcdef`,`abcdefg`]);const foo = () => {};
 
 // For short strings, we should use the original string instead of replacing it with a
 // dictionary reference.

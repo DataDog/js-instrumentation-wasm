@@ -1,14 +1,4 @@
-import { $ } from 'datadog:privacy-helpers.mjs';
-const D = $([
-  'francis',
-  'result',
-  'emmett',
-  "arnold",
-  'betty',
-  $`danielle`,
-  `charles`,
-]);
-const tag = () => D[1];
+import{$}from'datadog:privacy-helpers.mjs';const D=$(['francis','result','emmett',"arnold",'betty',$`danielle`,`charles`]);const tag = () => D[1];
 
 export const foo = (value) => {
   const emmett = D[2];
