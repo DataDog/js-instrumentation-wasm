@@ -404,6 +404,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a2330da5de22e8a3cb63252ce2abb30116bf5265e89c0e01bc17015ce30a476"
 
 [[package]]
+name = "data-url"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c297a1c74b71ae29df00c3e22dd9534821d60eb9af5a0192823fa2acea70c2a"
+
+[[package]]
 name = "datadog-js-instrumentation"
 version = "0.1.0"
 dependencies = [
@@ -887,6 +893,7 @@ name = "js-instrumentation-transform"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "data-url",
  "js-instrumentation-rewrite",
  "js-instrumentation-shared",
  "lazy_static",

@@ -12,6 +12,7 @@ pub enum PrivacyRewriteContent {
     TaggedTemplateAfterExpr(String),
     TaggedTemplateTerminator(String),
     TemplateQuasiDictionaryReference(String),
+    DeleteSourceMapComment(String),
 }
 
 impl PrivacyRewriteContent {
@@ -36,6 +37,7 @@ impl PrivacyRewriteContent {
             PrivacyRewriteContent::TaggedTemplateAfterExpr(_) => false,
             PrivacyRewriteContent::TaggedTemplateTerminator(_) => false,
             PrivacyRewriteContent::TemplateQuasiDictionaryReference(_) => true,
+            PrivacyRewriteContent::DeleteSourceMapComment(_) => false,
         }
     }
 
@@ -51,6 +53,7 @@ impl PrivacyRewriteContent {
             PrivacyRewriteContent::TaggedTemplateAfterExpr(string) => string.len(),
             PrivacyRewriteContent::TaggedTemplateTerminator(string) => string.len(),
             PrivacyRewriteContent::TemplateQuasiDictionaryReference(string) => string.len(),
+            PrivacyRewriteContent::DeleteSourceMapComment(string) => string.len(),
         }
     }
 }
@@ -74,6 +77,7 @@ impl Display for PrivacyRewriteContent {
             PrivacyRewriteContent::TemplateQuasiDictionaryReference(string) => {
                 write!(f, "{}", string)
             }
+            PrivacyRewriteContent::DeleteSourceMapComment(string) => write!(f, "{}", string),
         }
     }
 }
