@@ -77,6 +77,13 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         // identifiers later.
         self.identifier_tracker.add_ident(node);
 
+        // If we see an identifier named "exports", assume it's the CommonJS "exports". (It may not
+        // be, if this is really an ES module, but in that case we'll generally observe an ESM
+        // "import" or "export" and correctly treat the module as ESM anyway.)
+        if node.sym.as_str() == "exports" {
+            self.feature_tracker.observed_cjs_exports_or_require();
+        }
+
         // Track both the starting and ending position of all identifiers, so that we generate
         // source maps that can handle identifier renaming well. (The TypeScript compiler does this
         // as well.)
@@ -88,6 +95,13 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
         // Track all identifiers, so that we can generate unique
         // identifiers later.
         self.identifier_tracker.add_ident_name(node);
+
+        // If we see an identifier named "exports", assume it's the CommonJS "exports". (It may not
+        // be, if this is really an ES module, but in that case we'll generally observe an ESM
+        // "import" or "export" and correctly treat the module as ESM anyway.)
+        if node.sym.as_str() == "exports" {
+            self.feature_tracker.observed_cjs_exports_or_require();
+        }
 
         // Track both the starting and ending position of all identifiers, so that we generate
         // source maps that can handle identifier renaming well. (The TypeScript compiler does this
@@ -319,19 +333,19 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
 
     fn visit_import_decl(&mut self, node: &ImportDecl) {
         // Don't collect string literals inside import declarations.
-        self.feature_tracker.observed_export_or_import();
+        self.feature_tracker.observed_esm_export_or_import();
         self.in_uncollected_scope(|this| node.visit_children_with(this));
     }
 
     fn visit_named_export(&mut self, node: &NamedExport) {
         // Don't collect string literals inside named exports.
-        self.feature_tracker.observed_export_or_import();
+        self.feature_tracker.observed_esm_export_or_import();
         self.in_uncollected_scope(|this| node.visit_children_with(this));
     }
 
     fn visit_export_all(&mut self, node: &ExportAll) {
         // Don't collect string literals inside export all declarations.
-        self.feature_tracker.observed_export_or_import();
+        self.feature_tracker.observed_esm_export_or_import();
         self.in_uncollected_scope(|this| node.visit_children_with(this));
     }
 
@@ -391,7 +405,7 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                                 return;
                             }
                             "require" => {
-                                self.feature_tracker.observed_require();
+                                self.feature_tracker.observed_cjs_exports_or_require();
                                 self.in_uncollected_scope(|this| node.visit_children_with(this));
                                 return;
                             }
@@ -403,7 +417,7 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
             }
             Callee::Import(_) => {
                 // Don't collect strings inside import() expressions.
-                self.feature_tracker.observed_export_or_import();
+                self.feature_tracker.observed_esm_export_or_import();
                 self.in_uncollected_scope(|this| node.visit_children_with(this));
                 return;
             }

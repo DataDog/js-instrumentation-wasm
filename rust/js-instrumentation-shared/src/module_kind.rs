@@ -13,8 +13,8 @@ pub enum ModuleKind {
 }
 
 pub struct ModuleKeywordUsage {
-    pub es_modules: bool,
-    pub require: bool,
+    pub cjs: bool,
+    pub esm: bool,
 }
 
 pub fn module_kind_for(
@@ -31,19 +31,14 @@ pub fn module_kind_for(
         _ if filename_is_explicitly_esm(filename) => ModuleKind::ESM,
 
         // If the file contained `import` or `export`, treat it as ESM.
-        (
-            None,
-            Some(ModuleKeywordUsage {
-                es_modules: true, ..
-            }),
-        ) => ModuleKind::ESM,
+        (None, Some(ModuleKeywordUsage { esm: true, .. })) => ModuleKind::ESM,
 
-        // If it contained `require()`, but no `import` or `export`, treat it as CJS.
+        // If it contained `require()` or `exports`, but no `import` or `export`, treat it as CJS.
         (
             None,
             Some(ModuleKeywordUsage {
-                es_modules: false,
-                require: true,
+                esm: false,
+                cjs: true,
             }),
         ) => ModuleKind::CJS,
 
