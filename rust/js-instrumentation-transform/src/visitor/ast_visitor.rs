@@ -3,8 +3,9 @@ use swc_atoms::Atom;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecma_ast::{
     CallExpr, Callee, ExportAll, Expr, Ident, IdentName, ImportDecl, JSXAttr, JSXAttrName,
-    JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXText, Lit, NamedExport, Program,
-    PropName, Stmt, Str, TaggedTpl, Tpl, TsEnumDecl, TsInterfaceDecl, TsModuleName, TsType,
+    JSXAttrValue, JSXElement, JSXElementChild, JSXElementName, JSXText, Lit, MemberExpr,
+    MemberProp, NamedExport, Program, PropName, PropOrSpread, Stmt, Str, TaggedTpl, Tpl,
+    TsEnumDecl, TsInterfaceDecl, TsModuleName, TsType,
 };
 use swc_ecma_visit::{Visit, VisitWith};
 
@@ -60,6 +61,73 @@ impl<'a, 'b> ASTVisitor<'a, 'b> {
         self.rewrite_tracker.enter_unrewritten_scope();
         action(self);
         self.rewrite_tracker.exit_unrewritten_scope();
+    }
+
+    /// Visit the children of a CallExpr, but don't collect the first argument. Useful for e.g.
+    /// React.createElement, where the first argument is an element name that isn't relevant for
+    /// the privacy dictionary.
+    fn visit_react_create_element_call(&mut self, node: &CallExpr) {
+        if let Some(true) = first_arg_if_literal_string(node).map(is_uncollected_jsx_element) {
+            // This is a React.createElement() call for an uncollected JSX element.
+            // Don't collect anything in this subtree.
+            self.in_uncollected_scope(|this| node.visit_children_with(this));
+            return;
+        }
+
+        // This is a React.createElement() for a collected JSX element. We generally want
+        // to collect things in this subtree, but we want to exclude certain strings,
+        // including the name of the element (which isn't relevant for privacy) and any
+        // uncollect JSX attributes.
+        match node {
+            CallExpr {
+                span,
+                ctxt,
+                callee,
+                args,
+                type_args,
+            } => {
+                {
+                    span.visit_with(self);
+                };
+                {
+                    ctxt.visit_with(self);
+                };
+                {
+                    callee.visit_with(self);
+                };
+                {
+                    for (i, arg) in args.iter().enumerate() {
+                        match i {
+                            0 => {
+                                // This is the tag name; don't collect it.
+                                self.in_uncollected_scope(|this| arg.visit_with(this));
+                            }
+                            1 => match *arg.expr {
+                                Expr::Object(ref obj) => {
+                                    obj.span.visit_with(self);
+                                    for prop in &obj.props {
+                                        if is_uncollected_jsx_attr_prop(&prop) {
+                                            self.in_uncollected_scope(|this| prop.visit_with(this));
+                                        } else {
+                                            prop.visit_with(self);
+                                        }
+                                    }
+                                }
+                                _ => {
+                                    arg.visit_with(self);
+                                }
+                            },
+                            _ => {
+                                arg.visit_with(self);
+                            }
+                        }
+                    }
+                };
+                {
+                    type_args.visit_with(self);
+                };
+            }
+        }
     }
 }
 
@@ -409,8 +477,19 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                                 self.in_uncollected_scope(|this| node.visit_children_with(this));
                                 return;
                             }
+                            "jsx" | "_jsx" | "jsxs" | "_jsxs" | "jsxDEV" | "_jsxDEV" => {
+                                // This is a "modern" React.createElement call, using the newer
+                                // JSX transform factory functions.
+                                self.visit_react_create_element_call(node);
+                                return;
+                            }
                             _ => {}
                         }
+                    }
+                    Expr::Member(ref member) if is_react_create_element(member) => {
+                        // This is a "classic" React.createElement call.
+                        self.visit_react_create_element_call(node);
+                        return;
                     }
                     _ => {}
                 }
@@ -457,6 +536,56 @@ fn is_uncollected_jsx_attr(atom: &Atom) -> bool {
     match atom.as_str() {
         "class" | "className" | "d" | "id" | "src" | "srcset" | "style" => true,
         _ => false,
+    }
+}
+
+fn is_uncollected_jsx_attr_prop(prop: &PropOrSpread) -> bool {
+    match prop {
+        PropOrSpread::Prop(ref prop) => match **prop {
+            swc_ecma_ast::Prop::KeyValue(ref key_value_prop) => match key_value_prop.key {
+                PropName::Ident(ref ident_name) => is_uncollected_jsx_attr(&ident_name.sym),
+                PropName::Str(ref str_name) => is_uncollected_jsx_attr(&str_name.value),
+                _ => false,
+            },
+            _ => false,
+        },
+        _ => false,
+    }
+}
+
+fn is_react_create_element(member: &MemberExpr) -> bool {
+    match *member.obj {
+        Expr::Ident(ref ident) => {
+            if ident.sym.as_str() != "React" {
+                return false;
+            }
+        }
+        _ => {
+            return false;
+        }
+    }
+
+    match member.prop {
+        MemberProp::Ident(ref ident) => {
+            if ident.sym.as_str() != "createElement" {
+                return false;
+            }
+        }
+        _ => {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+fn first_arg_if_literal_string(node: &CallExpr) -> Option<&Atom> {
+    match node.args.get(0) {
+        Some(expr_or_spread) => match *expr_or_spread.expr {
+            Expr::Lit(Lit::Str(ref s)) => Some(&s.value),
+            _ => None,
+        },
+        None => None,
     }
 }
 
