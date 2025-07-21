@@ -114,8 +114,7 @@ export const unpluginFactory: UnpluginFactory<UnpluginOptions> = options => {
       order: 'pre',
 
       handler(code, id) {
-        const result = instrument({ id, code }, instrumentationOptions);
-        return { code: result.code, map: result.map };
+        return instrument({ id, code }, instrumentationOptions);
       },
     },
   };

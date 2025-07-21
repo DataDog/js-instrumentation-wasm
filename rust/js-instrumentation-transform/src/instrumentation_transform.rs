@@ -66,6 +66,7 @@ pub fn apply_transform(
     let dictionary_identifier =
         identifier_tracker.new_unused_identifier(DEFAULT_DICTIONARY_IDENTIFIER);
     let dictionary = OptimizedDictionary::build(&dictionary_identifier, dictionary_tracker.strings);
+    let privacy_dictionary_size = dictionary.strings.len();
 
     let helper_identifier =
         identifier_tracker.new_unused_identifier(default_add_to_dictionary_helper);
@@ -140,6 +141,7 @@ pub fn apply_transform(
         id: input.id.clone(),
         code: instrumented_code,
         map: serialized_source_map,
+        privacy_dictionary_size,
     })
 }
 

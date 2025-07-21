@@ -28,6 +28,8 @@ export interface InstrumentationOutput {
    * external source map), no source map is returned.
    */
   map?: string;
+  /** The number of items in the privacy dictionary generated for this file. */
+  privacyDictionarySize: number;
 }
 
 export interface InputOptions {
