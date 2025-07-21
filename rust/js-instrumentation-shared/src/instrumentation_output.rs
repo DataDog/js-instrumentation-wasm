@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct InstrumentationOutput {
     /// The filename or id of the code that was instrumented.
     pub id: String,
@@ -12,4 +13,6 @@ pub struct InstrumentationOutput {
     /// map was not generated for some reason (e.g. because the input referenced an
     /// external source map), no source map is returned.
     pub map: Option<String>,
+    /// The number of items in the privacy dictionary generated for this file.
+    pub privacy_dictionary_size: usize,
 }
