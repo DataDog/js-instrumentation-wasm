@@ -149,9 +149,9 @@ __metadata:
   linkType: soft
 
 "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz::locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A.":
-  version: 1.0.2
-  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=c2a2ae&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
-  checksum: 10c0/2629343f004a829d1a6c73cce386342d981711b4318f81cf6b2ce5852ce17ec6bc9dfa42700733d117f123412745ac6cafa2263981b7f6867e6f335298e204ae
+  version: 1.0.3
+  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=232ba1&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
+  checksum: 10c0/5d1cb2b21ccdf3d47cfaa67132d03b8da4e8168f02556d96373747acf2caf417e8e18b7f1eb53fafcbf3f7486a361b0c17bd33d2434aee8c2653cd4fa8db488a
   languageName: node
   linkType: hard
 
