@@ -19,6 +19,7 @@ rust-version = "1.70"
 anyhow = "1.0.83"
 data-url = "0.3.1"
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
+html-escape = "0.2.13"
 lazy_static = "1.4.0"
 ordermap = "0.5.6"
 regex = { version = "1.10.4" }

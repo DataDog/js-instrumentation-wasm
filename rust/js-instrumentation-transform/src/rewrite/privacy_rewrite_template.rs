@@ -42,7 +42,7 @@ impl<'a> TemplateParameters<'a> {
         add_to_dictionary_helper_source: &HelperFunctionSource,
         add_to_dictionary_helper_identifier: String,
         module_kind: ModuleKind,
-    ) -> TemplateParameters {
+    ) -> TemplateParameters<'_> {
         TemplateParameters {
             dictionary,
             dictionary_identifier,

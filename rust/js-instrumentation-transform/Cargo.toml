@@ -13,6 +13,7 @@ version = "0.1.0"
 [dependencies]
 anyhow = { workspace = true }
 data-url = { workspace = true }
+html-escape = { workspace = true }
 lazy_static = { workspace = true }
 ordermap = { workspace = true }
 regex = { workspace = true }
