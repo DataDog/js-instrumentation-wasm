@@ -1,3 +1,4 @@
+use html_escape::decode_html_entities;
 use js_instrumentation_shared::log::debug_log;
 use lazy_static::lazy_static;
 use ordermap::OrderMap;
@@ -15,7 +16,10 @@ lazy_static! {
     static ref JSX_INITIAL_WHITESPACE_REGEX: Regex = Regex::new(r"^\n\s+").unwrap();
     static ref JSX_INTERNAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+").unwrap();
     static ref JSX_TERMINAL_WHITESPACE_REGEX: Regex = Regex::new(r"\n\s+$").unwrap();
-    static ref JSX_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\"]"#).unwrap();
+
+    static ref JSX_DOUBLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\"]"#).unwrap();
+    static ref JSX_SINGLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\']"#).unwrap();
+    static ref JSX_TEXT_ESCAPED_CHARACTERS_REGEX: Regex = Regex::new(r#"[\\"]"#).unwrap();
 
     /// Matches strings that look like URLs.
     static ref URL_STRINGS_REGEX: Regex =
@@ -90,24 +94,22 @@ impl DictionaryTracker {
             }
         };
 
-        // The input to this function is a JSX attribute value, which may be either a normal JS
-        // string (if it was surrounded by '{}') or a JSX string with HTML-like behavior (if it
-        // wasn't). Unfortunately, SWC's lexer does not make the braces around JSX attribute values
-        // visible to us, so we can't tell which situation we're in. So, this code needs to be
-        // written in such a way as to handle both normal JS strings and JSX strings. Fortunately,
-        // because SWC already does some normalization on the token's 'value' before handing it to
-        // us, they can mostly be treated uniformly, but we do need to be careful to deal with some
-        // oddities specific to JSX strings, like the potential for real newlines to be present.
+        // Escape any real newlines that may be present. JSX attribute values can contain real
+        // newlines, but ordinary, non-template JS strings cannot.
         let string = value.replace("\n", "\\n");
 
-        if raw_value.starts_with("\"") {
-            let string = format!(r#""{}""#, string);
-            self.try_add_string(&Some(string.into()))
-        } else if raw_value.starts_with("'") {
+        // Decode any HTML entities that appear in the string. Note that it's important that we do
+        // this before escaping quotes, since decoding HTML entities can produce new double quotes!
+        let string = decode_html_entities(&string);
+
+        if raw_value.starts_with("'") {
+            let string =
+                JSX_SINGLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
             let string = format!(r#"'{}'"#, string);
             self.try_add_string(&Some(string.into()))
         } else {
-            let string = string.replace("\"", "\\\"");
+            let string =
+                JSX_DOUBLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
             let string = format!(r#""{}""#, string);
             self.try_add_string(&Some(string.into()))
         }
@@ -131,9 +133,13 @@ impl DictionaryTracker {
         // Remove any newlines that remain.
         let string = string.replace("\n", "");
 
-        // Escape double quotes, so that we can safely wrap the string in double
-        // quotes.
-        let string = JSX_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
+        // Decode any HTML entities that appear in the string. Note that it's important that we do
+        // this before escaping quotes, since decoding HTML entities can produce new double quotes!
+        let string = decode_html_entities(&string);
+
+        // Escape special characters, including double quotes, so that we can safely wrap the
+        // string in double quotes.
+        let string = JSX_TEXT_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
 
         // Wrap the string in double quotes.
         let string = format!(r#""{}""#, string);
