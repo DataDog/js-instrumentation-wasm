@@ -51,10 +51,7 @@ impl<Content: RewriteContent> RewritePlan<Content> {
         embed_code_in_source_map: bool,
     ) -> (String, SourceMap) {
         let embedded_code = if embed_code_in_source_map {
-            Some(vec![
-                Some(String::from(input_file.code).into()),
-                Some("".into()),
-            ])
+            Some(vec![Some(String::from(input_file.code).into())])
         } else {
             None
         };
@@ -76,14 +73,13 @@ impl<Content: RewriteContent> RewritePlan<Content> {
 
         let (rewritten_code, source_map_tokens) = output.finish();
 
-        let mut source_map = SourceMap::new(
+        let source_map = SourceMap::new(
             None,
             source_map_tokens,
             vec![],
-            vec![String::from(input_file.name).into(), "".into()],
+            vec![String::from(input_file.name).into()],
             embedded_code,
         );
-        source_map.add_to_ignore_list(1);
 
         return (rewritten_code, source_map);
     }
