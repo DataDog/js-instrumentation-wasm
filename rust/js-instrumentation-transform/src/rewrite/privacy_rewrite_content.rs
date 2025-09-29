@@ -1,9 +1,14 @@
 use std::fmt::Display;
 
+use js_instrumentation_rewrite::rewrite_content::RewriteContent;
+use swc_common::BytePos;
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PrivacyRewriteContent {
     HelperImport(String),
-    DictionaryDeclaration(String),
+    DictionaryDeclarationOpener(String),
+    DictionaryDeclarationEntry(String, BytePos),
+    DictionaryDeclarationCloser(String),
     JSXStringDictionaryReference(String),
     PropertyKeyDictionaryReference(String),
     StringDictionaryReference(String),
@@ -15,9 +20,29 @@ pub enum PrivacyRewriteContent {
     DeleteSourceMapComment(String),
 }
 
+impl RewriteContent for PrivacyRewriteContent {
+    fn source_pos(self: &Self) -> Option<BytePos> {
+        match self {
+            PrivacyRewriteContent::HelperImport(_) => None,
+            PrivacyRewriteContent::DictionaryDeclarationOpener(_) => None,
+            PrivacyRewriteContent::DictionaryDeclarationEntry(_, ref pos) => Some(pos.clone()),
+            PrivacyRewriteContent::DictionaryDeclarationCloser(_) => None,
+            PrivacyRewriteContent::JSXStringDictionaryReference(_) => None,
+            PrivacyRewriteContent::PropertyKeyDictionaryReference(_) => None,
+            PrivacyRewriteContent::StringDictionaryReference(_) => None,
+            PrivacyRewriteContent::TaggedTemplateOpenerDictionaryReference(_) => None,
+            PrivacyRewriteContent::TaggedTemplateBeforeExpr(_) => None,
+            PrivacyRewriteContent::TaggedTemplateAfterExpr(_) => None,
+            PrivacyRewriteContent::TaggedTemplateTerminator(_) => None,
+            PrivacyRewriteContent::TemplateQuasiDictionaryReference(_) => None,
+            PrivacyRewriteContent::DeleteSourceMapComment(_) => None,
+        }
+    }
+}
+
 impl PrivacyRewriteContent {
     /// Returns true if it's safe to discard this rewrite if it would increase code size.
-    /// TODO: Ideally, we would only return true here for the rewrites that actually
+    /// TODO: Ideally, we would only return false here for the rewrites that actually
     /// construct the dictionary, but it's currently not safe to drop the rewrites for
     /// tagged templates. To make it safe, we need to rework things so that the tagged
     /// template rewrites for a given tagged template expression can be evaluated for size
@@ -28,7 +53,9 @@ impl PrivacyRewriteContent {
     pub fn should_only_replace_if_smaller(self: &Self) -> bool {
         match self {
             PrivacyRewriteContent::HelperImport(_) => false,
-            PrivacyRewriteContent::DictionaryDeclaration(_) => false,
+            PrivacyRewriteContent::DictionaryDeclarationOpener(_) => false,
+            PrivacyRewriteContent::DictionaryDeclarationEntry(_, _) => false,
+            PrivacyRewriteContent::DictionaryDeclarationCloser(_) => false,
             PrivacyRewriteContent::JSXStringDictionaryReference(_) => true,
             PrivacyRewriteContent::PropertyKeyDictionaryReference(_) => true,
             PrivacyRewriteContent::StringDictionaryReference(_) => true,
@@ -44,7 +71,9 @@ impl PrivacyRewriteContent {
     pub fn len(self: &Self) -> usize {
         match self {
             PrivacyRewriteContent::HelperImport(string) => string.len(),
-            PrivacyRewriteContent::DictionaryDeclaration(string) => string.len(),
+            PrivacyRewriteContent::DictionaryDeclarationOpener(string) => string.len(),
+            PrivacyRewriteContent::DictionaryDeclarationEntry(string, _) => string.len(),
+            PrivacyRewriteContent::DictionaryDeclarationCloser(string) => string.len(),
             PrivacyRewriteContent::JSXStringDictionaryReference(string) => string.len(),
             PrivacyRewriteContent::PropertyKeyDictionaryReference(string) => string.len(),
             PrivacyRewriteContent::StringDictionaryReference(string) => string.len(),
@@ -62,7 +91,9 @@ impl Display for PrivacyRewriteContent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PrivacyRewriteContent::HelperImport(string) => write!(f, "{}", string),
-            PrivacyRewriteContent::DictionaryDeclaration(string) => write!(f, "{}", string),
+            PrivacyRewriteContent::DictionaryDeclarationOpener(string) => write!(f, "{}", string),
+            PrivacyRewriteContent::DictionaryDeclarationEntry(string, _) => write!(f, "{}", string),
+            PrivacyRewriteContent::DictionaryDeclarationCloser(string) => write!(f, "{}", string),
             PrivacyRewriteContent::JSXStringDictionaryReference(string) => write!(f, "{}", string),
             PrivacyRewriteContent::PropertyKeyDictionaryReference(string) => {
                 write!(f, "{}", string)

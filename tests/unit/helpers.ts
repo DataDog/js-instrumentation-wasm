@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import url from 'node:url';
+import { SourceMapConsumer } from 'source-map';
+import { expect } from 'vitest';
 
 export interface TestCase {
   code: string;
@@ -75,4 +77,36 @@ export async function walkDir(
       console.error(e);
     }
   }
+}
+
+export async function expectEveryPositionToHaveASourceMapping(
+  testName: string,
+  code: string,
+  map: string
+): Promise<void> {
+  const sourceLines = code.split('\n');
+  if (sourceLines.length > 0) {
+    const lastLine = sourceLines[sourceLines.length - 1];
+    if (lastLine === '' || lastLine.startsWith('//# sourceMapping')) {
+      // It's expected that there is no source mapping for a totally empty final line, or
+      // for a final line that is itself a source mapping comment.
+      sourceLines.pop();
+    }
+  }
+
+  await SourceMapConsumer.with(map, null, consumer => {
+    sourceLines.forEach((line, lineIndex) => {
+      for (let columnIndex = 0; columnIndex < line.length; columnIndex++) {
+        const originalPosition = consumer.originalPositionFor({
+          line: lineIndex + 1,
+          column: columnIndex
+        });
+        const posContext = `line ${lineIndex + 1} column ${columnIndex}`;
+        const context = `Source mapping for ${testName} at ${posContext} line '${line}'`;
+        expect(originalPosition.source, context).not.toBe(null);
+        expect(originalPosition.line, context).not.toBe(null);
+        expect(originalPosition.column, context).not.toBe(null);
+      }
+    });
+  });
 }

@@ -63,8 +63,8 @@ impl<'a, 'b> ASTVisitor<'a, 'b> {
         self.rewrite_tracker.exit_unrewritten_scope();
     }
 
-    /// Visit the children of a CallExpr, but don't collect the first argument. Useful for e.g.
-    /// React.createElement, where the first argument is an element name that isn't relevant for
+    /// Visit a React.createElement call. We have a special visitor for React.createElement to
+    /// avoid collecting the first argument, which is an element name that isn't relevant for
     /// the privacy dictionary.
     fn visit_react_create_element_call(&mut self, node: &CallExpr) {
         if let Some(true) = first_arg_if_literal_string(node).map(is_uncollected_jsx_element) {
@@ -611,7 +611,7 @@ mod tests {
         let mut dictionary_tracker = DictionaryTracker::new(directive_set);
         let mut feature_tracker = FeatureTracker::new();
         let mut identifier_tracker = IdentifierTracker::new(vec![]);
-        let mut rewrite_tracker = RewriteTracker::new(vec![]);
+        let mut rewrite_tracker = RewriteTracker::new();
 
         visit(
             &program,

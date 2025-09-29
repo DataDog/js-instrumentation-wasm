@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 use ordermap::OrderMap;
 use regex::Regex;
 use swc_atoms::Atom;
-use swc_common::Span;
+use swc_common::{BytePos, Span};
 
 use crate::comments::DirectiveSet;
 
@@ -37,9 +37,11 @@ lazy_static! {
     static ref CODE_STRINGS_REGEX: Regex = Regex::new(r#""use strict""#).unwrap();
 }
 
+#[derive(Debug)]
 pub struct DictionaryEntryStats {
     pub count: usize,
     pub dictionary_entry: usize,
+    pub first_pos: BytePos,
     pub index: usize,
 }
 
@@ -106,12 +108,12 @@ impl DictionaryTracker {
             let string =
                 JSX_SINGLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
             let string = format!(r#"'{}'"#, string);
-            self.try_add_string(&Some(string.into()))
+            self.try_add_string(&Some(string.into()), span)
         } else {
             let string =
                 JSX_DOUBLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
             let string = format!(r#""{}""#, string);
-            self.try_add_string(&Some(string.into()))
+            self.try_add_string(&Some(string.into()), span)
         }
     }
 
@@ -144,7 +146,7 @@ impl DictionaryTracker {
         // Wrap the string in double quotes.
         let string = format!(r#""{}""#, string);
 
-        Some(self.add_atom(DictionaryEntry::String(string.into())))
+        Some(self.add_atom(DictionaryEntry::String(string.into()), span))
     }
 
     pub fn maybe_add_string(
@@ -157,13 +159,13 @@ impl DictionaryTracker {
             return None;
         }
 
-        self.try_add_string(raw)
+        self.try_add_string(raw, span)
     }
 
-    fn try_add_string(self: &mut Self, raw: &Option<Atom>) -> Option<usize> {
+    fn try_add_string(self: &mut Self, raw: &Option<Atom>, span: &Span) -> Option<usize> {
         match raw {
             Some(raw_value) => {
-                return Some(self.add_atom(DictionaryEntry::String(raw_value.clone())));
+                return Some(self.add_atom(DictionaryEntry::String(raw_value.clone()), span));
             }
             None => {
                 return None;
@@ -179,7 +181,7 @@ impl DictionaryTracker {
         if self.should_skip_tagged_template(span) {
             return None;
         } else {
-            return Some(self.add_atom(DictionaryEntry::TaggedTemplate(quasis.clone())));
+            return Some(self.add_atom(DictionaryEntry::TaggedTemplate(quasis.clone()), span));
         }
     }
 
@@ -187,11 +189,11 @@ impl DictionaryTracker {
         if self.should_skip_string(raw, span) {
             None
         } else {
-            Some(self.add_atom(DictionaryEntry::TemplateQuasi(raw.clone())))
+            Some(self.add_atom(DictionaryEntry::TemplateQuasi(raw.clone()), span))
         }
     }
 
-    fn add_atom(self: &mut Self, atom: DictionaryEntry) -> usize {
+    fn add_atom(self: &mut Self, atom: DictionaryEntry, span: &Span) -> usize {
         match self.strings.get_mut(&atom) {
             Some(stats) => {
                 stats.count += 1;
@@ -204,6 +206,7 @@ impl DictionaryTracker {
                     DictionaryEntryStats {
                         count: 1,
                         dictionary_entry: 0,
+                        first_pos: span.lo,
                         index,
                     },
                 );

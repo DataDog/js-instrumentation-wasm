@@ -37,7 +37,7 @@ pub fn chain_source_map_if_needed(
         }
 
         // We got source maps from two different sources! Arbitrarily choose to trust the
-        // inline source map and chain with it.
+        // input source map and chain with it.
         (Some(SourceMapComment::Inline(_, _)), Some(unparsed_map)) => {
             debug_log("Detected an inline source map, but an input source map was provided. Ignoring inline source map.");
             let mut map = parse_source_map(&unparsed_map.as_bytes())?;

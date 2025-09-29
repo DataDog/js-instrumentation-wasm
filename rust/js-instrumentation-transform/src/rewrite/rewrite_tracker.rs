@@ -11,10 +11,10 @@ pub struct RewriteTracker {
 }
 
 impl RewriteTracker {
-    pub fn new(rewrites: Vec<Rewrite<PrivacyRewriteTemplate>>) -> RewriteTracker {
+    pub fn new() -> RewriteTracker {
         RewriteTracker {
             in_unrewritten_scopes: 0,
-            rewrites,
+            rewrites: Vec::new(),
             token_positions: Vec::new(),
         }
     }
