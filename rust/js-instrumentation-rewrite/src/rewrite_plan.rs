@@ -6,46 +6,65 @@ use crate::{rewrite::Rewrite, rewrite_content::RewriteContent, rewrite_output::R
 
 pub struct RewritePlan<Content: RewriteContent> {
     rewrites: Vec<Rewrite<Content>>,
+    source_positions_used_in_mappings: Vec<BytePos>,
 }
 
-pub fn build_rewrite_plan<Content, RewriteIterable>(
-    rewrite_iterable: RewriteIterable,
+pub fn build_rewrite_plan<Content, HeaderRewriteIterable, BodyRewriteIterable>(
+    header_iterable: HeaderRewriteIterable,
+    body_iterable: BodyRewriteIterable,
 ) -> RewritePlan<Content>
 where
     Content: RewriteContent,
-    RewriteIterable: IntoIterator<Item = Rewrite<Content>>,
+    HeaderRewriteIterable: IntoIterator<Item = Rewrite<Content>>,
+    BodyRewriteIterable: IntoIterator<Item = Rewrite<Content>>,
 {
-    // Sort the rewrites.
-    let mut rewrites: Vec<Rewrite<Content>> = rewrite_iterable.into_iter().collect();
-    rewrites.sort_unstable();
+    let mut source_positions_used_in_mappings: Vec<BytePos> = Vec::new();
+
+    // Sort the body rewrites.
+    let mut body_rewrites: Vec<Rewrite<Content>> = body_iterable.into_iter().collect();
+    body_rewrites.sort_unstable();
 
     // Filter out rewrites that overlap with previous rewrites, since they would otherwise
     // conflict.
     let mut prev_hi: Option<BytePos> = None;
-    let rewrites: Vec<Rewrite<Content>> = rewrites
+    let filtered_body_rewrites_iterable = body_rewrites.into_iter().filter(|rewrite| {
+        let should_keep = match prev_hi {
+            None => true,
+            Some(prev_hi) if prev_hi > *rewrite.lo() => false,
+            Some(_) => true,
+        };
+        if should_keep {
+            prev_hi = Some(*rewrite.hi());
+        } else {
+            debug_log(&format!("Skipping rewrite due to overlap: {}", rewrite));
+        }
+        should_keep
+    });
+
+    // Combine the header and body rewrites.
+    let rewrites: Vec<Rewrite<Content>> = header_iterable
         .into_iter()
-        .filter(|rewrite| {
-            let should_keep = match prev_hi {
-                None => true,
-                Some(prev_hi) if prev_hi > *rewrite.lo() => false,
-                Some(_) => true,
-            };
-            if should_keep {
-                prev_hi = Some(*rewrite.hi());
-            } else {
-                debug_log(&format!("Skipping rewrite due to overlap: {}", rewrite));
+        .chain(filtered_body_rewrites_iterable)
+        .inspect(|rewrite| {
+            // Collect positions that we'll need to track to generate source mappings.
+            if let Some(pos) = rewrite.content().source_pos() {
+                source_positions_used_in_mappings.push(pos);
             }
-            should_keep
         })
         .collect();
 
+    source_positions_used_in_mappings.sort_unstable();
+
     // The result should be a safe rewrite plan.
-    RewritePlan { rewrites }
+    RewritePlan {
+        rewrites,
+        source_positions_used_in_mappings,
+    }
 }
 
 impl<Content: RewriteContent> RewritePlan<Content> {
     pub fn apply<'a>(
-        self: &Self,
+        self: Self,
         input_file: &mut InputFile<'a>,
         token_positions: Vec<BytePos>,
         embed_code_in_source_map: bool,
@@ -56,17 +75,25 @@ impl<Content: RewriteContent> RewritePlan<Content> {
             None
         };
 
-        let mut output = RewriteOutput::new(input_file, token_positions);
+        let mut output = RewriteOutput::new(
+            input_file,
+            token_positions,
+            self.source_positions_used_in_mappings,
+        );
 
         for rewrite in &self.rewrites {
             match rewrite {
                 Rewrite::Replace { content, span } => {
                     output.emit_input_until(span.lo());
-                    output.emit_replacement_until(span.hi(), &format!("{}", content));
+                    output.emit_replacement_until(
+                        span.hi(),
+                        &format!("{}", content),
+                        content.source_pos(),
+                    );
                 }
                 Rewrite::Insert { content, pos } => {
                     output.emit_input_until(*pos);
-                    output.emit_insertion(&format!("{}", content));
+                    output.emit_insertion(&format!("{}", content), content.source_pos());
                 }
             }
         }

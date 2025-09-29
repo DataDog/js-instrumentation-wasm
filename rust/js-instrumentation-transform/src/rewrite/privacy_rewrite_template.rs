@@ -1,8 +1,10 @@
-use std::fmt::{Display, Write};
+use std::fmt::Display;
 
+use js_instrumentation_rewrite::rewrite_content::RewriteContent;
 use js_instrumentation_shared::{instrumentation_options::HelperFunctionSource, ModuleKind};
+use swc_common::BytePos;
 
-use crate::dictionary::{DictionaryEntry, DictionaryError, OptimizedDictionary};
+use crate::dictionary::{DictionaryError, OptimizedDictionary};
 
 use super::PrivacyRewriteContent;
 
@@ -14,8 +16,6 @@ pub enum LeftContext {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PrivacyRewriteTemplate {
-    HelperDeclaration,
-    DictionaryDeclaration,
     JSXStringDictionaryReference(usize),
     PropertyKeyDictionaryReference(usize),
     StringDictionaryReference(usize, LeftContext),
@@ -25,6 +25,12 @@ pub enum PrivacyRewriteTemplate {
     TaggedTemplateTerminator,
     TemplateQuasiDictionaryReference(usize),
     DeleteSourceMapComment,
+}
+
+impl RewriteContent for PrivacyRewriteTemplate {
+    fn source_pos(self: &Self) -> Option<BytePos> {
+        None
+    }
 }
 
 pub struct TemplateParameters<'a> {
@@ -59,12 +65,6 @@ impl PrivacyRewriteTemplate {
         params: &TemplateParameters,
     ) -> Result<PrivacyRewriteContent, DictionaryError> {
         match self {
-            PrivacyRewriteTemplate::HelperDeclaration => Ok(PrivacyRewriteContent::HelperImport(
-                build_helper_declaration(params),
-            )),
-            PrivacyRewriteTemplate::DictionaryDeclaration => Ok(
-                PrivacyRewriteContent::DictionaryDeclaration(build_dictionary_declaration(params)),
-            ),
             PrivacyRewriteTemplate::JSXStringDictionaryReference(index) => Ok(
                 PrivacyRewriteContent::JSXStringDictionaryReference(format!(
                     "{{{}[{}]}}",
@@ -137,107 +137,4 @@ impl Display for PrivacyRewriteTemplate {
         // output, so we can just display its derived Debug implementation.
         write!(f, "{:?}", self)
     }
-}
-
-fn build_helper_declaration(params: &TemplateParameters) -> String {
-    // Don't generate an import statement if we didn't collect any strings.
-    if params.dictionary.strings.is_empty() {
-        return "".to_string();
-    }
-
-    match &params.add_to_dictionary_helper_source {
-        HelperFunctionSource::Expression { code } => format!(
-            "const {}={};",
-            params.add_to_dictionary_helper_identifier, code
-        ),
-        HelperFunctionSource::Import {
-            cjs_module,
-            esm_module,
-            func,
-        } => match params.module_kind {
-            ModuleKind::CJS if &params.add_to_dictionary_helper_identifier == func => {
-                format!(
-                    "const{{{}}}=require('{}');",
-                    params.add_to_dictionary_helper_identifier, cjs_module,
-                )
-            }
-            ModuleKind::CJS => {
-                format!(
-                    "const{{{}:{}}}=require('{}');",
-                    func, params.add_to_dictionary_helper_identifier, cjs_module,
-                )
-            }
-            ModuleKind::ESM if &params.add_to_dictionary_helper_identifier == func => {
-                format!(
-                    "import{{{}}}from'{}';",
-                    params.add_to_dictionary_helper_identifier, esm_module,
-                )
-            }
-            ModuleKind::ESM => {
-                format!(
-                    "import{{{} as {}}}from'{}';",
-                    func, params.add_to_dictionary_helper_identifier, esm_module,
-                )
-            }
-        },
-    }
-}
-
-fn build_dictionary_declaration(params: &TemplateParameters) -> String {
-    // Don't generate a dictionary declaration if we didn't collect any strings.
-    if params.dictionary.strings.is_empty() {
-        return "".to_string();
-    }
-
-    let mut output = String::new();
-
-    let _ = write!(
-        &mut output,
-        "const {}={}([",
-        params.dictionary_identifier, params.add_to_dictionary_helper_identifier
-    );
-
-    let mut follows_another_entry = false;
-    for index in &params.dictionary.indices {
-        match params.dictionary.strings.get_index(*index) {
-            Some((atom, _stats)) => {
-                if follows_another_entry {
-                    let _ = write!(&mut output, "{}", ",");
-                }
-
-                match atom {
-                    DictionaryEntry::String(string) => {
-                        let _ = write!(&mut output, "{}", string);
-                    }
-                    DictionaryEntry::TaggedTemplate(quasis) => {
-                        let _ = write!(
-                            &mut output,
-                            "{}`",
-                            params.add_to_dictionary_helper_identifier
-                        );
-                        let mut need_separator = false;
-                        for quasi in quasis {
-                            if need_separator {
-                                let _ = write!(&mut output, "{}", "${0}");
-                            } else {
-                                need_separator = true;
-                            }
-                            let _ = write!(&mut output, "{}", quasi.as_str());
-                        }
-                        let _ = write!(&mut output, "{}", "`");
-                    }
-                    DictionaryEntry::TemplateQuasi(quasi) => {
-                        let _ = write!(&mut output, "`{}`", quasi.as_str());
-                    }
-                }
-
-                follows_another_entry = true;
-            }
-            None => {}
-        }
-    }
-
-    let _ = write!(&mut output, "{}", "]);");
-
-    return output;
 }

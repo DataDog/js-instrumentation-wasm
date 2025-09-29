@@ -1,21 +1,7 @@
 use js_instrumentation_rewrite::rewrite::Rewrite;
-use swc_common::{BytePos, Span};
+use swc_common::Span;
 
 use super::{privacy_rewrite_template::LeftContext, PrivacyRewriteTemplate};
-
-pub fn insert_helper_declaration(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
-    Rewrite::Insert {
-        content: PrivacyRewriteTemplate::HelperDeclaration,
-        pos,
-    }
-}
-
-pub fn insert_dictionary_declaration(pos: BytePos) -> Rewrite<PrivacyRewriteTemplate> {
-    Rewrite::Insert {
-        content: PrivacyRewriteTemplate::DictionaryDeclaration,
-        pos,
-    }
-}
 
 pub fn replace_tagged_template_opener_with_dictionary_ref(
     dictionary_index: usize,

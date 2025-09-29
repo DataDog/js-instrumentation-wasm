@@ -17,7 +17,7 @@ use crate::dictionary::{
 use crate::features::FeatureTracker;
 use crate::identifiers::IdentifierTracker;
 use crate::rewrite::{
-    delete_source_map_comment, insert_dictionary_declaration, insert_helper_declaration,
+    build_dictionary_declaration, build_helper_declaration, delete_source_map_comment,
     RewriteTracker, TemplateParameters,
 };
 use crate::source_maps::{
@@ -49,10 +49,7 @@ pub fn apply_transform(
         default_add_to_dictionary_helper,
         DEFAULT_DICTIONARY_IDENTIFIER,
     ]);
-    let mut rewrite_tracker = RewriteTracker::new(vec![
-        insert_helper_declaration(input_file.start_pos),
-        insert_dictionary_declaration(input_file.start_pos),
-    ]);
+    let mut rewrite_tracker = RewriteTracker::new();
 
     visit(
         &program,
@@ -90,32 +87,38 @@ pub fn apply_transform(
         rewrites.push(delete_source_map_comment(span_to_delete));
     }
 
-    let rewrite_plan = build_rewrite_plan(
-        rewrites
-            .into_iter()
-            .filter_map(|rewrite| {
-                rewrite.filter_map_content(|template| {
-                    // Evaluate the rewrite templates by substituting in template parameters (e.g.
-                    // the dictionary identifier).
-                    match template.evaluate(&template_parameters) {
-                        Ok(content) => Some(content),
-                        Err(err) => {
-                            debug_log(&format!("Error evaluating rewrite templates: {}", err));
-                            None
-                        }
+    let header_rewrites = build_helper_declaration(input_file.start_pos, &template_parameters)
+        .into_iter()
+        .chain(
+            build_dictionary_declaration(input_file.start_pos, &template_parameters).into_iter(),
+        );
+
+    let body_rewrites = rewrites
+        .into_iter()
+        .flat_map(|rewrite| {
+            rewrite.filter_map_content(|template| {
+                // Evaluate the rewrite templates by substituting in template parameters (e.g.
+                // the dictionary identifier).
+                match template.evaluate(&template_parameters) {
+                    Ok(content) => Some(content),
+                    Err(err) => {
+                        debug_log(&format!("Error evaluating rewrite templates: {}", err));
+                        None
                     }
-                })
-            })
-            .filter(|rewrite| match rewrite {
-                // Some optional rewrites are only beneficial if they produce smaller output than
-                // the original source code. Filter out these rewrites when they'll provide no
-                // benefit.
-                Rewrite::Replace { content, span } if content.should_only_replace_if_smaller() => {
-                    content.len() < (span.hi.to_usize() - span.lo.to_usize())
                 }
-                _ => true,
-            }),
-    );
+            })
+        })
+        .filter(|rewrite| match rewrite {
+            // Some optional rewrites are only beneficial if they produce smaller output than
+            // the original source code. Filter out these rewrites when they'll provide no
+            // benefit.
+            Rewrite::Replace { content, span } if content.should_only_replace_if_smaller() => {
+                content.len() < (span.hi.to_usize() - span.lo.to_usize())
+            }
+            _ => true,
+        });
+
+    let rewrite_plan = build_rewrite_plan(header_rewrites, body_rewrites);
 
     let (mut instrumented_code, transform_map) = rewrite_plan.apply(
         &mut input_file,
