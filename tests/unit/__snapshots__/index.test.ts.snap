@@ -567,6 +567,17 @@ const addQuotes = (string, hasQuotes) =>
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjb21wYWN0IGZyb20gJ2xvZGFzaC9jb21wYWN0JztcblxuZXhwb3J0IGNvbnN0IFBBVFRFUk4gPSAvWzooKVwiXFxcXF0vZztcblxuY29uc3QgYWRkUXVvdGVzID0gKHN0cmluZywgaGFzUXVvdGVzKSA9PlxuICBoYXNRdW90ZXMgPyBgXCIke3N0cmluZ31cImAgOiBzdHJpbmc7XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEseUNBS2UsTUFMZixPQUFPLE9BQU8sTUFBTSxnQkFBZ0I7QUFDcEM7QUFDQSxPQUFPLE1BQU0sT0FBTyxHQUFHO0FBQ3ZCO0FBQ0EsTUFBTSxTQUFTLEdBQUcsQ0FBQyxNQUFNLEVBQUUsU0FBUztBQUNwQyxFQUFFLFNBQVMsSUFBSSxDQUFDLEVBQUUsTUFBTSxDQUFDLENBQUMsSUFBSSxNQUFNIn0="
 `;
 
+exports[`should be able to set a custom expression addToDictionary helper > for shebang 1`] = `
+"#!/usr/bin/env node
+const $=(v) => console.log(v);const D=$(['foo']);const foo = D[0];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmNvbnN0IGZvbyA9ICdmb28nO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EseUNBQVksUUFBWixNQUFNLEdBQUcsR0FBRyxJQUFLIn0="
+`;
+
+exports[`should be able to set a custom expression addToDictionary helper > for shebang-empty-file 1`] = `
+"#!/usr/bin/env node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9"
+`;
+
 exports[`should be able to set a custom expression addToDictionary helper > for string-literals 1`] = `
 "const $=(v) => console.log(v);const D=$(["appendix","gem\`'\\"\\u{6F}","cat\\r\\n\\tdog","observe",'quarrel','fizz"\\'"',"karat",'bowling',"egg'\\"'","macrame","nanobot","pacific","hammer","image","jewel","labor"]);const foo = () => {};
 
@@ -1396,6 +1407,17 @@ export const PATTERN = /[:()"\\\\]/g;
 const addQuotes = (string, hasQuotes) =>
   hasQuotes ? \`"\${string}"\` : string;
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjb21wYWN0IGZyb20gJ2xvZGFzaC9jb21wYWN0JztcblxuZXhwb3J0IGNvbnN0IFBBVFRFUk4gPSAvWzooKVwiXFxcXF0vZztcblxuY29uc3QgYWRkUXVvdGVzID0gKHN0cmluZywgaGFzUXVvdGVzKSA9PlxuICBoYXNRdW90ZXMgPyBgXCIke3N0cmluZ31cImAgOiBzdHJpbmc7XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsaUVBS2UsTUFMZixPQUFPLE9BQU8sTUFBTSxnQkFBZ0I7QUFDcEM7QUFDQSxPQUFPLE1BQU0sT0FBTyxHQUFHO0FBQ3ZCO0FBQ0EsTUFBTSxTQUFTLEdBQUcsQ0FBQyxNQUFNLEVBQUUsU0FBUztBQUNwQyxFQUFFLFNBQVMsSUFBSSxDQUFDLEVBQUUsTUFBTSxDQUFDLENBQUMsSUFBSSxNQUFNIn0="
+`;
+
+exports[`should be able to set a custom imported addToDictionary helper > for shebang 1`] = `
+"#!/usr/bin/env node
+import{addToDictionary as $}from'@custom/helpers.mjs';const D=$(['foo']);const foo = D[0];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmNvbnN0IGZvbyA9ICdmb28nO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsaUVBQVksUUFBWixNQUFNLEdBQUcsR0FBRyxJQUFLIn0="
+`;
+
+exports[`should be able to set a custom imported addToDictionary helper > for shebang-empty-file 1`] = `
+"#!/usr/bin/env node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9"
 `;
 
 exports[`should be able to set a custom imported addToDictionary helper > for string-literals 1`] = `
@@ -2229,6 +2251,17 @@ const addQuotes = (string, hasQuotes) =>
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjb21wYWN0IGZyb20gJ2xvZGFzaC9jb21wYWN0JztcblxuZXhwb3J0IGNvbnN0IFBBVFRFUk4gPSAvWzooKVwiXFxcXF0vZztcblxuY29uc3QgYWRkUXVvdGVzID0gKHN0cmluZywgaGFzUXVvdGVzKSA9PlxuICBoYXNRdW90ZXMgPyBgXCIke3N0cmluZ31cImAgOiBzdHJpbmc7XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsdURBS2UsTUFMZixPQUFPLE9BQU8sTUFBTSxnQkFBZ0I7QUFDcEM7QUFDQSxPQUFPLE1BQU0sT0FBTyxHQUFHO0FBQ3ZCO0FBQ0EsTUFBTSxTQUFTLEdBQUcsQ0FBQyxNQUFNLEVBQUUsU0FBUztBQUNwQyxFQUFFLFNBQVMsSUFBSSxDQUFDLEVBQUUsTUFBTSxDQUFDLENBQUMsSUFBSSxNQUFNIn0="
 `;
 
+exports[`the CJS version should transform code correctly > for shebang 1`] = `
+"#!/usr/bin/env node
+import{$}from' datadog:privacy-helpers.mjs';const D=$(['foo']);const foo = D[0];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmNvbnN0IGZvbyA9ICdmb28nO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsdURBQVksUUFBWixNQUFNLEdBQUcsR0FBRyxJQUFLIn0="
+`;
+
+exports[`the CJS version should transform code correctly > for shebang-empty-file 1`] = `
+"#!/usr/bin/env node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9"
+`;
+
 exports[`the CJS version should transform code correctly > for string-literals 1`] = `
 "import{$}from' datadog:privacy-helpers.mjs';const D=$(["appendix","gem\`'\\"\\u{6F}","cat\\r\\n\\tdog","observe",'quarrel','fizz"\\'"',"karat",'bowling',"egg'\\"'","macrame","nanobot","pacific","hammer","image","jewel","labor"]);const foo = () => {};
 
@@ -3058,6 +3091,17 @@ export const PATTERN = /[:()"\\\\]/g;
 const addQuotes = (string, hasQuotes) =>
   hasQuotes ? \`"\${string}"\` : string;
 //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjb21wYWN0IGZyb20gJ2xvZGFzaC9jb21wYWN0JztcblxuZXhwb3J0IGNvbnN0IFBBVFRFUk4gPSAvWzooKVwiXFxcXF0vZztcblxuY29uc3QgYWRkUXVvdGVzID0gKHN0cmluZywgaGFzUXVvdGVzKSA9PlxuICBoYXNRdW90ZXMgPyBgXCIke3N0cmluZ31cImAgOiBzdHJpbmc7XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsdURBS2UsTUFMZixPQUFPLE9BQU8sTUFBTSxnQkFBZ0I7QUFDcEM7QUFDQSxPQUFPLE1BQU0sT0FBTyxHQUFHO0FBQ3ZCO0FBQ0EsTUFBTSxTQUFTLEdBQUcsQ0FBQyxNQUFNLEVBQUUsU0FBUztBQUNwQyxFQUFFLFNBQVMsSUFBSSxDQUFDLEVBQUUsTUFBTSxDQUFDLENBQUMsSUFBSSxNQUFNIn0="
+`;
+
+exports[`the ESM version should transform code correctly > for shebang 1`] = `
+"#!/usr/bin/env node
+import{$}from' datadog:privacy-helpers.mjs';const D=$(['foo']);const foo = D[0];
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmNvbnN0IGZvbyA9ICdmb28nO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsdURBQVksUUFBWixNQUFNLEdBQUcsR0FBRyxJQUFLIn0="
+`;
+
+exports[`the ESM version should transform code correctly > for shebang-empty-file 1`] = `
+"#!/usr/bin/env node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSJ9"
 `;
 
 exports[`the ESM version should transform code correctly > for string-literals 1`] = `
