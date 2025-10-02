@@ -49,12 +49,23 @@ impl<'a> InputFile<'a> {
         }
     }
 
-    pub fn next_char_pos(self: &mut Self, pos: BytePos) -> BytePos {
+    pub fn next_char_pos(self: &Self, pos: BytePos) -> BytePos {
         let maybe_next_char_pos = self.map.next_point(pos.span()).hi;
         if maybe_next_char_pos > self.end_pos {
             self.end_pos
         } else {
             maybe_next_char_pos
+        }
+    }
+
+    pub fn next_line_start(self: &Self, pos: BytePos) -> BytePos {
+        let pos_as_span = Span { lo: pos, hi: pos };
+        let extended_span = self.map.span_extend_to_next_char(pos_as_span, '\n');
+        if extended_span == pos_as_span {
+            // No newline found; use the end of the file.
+            self.end_pos
+        } else {
+            self.next_char_pos(extended_span.hi)
         }
     }
 

@@ -8,6 +8,8 @@ use js_instrumentation_shared::{
 };
 use swc_common::comments::SingleThreadedComments;
 use swc_common::source_map::SmallPos;
+use swc_common::BytePos;
+use swc_ecma_ast::Program;
 
 use crate::comments::process_comments;
 use crate::dictionary::{
@@ -32,7 +34,7 @@ pub fn apply_transform(
     let mut input_file = InputFile::new(&input.id, &input.code);
     let comments: SingleThreadedComments = Default::default();
     let mut parser = build_parser(&input_file, &comments, options);
-    let program = match parser.parse_program() {
+    let program: Program = match parser.parse_program() {
         Ok(program) => program,
         Err(err) => {
             return Err(anyhow::anyhow!("Parsing failed: {:?}", err));
@@ -87,11 +89,10 @@ pub fn apply_transform(
         rewrites.push(delete_source_map_comment(span_to_delete));
     }
 
-    let header_rewrites = build_helper_declaration(input_file.start_pos, &template_parameters)
+    let start_of_first_line = compute_start_of_first_line(&input_file, &program);
+    let header_rewrites = build_helper_declaration(start_of_first_line, &template_parameters)
         .into_iter()
-        .chain(
-            build_dictionary_declaration(input_file.start_pos, &template_parameters).into_iter(),
-        );
+        .chain(build_dictionary_declaration(start_of_first_line, &template_parameters).into_iter());
 
     let body_rewrites = rewrites
         .into_iter()
@@ -161,5 +162,17 @@ fn get_default_add_to_dictionary_helper<'a>(options: &'a InstrumentationOptions)
                 DEFAULT_ADD_TO_DICTIONARY_FUNCTION
             }
         }
+    }
+}
+
+fn compute_start_of_first_line(input_file: &InputFile, program: &Program) -> BytePos {
+    let has_shebang = match program {
+        Program::Module(ref module) => module.shebang.is_some(),
+        Program::Script(ref script) => script.shebang.is_some(),
+    };
+    if has_shebang {
+        input_file.next_line_start(input_file.start_pos)
+    } else {
+        input_file.start_pos
     }
 }
