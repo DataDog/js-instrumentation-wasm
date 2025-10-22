@@ -37,5 +37,13 @@ exports[`Built Page test > should render the expected HTML 1`] = `
   >
     Click on the React logos to learn more about these projects. Use "\\" to escape special characters when searching.
   </p>
+  <div>
+    <p>
+      
+        Hello, world!
+        This is a test for multiline text in jsx attributes. And it should not add
+        extra \\n characters in between the text.
+    </p>
+  </div>
 </div>
 `;
