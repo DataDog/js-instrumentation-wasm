@@ -1,4 +1,4 @@
-import{$}from'datadog:privacy-helpers.mjs';const D=$(["Escape special characters with the \"\\\" character.","Text content. With more than one line. And another."," entity reference",'quotes"inside','with"\'quotes','--top-offset',"some content","something'",'error-info','value',`--is-stuck`,`px`]);import {
+import{$}from'datadog:privacy-helpers.mjs';const D=$([" A jsx attribute text that is multiline but we should not\n        add line breaks to the text for new lines in jsx attributes\n        and should not add extra \\n characters in between the text.","Escape special characters with the \"\\\" character.","Text content. With more than one line. And another."," entity reference",'quotes"inside','with"\'quotes','--top-offset',"some content","something'",'error-info','value',`--is-stuck`,`px`]);import {
   AnotherComponent,
   ErrorHandler,
   Flex,
@@ -13,34 +13,37 @@ import{$}from'datadog:privacy-helpers.mjs';const D=$(["Escape special characters
 
 export function MyComponent(props) {
   return (
-    <SomeComponent attr={D[7]} with={D[3]}>
-      <AnotherComponent attr={D[4]} />
+    <SomeComponent attr={D[8]} with={D[4]}>
+      <AnotherComponent attr={D[5]} />
       <SomethingElse stuff={{
-        key: D[9],
+        key: D[10],
         anotherKey: props.key2,
       }}
-      >{D[1]}</SomethingElse>
+      >{D[2]}</SomethingElse>
       <ErrorHandler
         onError={(info) => {
-          reportError({ [D[8]]: info });
+          reportError({ [D[9]]: info });
         }}
       />
       <Flex
         stuff={
           {
-            [D[5]]: `${topOffset}px`,
+            [D[6]]: `${topOffset}px`,
           }
         }
         clazzes={classNames(BLOCK, {
-          [`${BLOCK}${D[10]}`]: isStuck,
+          [`${BLOCK}${D[11]}`]: isStuck,
         })}
-      >{D[0]}</Flex>
+      >{D[1]}</Flex>
+      <Toast
+        label={D[0]}
+      />
       <svg
         fill={props.fill}
-        content={(() => { return D[6]; })()}
+        content={(() => { return D[7]; })()}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 192 192"
-        data={D[2]}
+        data={D[3]}
       >
         <g>
           <rect x='84' y='156' width='20' height='20' />

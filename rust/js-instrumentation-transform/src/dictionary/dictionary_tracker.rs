@@ -96,25 +96,21 @@ impl DictionaryTracker {
             }
         };
 
-        // Escape any real newlines that may be present. JSX attribute values can contain real
-        // newlines, but ordinary, non-template JS strings cannot.
-        let string = value.replace("\n", "\\n");
-
         // Decode any HTML entities that appear in the string. Note that it's important that we do
         // this before escaping quotes, since decoding HTML entities can produce new double quotes!
-        let string = decode_html_entities(&string);
+        let string = decode_html_entities(&value);
 
-        if raw_value.starts_with("'") {
-            let string =
-                JSX_SINGLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
-            let string = format!(r#"'{}'"#, string);
-            self.try_add_string(&Some(string.into()), span)
+        let (regex, quote_char) = if raw_value.starts_with("'") {
+            (&JSX_SINGLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX as &Regex, "'")
         } else {
-            let string =
-                JSX_DOUBLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX.replace_all(&string, "\\$0");
-            let string = format!(r#""{}""#, string);
-            self.try_add_string(&Some(string.into()), span)
-        }
+            (&JSX_DOUBLE_QUOTE_ATTR_ESCAPED_CHARACTERS_REGEX as &Regex, "\"")
+        };
+        
+        // Escape the string with the appropriate regex and quote character
+        let string = regex.replace_all(&string, "\\$0");
+        let string = string.replace("\n", "\\n"); // We have to escape new lines after escaping quotes, so we don't double escape them
+        let string = format!("{}{}{}", quote_char, string, quote_char);
+        self.try_add_string(&Some(string.into()), span)
     }
 
     pub fn maybe_add_jsx_text(

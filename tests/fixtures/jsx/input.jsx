@@ -43,6 +43,11 @@ export function MyComponent(props) {
       >
         Escape special characters with the "\" character.
       </Flex>
+      <Toast
+        label=" A jsx attribute text that is multiline but we should not
+        add line breaks to the text for new lines in jsx attributes
+        and should not add extra \n characters in between the text."
+      />
       <svg
         fill={props.fill}
         content={(() => { return "some content"; })()}

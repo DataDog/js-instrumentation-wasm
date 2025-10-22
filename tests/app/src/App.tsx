@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
+function MyComponent({ displayText }: { displayText: string }) {
+  return (
+    <div>
+      <p>{displayText}</p>
+    </div>
+  )
+}
 
 function App() {
   const [count, setCount] = useState(0)
@@ -28,6 +35,12 @@ function App() {
 
         Use "\" to escape special characters when searching.
       </p>
+      <MyComponent 
+        displayText="
+        Hello, world!
+        This is a test for multiline text in jsx attributes. And it should not add
+        extra \n characters in between the text."
+      />
     </>
   )
 }

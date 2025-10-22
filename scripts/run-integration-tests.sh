@@ -4,6 +4,8 @@ set -e
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 cd "$PROJECT_ROOT"
 
+FAILED_TESTS=""
+
 for TEST_ROOT in ./tests/integration/*; do
  cd "$PROJECT_ROOT"
  cd "$TEST_ROOT"
@@ -15,5 +17,17 @@ for TEST_ROOT in ./tests/integration/*; do
  yarn install
 
  yarn build
- yarn test
+ 
+ # Run tests but don't exit on failure
+ if ! yarn test; then
+   FAILED_TESTS="$FAILED_TESTS\n  - $(basename $TEST_ROOT)"
+ fi
 done
+
+# Report results
+if [ -n "$FAILED_TESTS" ]; then
+  echo "\n❌ Some integration tests failed:$FAILED_TESTS"
+  exit 1
+else
+  echo "\n✅ All integration tests passed!"
+fi
