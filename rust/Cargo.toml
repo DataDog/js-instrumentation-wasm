@@ -27,7 +27,7 @@ serde = { version = "1.0.203", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 similar-asserts = "1.4.2"
 sourcemap = "9.0.0"
-swc_atoms = "5.0.0"
+swc_atoms = "9.0.0"
 swc_common = "12.0.1"
 swc_core = { version = "27.0.6", features = ["__base"] }
 swc_ecma_ast = "12.0.0"
