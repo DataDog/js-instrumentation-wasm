@@ -21,7 +21,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "css-loader": "^7.1.2",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.0.1",
     "style-loader": "^4.0.0",
     "svg-url-loader": "^8.0.0",
     "ts-loader": "^9.5.2",
