@@ -18,8 +18,8 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "esbuild": "^0.25.4",
+    "@types/react-dom": "^19.1.11",
+    "esbuild": "^0.25.12",
     "jsdom": "^26.1.0",
     "typescript": "~5.7.2",
     "vitest": "^3.1.4"
