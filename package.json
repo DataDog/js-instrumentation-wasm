@@ -64,5 +64,5 @@
     "vite-plugin-require": "^1.2.14",
     "vitest": "^3.2.4"
   },
-  "packageManager": "yarn@4.8.1"
+  "packageManager": "yarn@4.14.1"
 }
