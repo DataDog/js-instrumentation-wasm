@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@babel/code-frame@npm:^7.27.1":
@@ -150,8 +150,8 @@ __metadata:
 
 "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz::locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A.":
   version: 1.0.8
-  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=bcb080&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
-  checksum: 10c0/7e64cc36613acf280a0e4e9044aeceb118f64cbec10e0495d1b16d9349455d00682e7b46cb5b3940a0cfc94d917cb015c62c543776cad53e447c62d7ba728797
+  resolution: "@datadog/js-instrumentation-wasm@file:../../artifacts/@datadog-js-instrumentation-wasm.tgz#../../artifacts/@datadog-js-instrumentation-wasm.tgz::hash=7b2568&locator=%40datadog%2Finstrumentation-test-plugin%40workspace%3A."
+  checksum: 10c0/549f0f38e237ca23e4d148265687eab56e0670f3137473b8791228c926daa6049726c2c8767b753922b851704e0c8cac77d2b55c155a5896d45b584ce9eb1ab3
   languageName: node
   linkType: hard
 
