@@ -7,7 +7,7 @@ permissions:
   contents: write
   deployments: none
   discussions: none
-  id-token: none
+  id-token: write
   issues: none
   packages: write
   pages: none
@@ -37,6 +37,4 @@ jobs:
         mode: "release"
       if: steps.release-status.outputs.already-released == 'false'
     - uses: ./.github/actions/publish/
-      with:
-        npm_publish_token: ${{ secrets.NPM_PUBLISH_TOKEN }}
       if: steps.release-status.outputs.already-released == 'false'
