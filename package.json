@@ -62,7 +62,14 @@
     "vite": "^6.4.2",
     "vite-plugin-commonjs": "^0.10.4",
     "vite-plugin-require": "^1.2.14",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.6"
   },
-  "packageManager": "yarn@4.14.1"
+  "packageManager": "yarn@4.14.1",
+  "resolutions": {
+    "ajv": "^8.20.0",
+    "brace-expansion": "^1.1.15",
+    "minimatch": "^9.0.9",
+    "picomatch": "^2.3.2",
+    "vite": "^7.3.5"
+  }
 }
