@@ -23,5 +23,10 @@
     "jsdom": "^26.1.0",
     "typescript": "~5.7.2",
     "vitest": "^3.1.4"
+  },
+  "resolutions": {
+    "minimatch": "^9.0.9",
+    "vite": "^6.4.3",
+    "picomatch": "^4.0.5"
   }
 }
