@@ -29,7 +29,12 @@
     "jsdom": "^26.0.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.3.5",
+    "vite": "^6.4.3",
     "vitest": "^3.1.4"
+  },
+  "resolutions": {
+    "tar": "^7.5.20",
+    "minimatch": "^3.1.5",
+    "flatted": "^3.4.2"
   }
 }
