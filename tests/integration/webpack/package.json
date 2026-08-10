@@ -29,5 +29,11 @@
     "vitest": "^3.1.4",
     "webpack": "^5.99.5",
     "webpack-cli": "^6.0.1"
+  },
+  "resolutions": {
+    "minimatch@npm:^9.0.4": "npm:^9.0.9",
+    "postcss@npm:^8.4.33": "npm:^8.5.26",
+    "postcss@npm:^8.5.3": "npm:^8.5.26",
+    "nanoid@npm:^3.3.8": "npm:^3.3.18"
   }
 }
