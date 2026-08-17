@@ -116,7 +116,7 @@
     "@nuxt/schema": "^3",
     "esbuild": "*",
     "rollup": "^3",
-    "vite": ">=3",
+    "vite": ">=6.4.3",
     "webpack": "^4 || ^5"
   },
   "peerDependenciesMeta": {
@@ -168,13 +168,28 @@
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1",
-    "vite": "^6.3.5",
+    "vite": "^6.4.3",
     "vite-plugin-commonjs": "^0.10.4",
     "vite-plugin-require": "^1.2.14",
-    "vitest": "^3.1.4",
+    "vitest": "^3.2.7",
     "webpack": "^5.97.1"
   },
   "workspaces": [
     "./privacy-helpers"
-  ]
+  ],
+  "resolutions": {
+    "brace-expansion@npm:^2.0.1": "npm:^2.1.4",
+    "fast-uri@npm:^3.0.1": "npm:^3.1.5",
+    "flatted@npm:^3.2.9": "npm:^3.4.4",
+    "glob@npm:^10.2.2": "npm:^10.5.0",
+    "js-yaml@npm:^4.1.0": "npm:^4.3.1",
+    "tar@npm:^7.4.3": "npm:^7.5.22",
+    "brace-expansion@npm:^1.1.7": "npm:^1.1.18",
+    "defu@npm:^6.1.4": "npm:^6.1.7",
+    "minimatch@npm:^9.0.4": "npm:^9.0.9",
+    "minimatch@npm:^3.1.2": "npm:^3.1.5",
+    "picomatch@npm:^2.3.1": "npm:^2.3.2",
+    "picomatch@npm:^4.0.2": "npm:^4.0.5",
+    "postcss@npm:^8.5.3": "npm:^8.5.26"
+  }
 }
