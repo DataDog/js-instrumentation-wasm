@@ -30,5 +30,13 @@
     "vite-plugin-commonjs": "^0.10.4",
     "vite-plugin-require": "^1.2.14",
     "vitest": "^3.0.5"
+  },
+  "resolutions": {
+    "ajv@npm:^8.0.0": "npm:^8.20.0",
+    "ajv@npm:^8.9.0": "npm:^8.20.0",
+    "ajv@npm:^6.12.4": "npm:^6.15.0",
+    "webpack@npm:^4.46.0 || ^5.0.0": "npm:^5.109.2",
+    "@eslint/plugin-kit@npm:^0.3.1": "npm:>=0.3.5",
+    "nanoid@npm:^3.3.8": "npm:^3.3.18"
   }
 }
