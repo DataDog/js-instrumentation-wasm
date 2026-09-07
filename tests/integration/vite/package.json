@@ -31,5 +31,11 @@
     "typescript-eslint": "^8.24.1",
     "vite": "^6.3.5",
     "vitest": "^3.1.4"
+  },
+  "resolutions": {
+    "postcss@npm:^8.5.3": "npm:^8.5.28",
+    "nanoid@npm:^3.3.8": "npm:^3.3.18",
+    "js-yaml@npm:^4.1.0": "npm:^4.3.2",
+    "browserslist@npm:^4.24.0": "npm:^4.28.9"
   }
 }
