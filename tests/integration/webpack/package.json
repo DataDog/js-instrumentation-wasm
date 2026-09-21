@@ -34,7 +34,7 @@
     "minimatch@npm:^9.0.4": "npm:^9.0.9",
     "postcss@npm:^8.4.33": "npm:^8.5.28",
     "postcss@npm:^8.5.3": "npm:^8.5.28",
-    "nanoid@npm:^3.3.8": "npm:^3.3.18",
-    "browserslist@npm:^4.24.0": "npm:^4.28.9"
+    "nanoid@npm:^3.3.8": "npm:^3.3.19",
+    "browserslist@npm:^4.24.0": "npm:^4.29.0"
   }
 }

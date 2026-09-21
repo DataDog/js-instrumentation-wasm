@@ -34,8 +34,8 @@
   },
   "resolutions": {
     "postcss@npm:^8.5.3": "npm:^8.5.28",
-    "nanoid@npm:^3.3.8": "npm:^3.3.18",
+    "nanoid@npm:^3.3.8": "npm:^3.3.19",
     "js-yaml@npm:^4.1.0": "npm:^4.3.2",
-    "browserslist@npm:^4.24.0": "npm:^4.28.9"
+    "browserslist@npm:^4.24.0": "npm:^4.29.0"
   }
 }
