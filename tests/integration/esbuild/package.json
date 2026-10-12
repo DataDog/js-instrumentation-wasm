@@ -22,11 +22,12 @@
     "esbuild": "^0.25.4",
     "jsdom": "^26.1.0",
     "typescript": "~5.7.2",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.7"
   },
   "resolutions": {
     "minimatch@npm:^9.0.4": "npm:^9.0.9",
     "postcss@npm:^8.5.3": "npm:^8.5.28",
-    "nanoid@npm:^3.3.8": "npm:^3.3.18"
+    "nanoid@npm:^3.3.8": "npm:^3.3.18",
+    "picomatch@npm:^4.0.2": "npm:^4.0.7"
   }
 }
