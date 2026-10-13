@@ -107,11 +107,11 @@ describe('should be able to set a custom expression addToDictionary helper', asy
   });
 });
 
-describe('should be able to skip the arguments of some functions', () => {
+describe('should be able to exclude the call arguments of some functions', () => {
   const transformCustom = unpluginESM.raw({
     ...pluginOptions,
     privacy: {
-      skipArgumentsOf: ['$dd_probes'],
+      excludeCallArguments: ['$dd_probes'],
     }
   }).transform.handler;
 

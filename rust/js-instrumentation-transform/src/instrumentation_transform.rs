@@ -56,7 +56,7 @@ pub fn apply_transform(
     visit(
         &program,
         &mut input_file,
-        &options.privacy.skip_arguments_of,
+        &options.privacy.exclude_call_arguments,
         &mut dictionary_tracker,
         &mut feature_tracker,
         &mut identifier_tracker,

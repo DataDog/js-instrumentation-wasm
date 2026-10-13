@@ -103,7 +103,7 @@ export interface PrivacyOptions {
    * `foo('bar')` stay inline, but the ones in `obj.foo('bar')` are still added to the
    * dictionary.
    */
-  skipArgumentsOf?: string[];
+  excludeCallArguments?: string[];
 }
 
 export interface InstrumentationOptions {
@@ -117,7 +117,7 @@ export interface InstrumentationOptions {
 
 export interface RustPrivacyOptions {
   addToDictionaryHelper: PrivacyHelperSource;
-  skipArgumentsOf: string[];
+  excludeCallArguments: string[];
 }
 
 type RustInstrumentationOptions = Required<InstrumentationOptions>;
@@ -143,7 +143,7 @@ function convertOptions(
           func: '$',
         }
       },
-      skipArgumentsOf: options?.privacy?.skipArgumentsOf ?? [],
+      excludeCallArguments: options?.privacy?.excludeCallArguments ?? [],
     },
   };
 }

@@ -48,7 +48,7 @@ pub struct PrivacyOptions {
     /// Names of functions whose arguments are never added to the dictionary, for calls made
     /// through a plain identifier, like `name(...)`.
     #[serde(default)]
-    pub skip_arguments_of: Vec<String>,
+    pub exclude_call_arguments: Vec<String>,
 }
 
 #[derive(Clone, Deserialize, Serialize)]
@@ -77,7 +77,7 @@ impl Default for InstrumentationOptions {
                     esm_module: "datadog:privacy-helpers.mjs".into(),
                     func: "$".into(),
                 },
-                skip_arguments_of: vec![],
+                exclude_call_arguments: vec![],
             },
         }
     }
