@@ -1,0 +1,12 @@
+issuer: https://token.actions.githubusercontent.com
+
+subject: repo:DataDog/js-instrumentation-wasm:ref:refs/heads/main
+
+claim_pattern:
+  event_name: push
+  ref: refs/heads/main
+  ref_protected: "true"
+  job_workflow_ref: DataDog/js-instrumentation-wasm/\.github/workflows/trigger_release\.yml@refs/heads/main
+
+permissions:
+  contents: write  # Required to create release tags
