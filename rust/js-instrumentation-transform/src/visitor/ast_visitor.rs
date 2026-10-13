@@ -25,6 +25,7 @@ use crate::{
 pub fn visit<'a, 'b>(
     program: &Program,
     input_file: &'a mut InputFile<'b>,
+    exclude_call_arguments: &'a [String],
     dictionary_tracker: &'a mut DictionaryTracker,
     feature_tracker: &'a mut FeatureTracker,
     identifier_tracker: &'a mut IdentifierTracker,
@@ -32,6 +33,7 @@ pub fn visit<'a, 'b>(
 ) {
     let mut visitor = ASTVisitor {
         input_file,
+        exclude_call_arguments,
         dictionary_tracker,
         feature_tracker,
         identifier_tracker,
@@ -42,6 +44,7 @@ pub fn visit<'a, 'b>(
 
 struct ASTVisitor<'a, 'b> {
     input_file: &'a mut InputFile<'b>,
+    exclude_call_arguments: &'a [String],
     dictionary_tracker: &'a mut DictionaryTracker,
     feature_tracker: &'a mut FeatureTracker,
     identifier_tracker: &'a mut IdentifierTracker,
@@ -54,6 +57,13 @@ impl<'a, 'b> ASTVisitor<'a, 'b> {
         self.dictionary_tracker.enter_uncollected_scope();
         action(self);
         self.dictionary_tracker.exit_uncollected_scope();
+    }
+
+    /// Whether the caller asked us not to collect strings passed to the given function.
+    fn excludes_call_arguments(self: &Self, name: &str) -> bool {
+        self.exclude_call_arguments
+            .iter()
+            .any(|callee| callee == name)
     }
 
     /// Perform an action in a context in which we won't rewrite code.
@@ -483,6 +493,10 @@ impl<'a, 'b> Visit for ASTVisitor<'a, 'b> {
                                 self.visit_react_create_element_call(node);
                                 return;
                             }
+                            name if self.excludes_call_arguments(name) => {
+                                self.in_uncollected_scope(|this| node.visit_children_with(this));
+                                return;
+                            }
                             _ => {}
                         }
                     }
@@ -602,6 +616,13 @@ mod tests {
     use super::*;
 
     fn walk_code(code: &str) -> (DictionaryTracker, RewriteTracker) {
+        walk_code_excluding_call_arguments(code, &[])
+    }
+
+    fn walk_code_excluding_call_arguments(
+        code: &str,
+        exclude_call_arguments: &[String],
+    ) -> (DictionaryTracker, RewriteTracker) {
         let mut input_file = InputFile::new("test.jsx", code);
         let comments: SingleThreadedComments = Default::default();
         let mut parser = build_parser(&input_file, &comments, &Default::default());
@@ -616,6 +637,7 @@ mod tests {
         visit(
             &program,
             &mut input_file,
+            exclude_call_arguments,
             &mut dictionary_tracker,
             &mut feature_tracker,
             &mut identifier_tracker,
@@ -623,6 +645,10 @@ mod tests {
         );
 
         (dictionary_tracker, rewrite_tracker)
+    }
+
+    fn collected_strings(dictionary_tracker: &DictionaryTracker) -> Vec<DictionaryEntry> {
+        dictionary_tracker.strings.keys().cloned().collect()
     }
 
     #[test]
@@ -653,6 +679,58 @@ mod tests {
                 0,
                 Span::new(BytePos::from_u32(187), BytePos::from_u32(193))
             )]
+        );
+    }
+
+    #[test]
+    fn excludes_strings_passed_to_listed_functions() {
+        let (dictionary_tracker, rewrite_tracker) = walk_code_excluding_call_arguments(
+            r#"
+              export function f() {
+                let probe = $dd_probes('src/utils.js;f');
+                track('src/utils.js;f');
+                return 'value';
+              }
+            "#,
+            &["$dd_probes".into()],
+        );
+        assert_eq!(
+            collected_strings(&dictionary_tracker),
+            vec![
+                DictionaryEntry::String("'src/utils.js;f'".into()),
+                DictionaryEntry::String("'value'".into()),
+            ]
+        );
+        // The argument of $dd_probes is not rewritten, even though the same string is
+        // collected elsewhere.
+        assert_eq!(rewrite_tracker.take().0.len(), 2);
+    }
+
+    #[test]
+    fn only_excludes_calls_through_plain_identifiers() {
+        let (dictionary_tracker, _) = walk_code_excluding_call_arguments(
+            r#"
+              $dd_probes('skipped');
+              probes.$dd_probes('member call');
+              dd_probes('other function');
+            "#,
+            &["$dd_probes".into()],
+        );
+        assert_eq!(
+            collected_strings(&dictionary_tracker),
+            vec![
+                DictionaryEntry::String("'member call'".into()),
+                DictionaryEntry::String("'other function'".into()),
+            ]
+        );
+    }
+
+    #[test]
+    fn collects_strings_passed_to_any_function_by_default() {
+        let (dictionary_tracker, _) = walk_code("$dd_probes('collected');");
+        assert_eq!(
+            collected_strings(&dictionary_tracker),
+            vec![DictionaryEntry::String("'collected'".into())]
         );
     }
 }
