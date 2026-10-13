@@ -6,6 +6,41 @@ runs:
     - name: Run yarn workspaces focus
       run: yarn workspaces focus --all --production
       shell: bash
+    # A version is only expected on npm already when an earlier run of this
+    # release published it and then failed. Yarn records the commit it
+    # published from as gitHead, so accept the version only when that commit
+    # is on main, and release that commit.
+    - name: Check if version is already on npm
+      id: npm-status
+      shell: bash
+      run: |
+        PACKAGE_NAME=$(jq -r .name < package.json)
+        PACKAGE_VERSION=$(jq -r .version < package.json)
+        MANIFEST=$(mktemp)
+        STATUS=$(curl --silent --output "${MANIFEST}" --write-out '%{http_code}' \
+          "https://registry.npmjs.org/${PACKAGE_NAME}/${PACKAGE_VERSION}")
+        case "${STATUS}" in
+          404)
+            echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is not on npm yet."
+            echo "published=false" >> $GITHUB_OUTPUT
+            echo "release-sha=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+            ;;
+          200)
+            GIT_HEAD=$(jq -r '.gitHead // empty' "${MANIFEST}")
+            if [ -n "${GIT_HEAD}" ] && git merge-base --is-ancestor "${GIT_HEAD}" "${GITHUB_SHA}"; then
+              echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already on npm, published from ${GIT_HEAD}."
+              echo "published=true" >> $GITHUB_OUTPUT
+              echo "release-sha=${GIT_HEAD}" >> $GITHUB_OUTPUT
+            else
+              echo "::error::${PACKAGE_NAME}@${PACKAGE_VERSION} is already on npm, published from '${GIT_HEAD}', which is not a commit on main."
+              exit 1
+            fi
+            ;;
+          *)
+            echo "::error::npm returned HTTP ${STATUS} for ${PACKAGE_NAME}@${PACKAGE_VERSION}."
+            exit 1
+            ;;
+        esac
     # The organization's tag rules don't let GITHUB_TOKEN create tags, so the
     # tag is created with a dd-octo-sts token. The release itself is still
     # created with GITHUB_TOKEN, so it doesn't trigger other workflows.
@@ -19,33 +54,23 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+        RELEASE_SHA: ${{ steps.npm-status.outputs.release-sha }}
       run: |
         PACKAGE_VERSION=$(jq -r .version < package.json)
-        # Tag the commit that set this version, even when a later push to main
-        # finishes a release that failed part way.
-        RELEASE_SHA=$(git log -1 --format=%H -G '"version":' -- package.json)
-        if git ls-remote --exit-code --tags origin "refs/tags/${PACKAGE_VERSION}" > /dev/null; then
-          echo "Tag ${PACKAGE_VERSION} already exists."
-        else
-          echo "Creating tag ${PACKAGE_VERSION} on ${RELEASE_SHA}"
+        # The last line is the tagged commit, also for annotated tags.
+        TAG_SHA=$(git ls-remote --tags origin \
+          "refs/tags/${PACKAGE_VERSION}" "refs/tags/${PACKAGE_VERSION}^{}" | tail -n 1 | cut -f 1)
+        if [ -z "${TAG_SHA}" ]; then
+          echo "Creating tag ${PACKAGE_VERSION} on ${RELEASE_SHA}."
           gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
             -f ref="refs/tags/${PACKAGE_VERSION}" \
             -f sha="${RELEASE_SHA}"
+        elif [ "${TAG_SHA}" = "${RELEASE_SHA}" ]; then
+          echo "Tag ${PACKAGE_VERSION} already exists on ${RELEASE_SHA}."
+        else
+          echo "::error::Tag ${PACKAGE_VERSION} already exists on ${TAG_SHA}, not on ${RELEASE_SHA}."
+          exit 1
         fi
-    - name: Check if version is already on npm
-      id: npm-status
-      shell: bash
-      run: |
-        PACKAGE_NAME=$(jq -r .name < package.json)
-        PACKAGE_VERSION=$(jq -r .version < package.json)
-        STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-          "https://registry.npmjs.org/${PACKAGE_NAME}/${PACKAGE_VERSION}")
-        echo "npm returned HTTP ${STATUS} for ${PACKAGE_NAME}@${PACKAGE_VERSION}"
-        case "${STATUS}" in
-          200) echo "published=true" >> $GITHUB_OUTPUT ;;
-          404) echo "published=false" >> $GITHUB_OUTPUT ;;
-          *) exit 1 ;;
-        esac
     - name: Run yarn npm publish
       if: steps.npm-status.outputs.published == 'false'
       run: yarn npm publish
