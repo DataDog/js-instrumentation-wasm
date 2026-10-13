@@ -6,7 +6,48 @@ runs:
     - name: Run yarn workspaces focus
       run: yarn workspaces focus --all --production
       shell: bash
+    # The organization's tag rules don't let GITHUB_TOKEN create tags, so the
+    # tag is created with a dd-octo-sts token. The release itself is still
+    # created with GITHUB_TOKEN, so it doesn't trigger other workflows.
+    - name: Get a token that can create tags
+      uses: DataDog/dd-octo-sts-action@c85802a58e202b7e764b5441e4378c76043c8108 # v1.0.5
+      id: octo-sts
+      with:
+        scope: DataDog/js-instrumentation-wasm
+        policy: self.release
+    - name: Create the release tag
+      shell: bash
+      env:
+        GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+      run: |
+        PACKAGE_VERSION=$(jq -r .version < package.json)
+        # Tag the commit that set this version, even when a later push to main
+        # finishes a release that failed part way.
+        RELEASE_SHA=$(git log -1 --format=%H -G '"version":' -- package.json)
+        if git ls-remote --exit-code --tags origin "refs/tags/${PACKAGE_VERSION}" > /dev/null; then
+          echo "Tag ${PACKAGE_VERSION} already exists."
+        else
+          echo "Creating tag ${PACKAGE_VERSION} on ${RELEASE_SHA}"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/${PACKAGE_VERSION}" \
+            -f sha="${RELEASE_SHA}"
+        fi
+    - name: Check if version is already on npm
+      id: npm-status
+      shell: bash
+      run: |
+        PACKAGE_NAME=$(jq -r .name < package.json)
+        PACKAGE_VERSION=$(jq -r .version < package.json)
+        STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+          "https://registry.npmjs.org/${PACKAGE_NAME}/${PACKAGE_VERSION}")
+        echo "npm returned HTTP ${STATUS} for ${PACKAGE_NAME}@${PACKAGE_VERSION}"
+        case "${STATUS}" in
+          200) echo "published=true" >> $GITHUB_OUTPUT ;;
+          404) echo "published=false" >> $GITHUB_OUTPUT ;;
+          *) exit 1 ;;
+        esac
     - name: Run yarn npm publish
+      if: steps.npm-status.outputs.published == 'false'
       run: yarn npm publish
       shell: bash
     - name: Create a Github release
@@ -16,4 +57,4 @@ runs:
       run: |
         PACKAGE_VERSION=$(jq -r .version < package.json)
         echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
-        gh release create "${PACKAGE_VERSION}" --generate-notes
+        gh release create "${PACKAGE_VERSION}" --verify-tag --generate-notes
