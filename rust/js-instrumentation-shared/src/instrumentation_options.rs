@@ -44,6 +44,11 @@ pub enum HelperFunctionSource {
 #[serde(rename_all = "camelCase")]
 pub struct PrivacyOptions {
     pub add_to_dictionary_helper: HelperFunctionSource,
+
+    /// Names of functions whose arguments are never added to the dictionary, for calls made
+    /// through a plain identifier, like `name(...)`.
+    #[serde(default)]
+    pub skip_arguments_of: Vec<String>,
 }
 
 #[derive(Clone, Deserialize, Serialize)]
@@ -72,6 +77,7 @@ impl Default for InstrumentationOptions {
                     esm_module: "datadog:privacy-helpers.mjs".into(),
                     func: "$".into(),
                 },
+                skip_arguments_of: vec![],
             },
         }
     }

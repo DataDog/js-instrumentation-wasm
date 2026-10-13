@@ -106,3 +106,28 @@ describe('should be able to set a custom expression addToDictionary helper', asy
     });
   });
 });
+
+describe('should be able to skip the arguments of some functions', () => {
+  const transformCustom = unpluginESM.raw({
+    ...pluginOptions,
+    privacy: {
+      skipArgumentsOf: ['$dd_probes'],
+    }
+  }).transform.handler;
+
+  it('for strings passed to a listed function', async () => {
+    const code = [
+      "export function f(label = 'default') {",
+      "  let probe = $dd_probes('src/utils.js;f');",
+      "  track('src/utils.js;f');",
+      '  return label;',
+      '}',
+    ].join('\n');
+    const output = transformCustom(code, 'input.js');
+
+    expect(output.code).toContain("$dd_probes('src/utils.js;f')");
+    expect(output.code).not.toContain("track('src/utils.js;f')");
+    expect(output.code).not.toContain("= 'default'");
+    await expectEveryPositionToHaveASourceMapping('input.js', output.code, output.map);
+  });
+});

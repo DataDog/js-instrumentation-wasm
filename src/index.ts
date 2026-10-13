@@ -97,6 +97,13 @@ export type PrivacyHelperSource =
 export interface PrivacyOptions {
   /** The source for the helper function used to add strings to the dictionary. */
   addToDictionaryHelper?: PrivacyHelperSource;
+  /**
+   * Names of functions whose arguments are never added to the dictionary. Only calls
+   * made through a plain identifier are matched: with `['foo']`, the strings in
+   * `foo('bar')` stay inline, but the ones in `obj.foo('bar')` are still added to the
+   * dictionary.
+   */
+  skipArgumentsOf?: string[];
 }
 
 export interface InstrumentationOptions {
@@ -110,6 +117,7 @@ export interface InstrumentationOptions {
 
 export interface RustPrivacyOptions {
   addToDictionaryHelper: PrivacyHelperSource;
+  skipArgumentsOf: string[];
 }
 
 type RustInstrumentationOptions = Required<InstrumentationOptions>;
@@ -134,7 +142,8 @@ function convertOptions(
           esmModule: 'datadog:privacy-helpers.mjs',
           func: '$',
         }
-      }
+      },
+      skipArgumentsOf: options?.privacy?.skipArgumentsOf ?? [],
     },
   };
 }
