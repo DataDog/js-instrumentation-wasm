@@ -35,7 +35,7 @@
     "postcss@npm:^8.4.33": "npm:^8.5.28",
     "postcss@npm:^8.5.3": "npm:^8.5.28",
     "nanoid@npm:^3.3.8": "npm:^3.3.18",
-    "browserslist@npm:^4.24.0": "npm:^4.28.9",
+    "browserslist@npm:^4.24.0": "npm:^4.29.5",
     "picomatch@npm:^2.3.1": "npm:^2.3.2",
     "picomatch@npm:^4.0.2": "npm:^4.0.7"
   }
